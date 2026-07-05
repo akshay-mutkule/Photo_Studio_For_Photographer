@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --color-gold-50: #fbf8f3;
+  --color-gold-100: #f4edd9;
+  --color-gold-200: #e7dab2;
+  --color-gold-300: #d6bf83;
+  --color-gold-400: #c1a155;
+  --color-gold-500: #b5903b;
+  --color-gold-600: #9e7a2f;
+  --color-gold-700: #806023;
+  --color-gold-800: #654a1a;
+  --color-gold-900: #523c16;
+  --color-gold-950: #30210a;
+}
+
+/* Custom overlay & scrollbar animations */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111111;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #b5903b;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9e7a2f;
+}
+
+/* Smooth active focus comparison slider */
+.before-after-slider {
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+}
