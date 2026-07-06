@@ -707,6 +707,89 @@ app.post("/api/gemini/tag-image", async (req, res) => {
   }
 });
 
+// Interactive AI Photoshoot Stylist and Creative Director consultant endpoint
+app.post("/api/gemini/shoot-consultant", async (req, res) => {
+  const { messages } = req.body;
+  if (!messages || !Array.isArray(messages)) {
+    return res.status(400).json({ error: "Messages array is required for shoot stylist consultation" });
+  }
+
+  if (!ai) {
+    // Elegant fallback if Gemini is not initialized yet (missing key)
+    const lastUserMsg = messages[messages.length - 1]?.text || "";
+    const text = `Hello! I'm Aria, your Creative Director at Lumina. (Note: Gemini API Key is not set, so I'm running in offline assistant mode). Based on your ideas: "${lastUserMsg}", I'd suggest we design a gorgeous, warm sunset photoshoot. Natural lighting, fluid linen outfits, and candid, organic movements will look absolutely breathtaking! I've pre-filled a suggested draft for you. Click 'Apply Aria's Design' to autofill your booking form!`;
+    return res.json({
+      text,
+      draftDetails: {
+        location: "Baker Beach Sunset, SF",
+        sessionType: "Portrait Sessions",
+        notes: "Aria's Styling Draft:\n- Theme: Organic coastal sunset\n- Color Palette: Warm neutrals, cream, rust, and clay\n- Key Shots: Candid walking on shore, close-up laugh, dramatic silhouette against waves\n- Outfits: Breathable fabrics, linen or soft knitwear"
+      },
+      isAIPowered: false
+    });
+  }
+
+  try {
+    // Map client conversation messages to Gemini's format: { role, parts: [{ text }] }
+    // Gemini 3.5 expects: contents: [{ role: 'user' | 'model', parts: [{ text: '...' }] }]
+    const contents = messages.map((m: any) => ({
+      role: m.role === "user" ? "user" : "model",
+      parts: [{ text: m.text }]
+    }));
+
+    const systemInstruction = `You are Aria, the AI Creative Director & Photoshoot Stylist at Lumina Photography.
+Your role is to guide clients in planning their dream photoshoot, helping them refine their creative vision, choose locations, themes, colors, and select matching outfits.
+
+Lumina Photography's standard photoshoot packages (sessionType) are:
+- "Wedding Photography"
+- "Pre-Wedding Session"
+- "Birthday & Social Events"
+- "Corporate Events"
+- "Portrait Sessions"
+- "Product Photography"
+
+Be encouraging, warm, creative, and highly descriptive. Offer 2-3 tailored outfit/color scheme suggestions or shoot location ideas in the San Francisco Bay Area (or general visual ideas if outside).
+
+You MUST respond in JSON format matching this schema:
+{
+  "text": "Your warm conversational reply to the client, explaining your creative suggestions. Use line breaks if needed.",
+  "draftDetails": {
+    "location": "A proposed location or venue style (optional/if decided, e.g. 'Baker Beach, SF' or 'Industrial Loft Studio')",
+    "sessionType": "One of the standard packages (optional/if decided, e.g. 'Portrait Sessions')",
+    "notes": "A concise, beautiful summary of the planned shoot theme, outfits, and key shot lists (optional/if decided) that can be directly applied to their booking request"
+  }
+}
+
+Even if details aren't finalized, ALWAYS return a JSON object. You can leave 'location', 'sessionType', or 'notes' fields empty or partially filled, but as the user shares ideas, populate them so they can apply them to the form. Ensure 'text' contains your full friendly response. Do not output anything other than raw valid JSON.`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3.5-flash",
+      contents,
+      config: {
+        systemInstruction,
+        responseMimeType: "application/json"
+      }
+    });
+
+    let result;
+    try {
+      result = JSON.parse(response.text?.trim() || "{}");
+    } catch (e) {
+      console.error("Failed parsing consultant json, raw output: ", response.text);
+      result = {
+        text: response.text || "I apologize, I encountered a tiny ripple in my processing canvas. Let's keep designing your shoot!",
+        draftDetails: {}
+      };
+    }
+
+    res.json({ ...result, isAIPowered: true });
+
+  } catch (err: any) {
+    console.error("Gemini Shoot Stylist error: ", err);
+    res.status(500).json({ error: "AI stylist consultation failed" });
+  }
+});
+
 // ================= VITE MIDDLEWARE & CLIENT MOUNTING =================
 
 // Mount Vite middleware in development (when process.env.NODE_ENV !== "production")
