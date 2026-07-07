@@ -723,15 +723,22 @@ app.post("/api/gemini/shoot-consultant", async (req, res) => {
       draftDetails: {
         location: "Baker Beach Sunset, SF",
         sessionType: "Portrait Sessions",
-        notes: "Aria's Styling Draft:\n- Theme: Organic coastal sunset\n- Color Palette: Warm neutrals, cream, rust, and clay\n- Key Shots: Candid walking on shore, close-up laugh, dramatic silhouette against waves\n- Outfits: Breathable fabrics, linen or soft knitwear"
+        notes: "Aria's Styling Draft:\n- Theme: Organic coastal sunset\n- Color Palette: Warm neutrals, cream, rust, and clay\n- Key Shots: Candid walking on shore, close-up laugh, dramatic silhouette against waves\n- Outfits: Breathable fabrics, linen or soft knitwear",
+        colors: ["#F9F6F0", "#E6D7C3", "#C58B6E", "#8A543A", "#2E1C15"],
+        shotList: [
+          "Candid walk along the shoreline water's edge",
+          "Close-up laugh with wind-swept hair detail",
+          "Dramatic silhouette portrait against wave crests",
+          "Soft focused gaze looking directly into golden hour sun"
+        ],
+        styleKeywords: ["Ethereal", "Organic", "Warm-Toned", "Cinematic"]
       },
       isAIPowered: false
     });
   }
 
   try {
-    // Map client conversation messages to Gemini's format: { role, parts: [{ text }] }
-    // Gemini 3.5 expects: contents: [{ role: 'user' | 'model', parts: [{ text: '...' }] }]
+    // Map client conversation messages to Gemini's format
     const contents = messages.map((m: any) => ({
       role: m.role === "user" ? "user" : "model",
       parts: [{ text: m.text }]
@@ -756,11 +763,14 @@ You MUST respond in JSON format matching this schema:
   "draftDetails": {
     "location": "A proposed location or venue style (optional/if decided, e.g. 'Baker Beach, SF' or 'Industrial Loft Studio')",
     "sessionType": "One of the standard packages (optional/if decided, e.g. 'Portrait Sessions')",
-    "notes": "A concise, beautiful summary of the planned shoot theme, outfits, and key shot lists (optional/if decided) that can be directly applied to their booking request"
+    "notes": "A concise, beautiful summary of the planned shoot theme, outfits, and key shot lists (optional/if decided) that can be directly applied to their booking request",
+    "colors": ["A list of 4 to 5 hex codes that represent the ideal photo mood/color palette for this session. Choose beautiful aesthetic colors, e.g. ['#FDFBF7', '#D4AF37', '#4A3B32']"],
+    "shotList": ["A list of 3 to 5 conceptual/specific shot ideas for this session (e.g., 'Groom looking back laughing', 'Bride's train detail near water', 'Candid close-up smile')"],
+    "styleKeywords": ["3 to 4 short adjectives describing the artistic style of the photoshoot, e.g., ['Dreamy', 'Cinematic', 'Minimalist', 'Editorial']"]
   }
 }
 
-Even if details aren't finalized, ALWAYS return a JSON object. You can leave 'location', 'sessionType', or 'notes' fields empty or partially filled, but as the user shares ideas, populate them so they can apply them to the form. Ensure 'text' contains your full friendly response. Do not output anything other than raw valid JSON.`;
+Even if details aren't finalized, ALWAYS return a JSON object. Ensure 'text' contains your full friendly response. Do not output anything other than raw valid JSON.`;
 
     const response = await ai.models.generateContent({
       model: "gemini-3.5-flash",
@@ -787,6 +797,83 @@ Even if details aren't finalized, ALWAYS return a JSON object. You can leave 'lo
   } catch (err: any) {
     console.error("Gemini Shoot Stylist error: ", err);
     res.status(500).json({ error: "AI stylist consultation failed" });
+  }
+});
+
+// Interactive AI Studio Copilot / Analytics Assistant endpoint for Administrators
+app.post("/api/gemini/admin-copilot", async (req, res) => {
+  const { messages } = req.body;
+  if (!messages || !Array.isArray(messages)) {
+    return res.status(400).json({ error: "Messages array is required for co-pilot" });
+  }
+
+  const db = readDb();
+  const bookingsSummary = (db.bookings || []).map((b: any) => 
+    `- Client: ${b.clientName} (${b.clientEmail}), Date: ${b.date}, Style: ${b.sessionType}, Status: ${b.status}, Location: ${b.location}, Notes: "${b.notes}"`
+  ).join("\n");
+
+  const galleriesSummary = (db.galleries || []).map((g: any) =>
+    `- Title: ${g.title}, Client: ${g.clientName}, Views: ${g.views || 0}, Total Images: ${g.images?.length || 0}, Selection Submitted: ${g.selectionSubmitted ? "YES" : "NO"}`
+  ).join("\n");
+
+  const activitiesSummary = (db.activities || []).slice(0, 10).map((a: any) =>
+    `-[${new Date(a.timestamp).toLocaleTimeString()}] ${a.clientName} performed "${a.action}" on "${a.galleryTitle}" details: ${a.details}`
+  ).join("\n");
+
+  if (!ai) {
+    // Elegant fallback response with customized templates if Gemini key is missing
+    const lastUserMsg = messages[messages.length - 1]?.text?.toLowerCase() || "";
+    let text = "Greetings! I am your AI Studio Assistant. (Note: Gemini API Key is not set, running in offline analytics mode).\n\n";
+    
+    if (lastUserMsg.includes("email") || lastUserMsg.includes("proposal") || lastUserMsg.includes("draft")) {
+      text += `Here is a drafted response for you:\n\nSubject: Planning Your Dream Photoshoot with Lumina\n\nDear Client,\n\nThank you for reaching out to Lumina! We are absolutely thrilled to discuss your vision. Based on our studio schedules, we would love to secure your date. Below is our proposed creative theme summary.\n\nLet's collaborate to make these memories permanent!\n\nWarmest regards,\nAria Sterling\nLead Photographer, Lumina Studio`;
+    } else if (lastUserMsg.includes("summar") || lastUserMsg.includes("stats") || lastUserMsg.includes("analy")) {
+      text += `Based on the local database metrics, here is your studio health overview:\n- Active Galleries: ${db.galleries?.length || 0}\n- Total Bookings logged: ${db.bookings?.length || 0}\n- Pending confirmation requests: ${db.bookings?.filter((b: any) => b.status === "pending").length || 0}\n- Starred favorites rate: Excellent engagement across portfolios.\n\nEverything looks operational and healthy!`;
+    } else {
+      text += `I am ready to help you manage your photography studio. You can ask me to:\n1. "Draft a personalized email proposal for pending bookings"\n2. "Provide an analytical summary of recent client activity"\n3. "Suggest marketing tactics for our Portrait Sessions package"\n\nLet me know how I can assist you today!`;
+    }
+
+    return res.json({ text, isAIPowered: false });
+  }
+
+  try {
+    const contents = messages.map((m: any) => ({
+      role: m.role === "user" ? "user" : "model",
+      parts: [{ text: m.text }]
+    }));
+
+    const systemInstruction = `You are the ultimate AI Studio Co-Pilot & Administrative Assistant for Lumina Photography Studio.
+Your role is to help the lead photographer, Aria Sterling, manage bookings, write outstanding proposals, draft email responses, analyze studio stats, suggest visual marketing trends, and analyze recent client proofing activities.
+
+Below is the REAL current state of the photography database for your context:
+
+--- ACTIVE BOOKING PROPOSALS ---
+${bookingsSummary || "No bookings found."}
+
+--- ACTIVE CLIENT GALLERIES & PROOFING STATUS ---
+${galleriesSummary || "No client galleries setup."}
+
+--- RECENT CLIENT ENGAGEMENT FEED ---
+${activitiesSummary || "No client activities recorded yet."}
+
+---
+
+When drafting email templates, make them absolutely pristine, elegant, warm, and highly personalized using the actual details of the client booking or gallery selection. 
+Be highly strategic, professional, and helpful. You can also format your answers in clean, beautiful Markdown.`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3.5-flash",
+      contents,
+      config: {
+        systemInstruction
+      }
+    });
+
+    res.json({ text: response.text || "No response received", isAIPowered: true });
+
+  } catch (err: any) {
+    console.error("Gemini Co-Pilot error: ", err);
+    res.status(500).json({ error: "AI copilot failed" });
   }
 });
 

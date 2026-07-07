@@ -1,6 +1,10 @@
 import React, { useState, FormEvent, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Calendar, Phone, Mail, MapPin, User, ChevronRight, CheckCircle2, Sparkles, Clock, Send, Bot, MessageSquare } from "lucide-react";
+import { 
+  Calendar, Phone, Mail, MapPin, User, ChevronRight, CheckCircle2, 
+  Sparkles, Clock, Send, Bot, MessageSquare, Palette, CheckSquare, 
+  Plus, Trash2, Download, Copy, Check, FileText 
+} from "lucide-react";
 
 interface BookingPageProps {
   theme: "dark" | "light";
@@ -16,6 +20,14 @@ interface DraftDetails {
   location?: string;
   sessionType?: string;
   notes?: string;
+  colors?: string[];
+  shotList?: string[];
+  styleKeywords?: string[];
+}
+
+interface InteractiveShot {
+  text: string;
+  checked: boolean;
 }
 
 export default function BookingPage({ theme, preSelectedPackage }: BookingPageProps) {
@@ -32,7 +44,7 @@ export default function BookingPage({ theme, preSelectedPackage }: BookingPagePr
   const [submitting, setSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  // AI Stylist Chat State
+  // AI Stylist Chat & Advanced Moodboard State
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
       role: "model",
@@ -43,6 +55,13 @@ export default function BookingPage({ theme, preSelectedPackage }: BookingPagePr
   const [chatLoading, setChatLoading] = useState(false);
   const [draftDetails, setDraftDetails] = useState<DraftDetails | null>(null);
   const [appliedNotification, setAppliedNotification] = useState(false);
+
+  // Advanced Interactive Moodboard States
+  const [activeRightTab, setActiveRightTab] = useState<"chat" | "moodboard">("chat");
+  const [moodboardColors, setMoodboardColors] = useState<string[]>([]);
+  const [moodboardShots, setMoodboardShots] = useState<InteractiveShot[]>([]);
+  const [newShotText, setNewShotText] = useState("");
+  const [copiedColor, setCopiedColor] = useState<string | null>(null);
 
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -111,8 +130,32 @@ export default function BookingPage({ theme, preSelectedPackage }: BookingPagePr
       if (response.ok) {
         const data = await response.json();
         setChatMessages(prev => [...prev, { role: "model", text: data.text }]);
+        
         if (data.draftDetails && (data.draftDetails.location || data.draftDetails.notes || data.draftDetails.sessionType)) {
           setDraftDetails(data.draftDetails);
+          
+          // Set advanced interactive states
+          if (data.draftDetails.colors && Array.isArray(data.draftDetails.colors)) {
+            setMoodboardColors(data.draftDetails.colors);
+          } else {
+            // High-quality pastel fallbacks
+            setMoodboardColors(["#FAF8F5", "#DCD5C9", "#A69986", "#6E5E4E", "#2C2016"]);
+          }
+
+          if (data.draftDetails.shotList && Array.isArray(data.draftDetails.shotList)) {
+            setMoodboardShots(data.draftDetails.shotList.map((s: string) => ({ text: s, checked: false })));
+          } else {
+            // Fallback shot list
+            setMoodboardShots([
+              { text: "Candid walking and laughing pose", checked: false },
+              { text: "Scenic background portrait showing natural beauty", checked: false },
+              { text: "Detailed macro-style accessory close-up", checked: false },
+              { text: "Dramatic low-light silhouette frame", checked: false }
+            ]);
+          }
+
+          // Auto-highlight the newly generated visual blueprint
+          setActiveRightTab("moodboard");
         }
       } else {
         throw new Error("Stylist failed to process");
@@ -129,6 +172,73 @@ export default function BookingPage({ theme, preSelectedPackage }: BookingPagePr
     } finally {
       setChatLoading(false);
     }
+  };
+
+  // Add custom user shot to interactive checklist
+  const handleAddShot = (e: FormEvent) => {
+    e.preventDefault();
+    if (!newShotText.trim()) return;
+    setMoodboardShots(prev => [...prev, { text: newShotText.trim(), checked: false }]);
+    setNewShotText("");
+  };
+
+  // Toggle specific shot checklist item state
+  const handleToggleShot = (index: number) => {
+    setMoodboardShots(prev =>
+      prev.map((s, idx) => (idx === index ? { ...s, checked: !s.checked } : s))
+    );
+  };
+
+  // Remove specific shot checklist item
+  const handleDeleteShot = (index: number) => {
+    setMoodboardShots(prev => prev.filter((_, idx) => idx !== index));
+  };
+
+  // Copy hex color code helper
+  const handleCopyColor = (color: string) => {
+    navigator.clipboard.writeText(color);
+    setCopiedColor(color);
+    setTimeout(() => setCopiedColor(null), 1500);
+  };
+
+  // Export creative planning blueprint as an elegant local text file
+  const handleExportBlueprint = () => {
+    if (!draftDetails) return;
+
+    const styleLabels = draftDetails.styleKeywords?.join(", ") || "Dreamy, Cinematic, Minimalist";
+    const colorsList = moodboardColors.map((c, i) => `${i + 1}. ${c}`).join("\n");
+    const shotListText = moodboardShots.map(s => `[${s.checked ? "X" : " "}] ${s.text}`).join("\n");
+
+    const fileContent = `============================================================
+           LUMINA BESPOKE CREATIVE PHOTO BLUEPRINT          
+============================================================
+Artistic Style Keywords: [${styleLabels}]
+Proposed Category: ${draftDetails.sessionType || "Custom Shoot"}
+Location Venue: ${draftDetails.location || "To Be Finalized"}
+
+------------------ ARTISTIC COLOR PALETTE ------------------
+${colorsList || "No custom colors designed."}
+
+------------------- PLANNED CONCEPT SHOTS ------------------
+${shotListText || "No conceptual shots planned yet."}
+
+---------------------- STYLING DETAILS ---------------------
+${draftDetails.notes || "No extra styling notes."}
+
+------------------------------------------------------------
+Generated with Lumina AI Creative Director & Stylist.
+Thank you for co-creating with us!
+============================================================`;
+
+    const blob = new Blob([fileContent], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `Lumina_Creative_Blueprint_${draftDetails.sessionType || "Shoot"}.txt`.replace(/\s+/g, "_");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   // Auto populate standard inputs with Aria's drafted suggestions
@@ -407,114 +517,298 @@ export default function BookingPage({ theme, preSelectedPackage }: BookingPagePr
                 </form>
               </motion.div>
 
-              {/* Right Column: AI Consultant Panel */}
+              {/* Right Column: AI Consultant Panel & Dynamic Moodboard */}
               <motion.div
                 key="booking-ai-stylist"
                 initial={{ opacity: 0, x: 15 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 15 }}
-                className={`lg:col-span-5 rounded-xl border flex flex-col h-[650px] overflow-hidden ${
+                className={`lg:col-span-5 rounded-xl border flex flex-col h-[680px] overflow-hidden ${
                   isDark ? "bg-neutral-950 border-neutral-900" : "bg-neutral-50 border-neutral-200"
                 }`}
               >
-                {/* AI Panel Header */}
-                <div className="p-4 border-b border-neutral-900/60 flex items-center justify-between bg-gold-500/5">
+                {/* AI Panel Header with Studio Branding */}
+                <div className="p-4 border-b border-neutral-900/60 flex items-center justify-between bg-gold-500/5 shrink-0">
                   <div className="flex items-center gap-2.5">
                     <div className="w-8 h-8 rounded-full bg-gold-500/10 flex items-center justify-center border border-gold-500/20">
                       <Bot className="w-4 h-4 text-gold-500" />
                     </div>
                     <div>
-                      <h4 className="font-serif text-sm font-medium tracking-wide">Aria</h4>
+                      <h4 className="font-serif text-sm font-medium tracking-wide">Aria Sterling</h4>
                       <p className="text-[10px] text-neutral-400 font-sans flex items-center gap-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-gold-500 inline-block animate-pulse"></span>
-                        AI Creative Director & Stylist
+                        Creative Studio Co-Director
                       </p>
                     </div>
                   </div>
                   <Sparkles className="w-4 h-4 text-gold-500/70" />
                 </div>
 
-                {/* Messages Panel */}
-                <div className="flex-grow overflow-y-auto p-4 space-y-4 text-xs font-sans scrollbar-thin">
-                  {chatMessages.map((msg, idx) => (
-                    <div
-                      key={idx}
-                      className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-                    >
-                      <div
-                        className={`max-w-[85%] rounded-lg px-3.5 py-2.5 leading-relaxed whitespace-pre-wrap ${
-                          msg.role === "user"
-                            ? "bg-gold-500 text-black font-medium"
-                            : isDark
-                            ? "bg-neutral-900 text-neutral-200 border border-neutral-800"
-                            : "bg-neutral-100 text-neutral-800 border border-neutral-200"
-                        }`}
-                      >
-                        {msg.text}
+                {/* Sub-Tab Navigation Switcher */}
+                <div className="flex border-b border-neutral-900 bg-neutral-950/40 p-1 gap-1 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setActiveRightTab("chat")}
+                    className={`flex-1 py-2 text-[10px] tracking-widest uppercase font-sans font-semibold rounded transition-all flex items-center justify-center gap-1.5 ${
+                      activeRightTab === "chat" ? "bg-gold-500 text-black" : "text-neutral-400 hover:text-white"
+                    }`}
+                  >
+                    <MessageSquare className="w-3.5 h-3.5" /> Consultant Chat
+                  </button>
+                  <button
+                    type="button"
+                    disabled={!draftDetails}
+                    onClick={() => draftDetails && setActiveRightTab("moodboard")}
+                    className={`flex-1 py-2 text-[10px] tracking-widest uppercase font-sans font-semibold rounded transition-all flex items-center justify-center gap-1.5 relative ${
+                      !draftDetails ? "opacity-30 cursor-not-allowed text-neutral-600" : ""
+                    } ${
+                      activeRightTab === "moodboard" ? "bg-gold-500 text-black" : "text-neutral-400 hover:text-white"
+                    }`}
+                    title={!draftDetails ? "Chat with Aria first to unlock your visual moodboard!" : "View styled blueprint"}
+                  >
+                    <Palette className="w-3.5 h-3.5" /> Creative Moodboard
+                    {draftDetails && activeRightTab !== "moodboard" && (
+                      <span className="absolute top-1.5 right-2 w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
+                    )}
+                  </button>
+                </div>
+
+                {/* Main Dynamic Viewport */}
+                <div className="flex-grow overflow-y-auto p-4 scrollbar-thin flex flex-col">
+                  {activeRightTab === "chat" ? (
+                    <div className="flex-grow flex flex-col h-full justify-between gap-4">
+                      {/* Chat Logs */}
+                      <div className="space-y-4 text-xs font-sans flex-grow">
+                        {chatMessages.map((msg, idx) => (
+                          <div
+                            key={idx}
+                            className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                          >
+                            <div
+                              className={`max-w-[85%] rounded-lg px-3.5 py-2.5 leading-relaxed whitespace-pre-wrap ${
+                                msg.role === "user"
+                                  ? "bg-gold-500 text-black font-medium"
+                                  : isDark
+                                  ? "bg-neutral-900 text-neutral-200 border border-neutral-800"
+                                  : "bg-neutral-100 text-neutral-800 border border-neutral-200"
+                              }`}
+                            >
+                              {msg.text}
+                            </div>
+                          </div>
+                        ))}
+                        {chatLoading && (
+                          <div className="flex justify-start">
+                            <div className={`max-w-[80%] rounded-lg px-3.5 py-3 flex items-center gap-2 ${
+                              isDark ? "bg-neutral-900 border border-neutral-800" : "bg-neutral-100 border border-neutral-200"
+                            }`}>
+                              <span className="w-1.5 h-1.5 rounded-full bg-gold-500 animate-bounce" style={{ animationDelay: "0ms" }}></span>
+                              <span className="w-1.5 h-1.5 rounded-full bg-gold-500 animate-bounce" style={{ animationDelay: "150ms" }}></span>
+                              <span className="w-1.5 h-1.5 rounded-full bg-gold-500 animate-bounce" style={{ animationDelay: "300ms" }}></span>
+                            </div>
+                          </div>
+                        )}
+                        <div ref={chatEndRef} />
                       </div>
+
+                      {/* Applied Trigger inside Chat tab */}
+                      {draftDetails && (
+                        <div className="p-3 bg-neutral-900/60 border border-neutral-800 rounded-lg flex flex-col gap-2 mt-auto">
+                          <p className="text-[10px] text-neutral-400 font-sans uppercase tracking-widest text-center">
+                            🌟 Dynamic photoshoot suggestions generated!
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => setActiveRightTab("moodboard")}
+                            className="w-full py-2 bg-neutral-950 border border-neutral-800 hover:border-gold-500/50 text-gold-400 text-[10px] uppercase font-sans tracking-widest font-semibold rounded flex items-center justify-center gap-1"
+                          >
+                            Open Visual Studio Moodboard <Palette className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      )}
                     </div>
-                  ))}
-                  {chatLoading && (
-                    <div className="flex justify-start">
-                      <div className={`max-w-[80%] rounded-lg px-3.5 py-3 flex items-center gap-2 ${
-                        isDark ? "bg-neutral-900 border border-neutral-800" : "bg-neutral-100 border border-neutral-200"
-                      }`}>
-                        <span className="w-1.5 h-1.5 rounded-full bg-gold-500 animate-bounce" style={{ animationDelay: "0ms" }}></span>
-                        <span className="w-1.5 h-1.5 rounded-full bg-gold-500 animate-bounce" style={{ animationDelay: "150ms" }}></span>
-                        <span className="w-1.5 h-1.5 rounded-full bg-gold-500 animate-bounce" style={{ animationDelay: "300ms" }}></span>
+                  ) : (
+                    // === MOODBOARD VIEW ===
+                    <div className="space-y-6 animate-[fadeIn_0.4s_ease]">
+                      {/* Keywords / Artistic Mood tags */}
+                      <div>
+                        <span className="text-[9px] tracking-widest uppercase text-neutral-500 block mb-2 font-mono">
+                          Style Archetype & Vibe
+                        </span>
+                        <div className="flex flex-wrap gap-1.5">
+                          {(draftDetails?.styleKeywords || ["Dreamy", "Cinematic", "Minimalist", "Editorial"]).map((keyword, i) => (
+                            <span
+                              key={i}
+                              className="px-2.5 py-1 bg-gold-500/5 text-gold-400 border border-gold-500/15 rounded-full text-[10px] tracking-wide font-medium font-sans"
+                            >
+                              ✨ {keyword}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Color Palette Swatches */}
+                      <div>
+                        <span className="text-[9px] tracking-widest uppercase text-neutral-500 block mb-2 font-mono">
+                          Aesthetic Palette (Click to Copy Hex)
+                        </span>
+                        <div className="grid grid-cols-5 gap-1.5">
+                          {moodboardColors.map((color, idx) => (
+                            <button
+                              key={idx}
+                              type="button"
+                              onClick={() => handleCopyColor(color)}
+                              className="group relative flex flex-col items-center gap-1 focus:outline-none cursor-pointer"
+                              title={`Copy ${color}`}
+                            >
+                              <div
+                                className="w-full h-12 rounded-md border border-neutral-800 shadow-md transition-transform group-hover:scale-[1.04] active:scale-95 flex items-center justify-center"
+                                style={{ backgroundColor: color }}
+                              >
+                                {copiedColor === color ? (
+                                  <Check className="w-4 h-4 text-emerald-500 bg-black/80 p-0.5 rounded-full" />
+                                ) : (
+                                  <Copy className="w-3 h-3 text-white opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 p-0.5 rounded" />
+                                )}
+                              </div>
+                              <span className="text-[8px] font-mono tracking-wider text-neutral-400 mt-0.5">
+                                {color}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Conceptual Shot List Checklist */}
+                      <div>
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-[9px] tracking-widest uppercase text-neutral-500 font-mono">
+                            Concept Shot Checklist & Planning
+                          </span>
+                          <span className="text-[9px] font-mono text-gold-400">
+                            {moodboardShots.filter(s => s.checked).length} of {moodboardShots.length} Selected
+                          </span>
+                        </div>
+
+                        {/* Progress visual bar */}
+                        <div className="w-full h-1 bg-neutral-900 rounded overflow-hidden mb-3">
+                          <div 
+                            className="h-full bg-gold-500 transition-all duration-300"
+                            style={{ 
+                              width: `${moodboardShots.length ? (moodboardShots.filter(s => s.checked).length / moodboardShots.length) * 100 : 0}%` 
+                            }}
+                          ></div>
+                        </div>
+
+                        {/* Checklist items list */}
+                        <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1">
+                          {moodboardShots.map((shot, idx) => (
+                            <div 
+                              key={idx}
+                              className={`flex items-center justify-between p-2 rounded border text-[11px] transition-colors ${
+                                shot.checked 
+                                  ? "bg-neutral-900/40 border-neutral-800/80 text-neutral-400" 
+                                  : "bg-black/30 border-neutral-900 text-neutral-200"
+                              }`}
+                            >
+                              <button
+                                type="button"
+                                onClick={() => handleToggleShot(idx)}
+                                className="flex items-center gap-2 flex-1 text-left"
+                              >
+                                <span className={`w-3.5 h-3.5 shrink-0 rounded border flex items-center justify-center transition-colors ${
+                                  shot.checked ? "bg-gold-500 border-gold-500 text-black" : "border-neutral-700"
+                                }`}>
+                                  {shot.checked && <Check className="w-2.5 h-2.5 stroke-[3px]" />}
+                                </span>
+                                <span className={shot.checked ? "line-through opacity-70" : ""}>
+                                  {shot.text}
+                                </span>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteShot(idx)}
+                                className="text-neutral-500 hover:text-red-400 p-0.5"
+                                title="Remove shot idea"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Inline input to append new shots */}
+                        <form onSubmit={handleAddShot} className="flex gap-2 mt-3">
+                          <input
+                            type="text"
+                            value={newShotText}
+                            onChange={(e) => setNewShotText(e.target.value)}
+                            placeholder="Add your own custom shot idea..."
+                            className={`flex-grow text-[11px] font-sans px-2.5 py-1.5 rounded border outline-none transition-colors ${
+                              isDark
+                                ? "bg-black border-neutral-900 text-white focus:border-gold-500"
+                                : "bg-white border-neutral-200 text-black focus:border-gold-500"
+                            }`}
+                          />
+                          <button
+                            type="submit"
+                            className="p-1.5 bg-neutral-900 text-gold-500 hover:bg-neutral-800 border border-neutral-800 rounded transition-colors flex items-center justify-center"
+                          >
+                            <Plus className="w-4 h-4" />
+                          </button>
+                        </form>
+                      </div>
+
+                      {/* Applied Draft meta details and actions */}
+                      <div className="pt-4 border-t border-neutral-900 space-y-3">
+                        <div className="grid grid-cols-2 gap-2">
+                          <button
+                            type="button"
+                            onClick={handleApplyDraft}
+                            className="py-2.5 bg-gold-500 hover:bg-gold-400 text-black text-[10px] tracking-widest uppercase font-bold rounded flex items-center justify-center gap-1 shadow-md transform active:scale-95 transition-all cursor-pointer"
+                          >
+                            <Sparkles className="w-3.5 h-3.5 animate-pulse" /> Apply to Form
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleExportBlueprint}
+                            className="py-2.5 bg-neutral-900 hover:bg-neutral-800 text-gold-500 border border-neutral-800 text-[10px] tracking-widest uppercase font-bold rounded flex items-center justify-center gap-1 shadow-md transform active:scale-95 transition-all cursor-pointer"
+                          >
+                            <Download className="w-3.5 h-3.5" /> Export Blueprint
+                          </button>
+                        </div>
+                        <p className="text-[9px] text-neutral-500 font-mono text-center">
+                          Aria's curated location: "{draftDetails?.location || "SF Area"}"
+                        </p>
                       </div>
                     </div>
                   )}
-                  <div ref={chatEndRef} />
                 </div>
 
-                {/* Autofill Suggesion Banner */}
-                {draftDetails && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="px-4 py-3 border-t border-gold-500/20 bg-gold-500/5 flex flex-col gap-2"
-                  >
-                    <div className="flex justify-between items-center">
-                      <span className="text-[10px] tracking-widest uppercase text-gold-400 font-bold font-mono">
-                        Aria's Concept Draft Ready
-                      </span>
-                      <span className="text-[9px] text-neutral-400 font-mono">
-                        {draftDetails.sessionType || "Custom Design"}
-                      </span>
-                    </div>
+                {/* Message Input Box for chat fallback */}
+                {activeRightTab === "chat" && (
+                  <form onSubmit={handleSendChat} className="p-3 border-t border-neutral-900/40 flex gap-2 shrink-0">
+                    <input
+                      type="text"
+                      value={chatInput}
+                      onChange={(e) => setChatInput(e.target.value)}
+                      placeholder="Ask about themes, SF locations, clothing, etc..."
+                      disabled={chatLoading}
+                      className={`flex-grow text-xs font-sans px-3.5 py-2.5 rounded border outline-none transition-colors ${
+                        isDark
+                          ? "bg-black border-neutral-800 text-white focus:border-gold-500"
+                          : "bg-white border-neutral-200 text-black focus:border-gold-500"
+                      }`}
+                    />
                     <button
-                      onClick={handleApplyDraft}
-                      className="w-full py-2 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-black text-[10px] tracking-widest uppercase font-bold rounded flex items-center justify-center gap-1.5 shadow-md transform active:scale-95 transition-all cursor-pointer"
+                      type="submit"
+                      disabled={chatLoading || !chatInput.trim()}
+                      className="px-4 bg-neutral-900 hover:bg-neutral-800 text-gold-500 border border-neutral-800 rounded flex items-center justify-center transition-colors disabled:opacity-40 cursor-pointer"
                     >
-                      <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-                      Apply Aria's Design to Form
+                      <Send className="w-3.5 h-3.5" />
                     </button>
-                  </motion.div>
+                  </form>
                 )}
-
-                {/* Message Input Box */}
-                <form onSubmit={handleSendChat} className="p-3 border-t border-neutral-900/40 flex gap-2">
-                  <input
-                    type="text"
-                    value={chatInput}
-                    onChange={(e) => setChatInput(e.target.value)}
-                    placeholder="Ask about themes, SF locations, clothing, etc..."
-                    disabled={chatLoading}
-                    className={`flex-grow text-xs font-sans px-3.5 py-2.5 rounded border outline-none transition-colors ${
-                      isDark
-                        ? "bg-black border-neutral-800 text-white focus:border-gold-500"
-                        : "bg-white border-neutral-200 text-black focus:border-gold-500"
-                    }`}
-                  />
-                  <button
-                    type="submit"
-                    disabled={chatLoading || !chatInput.trim()}
-                    className="px-4 bg-neutral-900 hover:bg-neutral-800 text-gold-500 border border-neutral-800 rounded flex items-center justify-center transition-colors disabled:opacity-40 cursor-pointer"
-                  >
-                    <Send className="w-3.5 h-3.5" />
-                  </button>
-                </form>
               </motion.div>
 
             </div>

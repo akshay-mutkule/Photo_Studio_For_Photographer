@@ -1,6 +1,6 @@
-import React, { useState, useEffect, FormEvent, DragEvent } from "react";
+import React, { useState, useEffect, FormEvent, DragEvent, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Lock, Eye, Trash2, Check, X, Calendar, Plus, Link, Upload, Tag, RefreshCw, BarChart3, ListCollapse, Image, Sparkles, FolderPlus, Download, UserCheck, AlertTriangle } from "lucide-react";
+import { Lock, Eye, Trash2, Check, X, Calendar, Plus, Link, Upload, Tag, RefreshCw, BarChart3, ListCollapse, Image, Sparkles, FolderPlus, Download, UserCheck, AlertTriangle, Bot, Send } from "lucide-react";
 import { Gallery, Booking, ClientActivity, DashboardStats, ImageItem } from "../types.js";
 
 interface AdminDashboardProps {
@@ -25,6 +25,17 @@ export default function AdminDashboard({ theme, onAdminAuthenticated }: AdminDas
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [activities, setActivities] = useState<ClientActivity[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // Admin Studio Intelligent Co-Pilot States
+  const [copilotMessages, setCopilotMessages] = useState<{ role: "user" | "model"; text: string }[]>([
+    {
+      role: "model",
+      text: "Greetings, Lead Photographer! I am your Studio Intelligence Assistant. I have indexed the active bookings, client galleries, and live proofing activity logs.\n\nAsk me to:\n- 'Draft an email proposal for Robert Miller's wedding'\n- 'Summarize active galleries selection progress'\n- 'Suggest marketing tactics for our Portrait Sessions package'"
+    }
+  ]);
+  const [copilotInput, setCopilotInput] = useState("");
+  const [copilotLoading, setCopilotLoading] = useState(false);
+  const copilotEndRef = useRef<HTMLDivElement>(null);
 
   // Gallery Creation form states
   const [newGalleryTitle, setNewGalleryTitle] = useState("");
@@ -69,6 +80,49 @@ export default function AdminDashboard({ theme, onAdminAuthenticated }: AdminDas
       loadAdminData();
     }
   }, [isAdminAuth]);
+
+  // Scroll copilot feed to bottom automatically
+  useEffect(() => {
+    copilotEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [copilotMessages, copilotLoading]);
+
+  // Admin Studio Intelligent Co-Pilot Submit handler
+  const handleSendCopilot = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!copilotInput.trim() || copilotLoading) return;
+
+    const userText = copilotInput.trim();
+    const updatedMessages = [...copilotMessages, { role: "user" as const, text: userText }];
+    setCopilotMessages(updatedMessages);
+    setCopilotInput("");
+    setCopilotLoading(true);
+
+    try {
+      const res = await fetch("/api/gemini/admin-copilot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: updatedMessages })
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setCopilotMessages(prev => [...prev, { role: "model" as const, text: data.text }]);
+      } else {
+        throw new Error("Copilot API failed");
+      }
+    } catch (err) {
+      console.error("Admin copilot error:", err);
+      setCopilotMessages(prev => [
+        ...prev,
+        {
+          role: "model",
+          text: "Apologies! I hit a temporary lens flare in my analytics engine. Please ask me again."
+        }
+      ]);
+    } finally {
+      setCopilotLoading(false);
+    }
+  };
 
   // Admin login check (Passcode is 'admin123' for simple access)
   const handleAdminLogin = (e: FormEvent) => {
@@ -440,25 +494,105 @@ export default function AdminDashboard({ theme, onAdminAuthenticated }: AdminDas
                     </div>
                   </div>
 
-                  {/* Operational stats shortcut block */}
-                  <div className="space-y-4">
-                    <h3 className="font-serif text-lg font-light">Active Shortcuts</h3>
-                    <div className="p-6 rounded-lg border border-neutral-900 bg-neutral-950 space-y-3 text-xs">
-                      <button
-                        onClick={() => { setActiveSubTab("galleries"); setIsCreatingGallery(true); }}
-                        className="w-full py-3 border border-neutral-800 hover:border-gold-500 text-neutral-300 hover:text-gold-500 font-sans text-[10px] tracking-widest uppercase font-semibold text-center rounded transition-colors flex items-center justify-center gap-2"
-                      >
-                        <FolderPlus className="w-3.5 h-3.5" />
-                        <span>Create Client Gallery</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveSubTab("bookings")}
-                        className="w-full py-3 border border-neutral-800 hover:border-gold-500 text-neutral-300 hover:text-gold-500 font-sans text-[10px] tracking-widest uppercase font-semibold text-center rounded transition-colors flex items-center justify-center gap-2"
-                      >
-                        <Calendar className="w-3.5 h-3.5" />
-                        <span>Review Booking Requests</span>
-                      </button>
+                  {/* Operational stats shortcut block & AI Studio Co-Pilot */}
+                  <div className="space-y-6">
+                    <div className="space-y-4">
+                      <h3 className="font-serif text-lg font-light">Active Shortcuts</h3>
+                      <div className="p-6 rounded-lg border border-neutral-900 bg-neutral-950 space-y-3 text-xs">
+                        <button
+                          onClick={() => { setActiveSubTab("galleries"); setIsCreatingGallery(true); }}
+                          className="w-full py-3 border border-neutral-800 hover:border-gold-500 text-neutral-300 hover:text-gold-500 font-sans text-[10px] tracking-widest uppercase font-semibold text-center rounded transition-colors flex items-center justify-center gap-2"
+                        >
+                          <FolderPlus className="w-3.5 h-3.5" />
+                          <span>Create Client Gallery</span>
+                        </button>
+                        <button
+                          onClick={() => setActiveSubTab("bookings")}
+                          className="w-full py-3 border border-neutral-800 hover:border-gold-500 text-neutral-300 hover:text-gold-500 font-sans text-[10px] tracking-widest uppercase font-semibold text-center rounded transition-colors flex items-center justify-center gap-2"
+                        >
+                          <Calendar className="w-3.5 h-3.5" />
+                          <span>Review Booking Requests</span>
+                        </button>
+                      </div>
                     </div>
+
+                    {/* AI Co-Pilot Panel */}
+                    <div className="space-y-4">
+                      <h3 className="font-serif text-lg font-light flex items-center gap-1.5">
+                        <Bot className="w-4 h-4 text-gold-500" />
+                        <span>Studio Intelligence Assistant</span>
+                      </h3>
+                      
+                      <div className="p-4 rounded-lg border border-neutral-900 bg-neutral-950 flex flex-col h-[340px] justify-between gap-3 text-xs font-sans">
+                        {/* Messages Area */}
+                        <div className="flex-grow overflow-y-auto pr-1 space-y-3 text-[11px] leading-relaxed scrollbar-thin">
+                          {copilotMessages.map((msg, idx) => (
+                            <div
+                              key={idx}
+                              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                            >
+                              <div
+                                className={`max-w-[90%] rounded px-2.5 py-2 whitespace-pre-wrap ${
+                                  msg.role === "user"
+                                    ? "bg-gold-500 text-black font-medium"
+                                    : "bg-neutral-900 text-neutral-300 border border-neutral-800"
+                                }`}
+                              >
+                                {msg.text}
+                              </div>
+                            </div>
+                          ))}
+                          {copilotLoading && (
+                            <div className="flex justify-start">
+                              <div className="bg-neutral-900 border border-neutral-800 rounded px-3 py-2 flex items-center gap-1.5">
+                                <span className="w-1.5 h-1.5 rounded-full bg-gold-500 animate-bounce" style={{ animationDelay: "0ms" }}></span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-gold-500 animate-bounce" style={{ animationDelay: "150ms" }}></span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-gold-500 animate-bounce" style={{ animationDelay: "300ms" }}></span>
+                              </div>
+                            </div>
+                          )}
+                          <div ref={copilotEndRef} />
+                        </div>
+
+                        {/* Quick Prompts Suggestions pills */}
+                        <div className="flex gap-1 flex-wrap shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => setCopilotInput("Draft email proposal for pending wedding booking")}
+                            className="px-2 py-1 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 hover:border-gold-500/30 text-neutral-400 hover:text-white rounded text-[9px] font-mono transition-colors"
+                          >
+                            ✉️ Draft Proposal
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setCopilotInput("Summarize studio bookings statistics")}
+                            className="px-2 py-1 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 hover:border-gold-500/30 text-neutral-400 hover:text-white rounded text-[9px] font-mono transition-colors"
+                          >
+                            📊 Booking Stats
+                          </button>
+                        </div>
+
+                        {/* Prompt Input Form */}
+                        <form onSubmit={handleSendCopilot} className="flex gap-1.5 border-t border-neutral-900/60 pt-2 shrink-0">
+                          <input
+                            type="text"
+                            value={copilotInput}
+                            onChange={(e) => setCopilotInput(e.target.value)}
+                            placeholder="Ask Co-Pilot to write email drafts, summarize stats..."
+                            disabled={copilotLoading}
+                            className="flex-grow text-[11px] font-sans px-2.5 py-1.5 rounded border border-neutral-800 bg-black text-white focus:border-gold-500 outline-none transition-colors"
+                          />
+                          <button
+                            type="submit"
+                            disabled={copilotLoading || !copilotInput.trim()}
+                            className="p-1.5 bg-neutral-900 text-gold-500 hover:bg-neutral-800 border border-neutral-800 rounded flex items-center justify-center transition-colors disabled:opacity-40"
+                          >
+                            <Send className="w-3.5 h-3.5" />
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
               </div>
