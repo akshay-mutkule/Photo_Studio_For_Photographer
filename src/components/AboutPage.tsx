@@ -44,11 +44,11 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
             </h3>
             
             <p className={`font-sans text-sm sm:text-base leading-relaxed font-light ${isDark ? "text-neutral-300" : "text-neutral-600"}`}>
-              For over a decade, I’ve dedicated my life to the pursuit of capturing timeless light. My style sits at the intersection of cinematic photojournalism and romantic fine-art. I believe a great photograph doesn't just document a moment; it preserves the precise feeling, the gentle breeze, and the unspoken warmth of a glance.
+              For over ten years, I have loved taking beautiful, timeless photos. My style is natural, elegant, and simple. I believe a great photo should show the true feeling of a moment so you can cherish it forever.
             </p>
 
             <p className={`font-sans text-sm leading-relaxed font-light ${isDark ? "text-neutral-400" : "text-neutral-500"}`}>
-              Lumina was founded on the philosophy that every photoshoot should be an relaxed, immersive experience. We don't force rigid, artificial poses. Instead, we cultivate raw, genuine interactions, utilizing soft natural light and exquisite compositions to tell your authentic story.
+              We believe every photo shoot should be a relaxed, happy experience. We do not use stiff or artificial poses. Instead, we capture natural smiles, soft natural light, and real moments to tell your true story.
             </p>
 
             {/* Core Values */}
@@ -57,10 +57,10 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
                 <Camera className="w-5 h-5 text-gold-500 shrink-0 mt-0.5" />
                 <div>
                   <h4 className="font-sans text-xs tracking-wider uppercase font-semibold text-gold-500">
-                    Bespoke Style
+                    Custom Style
                   </h4>
                   <p className="text-[11px] text-neutral-400 font-light">
-                    Every session is customized from color grading to layout.
+                    We plan every shoot to match your favorite colors and style.
                   </p>
                 </div>
               </div>
@@ -68,10 +68,10 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
                 <ShieldCheck className="w-5 h-5 text-gold-500 shrink-0 mt-0.5" />
                 <div>
                   <h4 className="font-sans text-xs tracking-wider uppercase font-semibold text-gold-500">
-                    Client First
+                    Easy Process
                   </h4>
                   <p className="text-[11px] text-neutral-400 font-light">
-                    Fluid, stress-free client proofing and selection.
+                    A simple, stress-free way to view and select your photos online.
                   </p>
                 </div>
               </div>
@@ -82,34 +82,34 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
         {/* Credentials & Achievements */}
         <div className={`p-8 sm:p-12 rounded-lg border mb-24 ${isDark ? "bg-neutral-950 border-neutral-900" : "bg-neutral-50 border-neutral-200"}`}>
           <h3 className="font-serif text-xl sm:text-2xl text-center font-light mb-8">
-            Achievements & Certifications
+            Our Experience & Awards
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
               <Award className="w-8 h-8 text-gold-500 mx-auto mb-3" />
               <h4 className="font-sans text-sm tracking-wider uppercase font-semibold mb-1">
-                Fearless Photographers Award
+                Outstanding Photo Award
               </h4>
               <p className="text-xs text-neutral-400 font-light">
-                Winner of "Outstanding Storytelling" in 2024 & 2025.
+                Awarded for outstanding photo stories in 2024 and 2025.
               </p>
             </div>
             <div className="text-center">
               <Sparkles className="w-8 h-8 text-gold-500 mx-auto mb-3" />
               <h4 className="font-sans text-sm tracking-wider uppercase font-semibold mb-1">
-                Vogue Weddings Feature
+                Featured in Magazines
               </h4>
               <p className="text-xs text-neutral-400 font-light">
-                Listed as one of the Premier Boutique Studios in Northern California.
+                Featured as a top local photography studio in Northern California.
               </p>
             </div>
             <div className="text-center">
               <Heart className="w-8 h-8 text-gold-500 mx-auto mb-3" />
               <h4 className="font-sans text-sm tracking-wider uppercase font-semibold mb-1">
-                Nikon Elite Ambassador
+                Professional Equipment
               </h4>
               <p className="text-xs text-neutral-400 font-light">
-                Official global partner, championing fine-art portraits and workshops.
+                Recognized partner using professional cameras for the best quality portraits.
               </p>
             </div>
           </div>

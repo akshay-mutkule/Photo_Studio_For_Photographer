@@ -48,7 +48,7 @@ export default function BookingPage({ theme, preSelectedPackage }: BookingPagePr
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
       role: "model",
-      text: "Hello! I am Aria, your AI Creative Director. Tell me a bit about your photoshoot vision—whether it's a romantic golden hour session, a moody studio portrait, or an elegant wedding—and I will style customized color palettes, suggest scenic locations, and detail outfit ideas for you. Once we craft your vision, you can directly apply it to the booking form below!"
+      text: "Hello! I am Aria, your photo stylist. Tell me about your ideas—like what colors you like or where you want to shoot—and I will create a color palette, suggest nice locations, and give you simple outfit ideas. When you are ready, you can apply these suggestions directly to your booking form below!"
     }
   ]);
   const [chatInput, setChatInput] = useState("");
@@ -284,13 +284,13 @@ Thank you for co-creating with us!
         <div className="text-center mb-12">
           <span className="text-xs tracking-widest text-gold-500 uppercase font-sans flex items-center justify-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-            Bespoke Styling & Scheduling
+            Styling & Booking
           </span>
           <h2 className="font-serif text-3xl sm:text-5xl font-light mt-2 mb-4">
-            Book Your Vision
+            Book Your Session
           </h2>
           <p className="text-xs font-sans tracking-wide text-neutral-400 max-w-lg mx-auto">
-            Plan your conceptual theme with Aria, our AI Creative Director, or complete your booking request directly.
+            Plan your style with Aria, our photo stylist, or fill out the booking form below directly.
           </p>
           <div className="w-12 h-[1px] bg-gold-500/40 mx-auto mt-4 rounded"></div>
         </div>
@@ -318,7 +318,7 @@ Thank you for co-creating with us!
                   >
                     <span className="flex items-center gap-1.5 font-semibold">
                       <CheckCircle2 className="w-3.5 h-3.5" />
-                      Applied Aria's Creative suggestions successfully!
+                      Applied Aria's suggestions to your form!
                     </span>
                   </motion.div>
                 )}

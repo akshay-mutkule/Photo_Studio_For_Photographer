@@ -13,15 +13,15 @@ export default function ServicesPage({ theme, onSelectPackage }: ServicesPagePro
       id: "pkg-wedding",
       name: "Wedding Photography",
       price: "$3,499",
-      duration: "8-10 Hours Coverage",
-      description: "Full-day fine art wedding coverage capturing everything from morning preparations to late-night dance moves.",
+      duration: "8-10 Hours of Photo Coverage",
+      description: "Full day of wedding photography. We capture everything from morning preparations to the dance party at night.",
       deliverables: [
-        "Photographer + Associate Assistant",
-        "500+ High-Res Fully Edited Images",
-        "Private Secure Client Portal Proofing",
-        "Lumina Signature Premium Leather Album",
-        "Digital Download Access (Approved Proofs)",
-        "Sneak Peek within 48 Hours"
+        "Two photographers to cover your day",
+        "500+ high-quality edited images",
+        "Private online photo gallery",
+        "Beautiful leather photo album",
+        "Easy digital download of all photos",
+        "First sneak peek within 48 hours"
       ],
       popular: true
     },
@@ -29,15 +29,15 @@ export default function ServicesPage({ theme, onSelectPackage }: ServicesPagePro
       id: "pkg-pre-wedding",
       name: "Pre-Wedding Session",
       price: "$1,299",
-      duration: "4 Hours Coverage",
-      description: "A cinematic pre-wedding portrait session at up to two dramatic outdoor scenic locations of your choice.",
+      duration: "4 Hours of Photo Coverage",
+      description: "A beautiful pre-wedding photo shoot at up to two scenic outdoor locations of your choice.",
       deliverables: [
-        "Aria Sterling Lead Photographer",
-        "120+ High-Res Signature Edited Images",
-        "Client Portal Photo Selection Platform",
-        "Wardrobe & Style Consultation",
-        "Travel Included up to 50 miles",
-        "Online gallery for 1 year"
+        "Aria Sterling as your lead photographer",
+        "120+ high-quality edited images",
+        "Easy online photo gallery and selection",
+        "Help with outfits and styling ideas",
+        "Travel included up to 50 miles",
+        "Online photo gallery active for 1 year"
       ],
       popular: false
     },
@@ -45,15 +45,15 @@ export default function ServicesPage({ theme, onSelectPackage }: ServicesPagePro
       id: "pkg-portraits",
       name: "Portrait Sessions",
       price: "$599",
-      duration: "2 Hours Session",
-      description: "Bespoke studio or outdoor portraits for creatives, professionals, couples, or lifestyle editorial usage.",
+      duration: "2 Hour Session",
+      description: "Custom studio or outdoor portrait photos for professionals, couples, or personal lifestyle use.",
       deliverables: [
-        "Bespoke Consultation & Lighting Setup",
-        "45+ Fine-Art Fully Retouched Photos",
-        "Self-Service Client Portal Selector",
-        "2 Outfits / Wardrobe Changes",
-        "Full commercial printing rights",
-        "Fast 5-Day Delivery Guarantee"
+        "One-on-one session with pro lighting",
+        "45+ fully edited high-quality photos",
+        "Simple online photo selection system",
+        "Up to 2 outfit changes",
+        "Full printing rights for personal use",
+        "Fast 5-day delivery guarantee"
       ],
       popular: false
     },
@@ -61,15 +61,15 @@ export default function ServicesPage({ theme, onSelectPackage }: ServicesPagePro
       id: "pkg-corporate",
       name: "Corporate Events",
       price: "$1,899",
-      duration: "6 Hours Coverage",
-      description: "Premium editorial headshots and event story documentation for summits, corporate retreats, or company profiles.",
+      duration: "6 Hours of Photo Coverage",
+      description: "Professional team headshots and coverage for business events, retreats, or company websites.",
       deliverables: [
-        "Full Event Narrative Documentation",
-        "Team Candid Shots & Headshots",
-        "High-Speed Next Day Proof Gallery",
-        "Commercial and Editorial Rights",
-        "Digital Download with passcode option",
-        "Clean, professional corporate framing"
+        "Full coverage of your business event",
+        "Team headshots and natural candid photos",
+        "Fast next-day online preview gallery",
+        "Full rights for commercial use",
+        "Secure digital photo downloads",
+        "Clean, professional photo styling"
       ],
       popular: false
     },
@@ -77,14 +77,14 @@ export default function ServicesPage({ theme, onSelectPackage }: ServicesPagePro
       id: "pkg-birthday",
       name: "Birthday & Social Events",
       price: "$899",
-      duration: "4 Hours Coverage",
-      description: "Stunning coverage of anniversaries, intimate birthdays, receptions, or curated social soirées.",
+      duration: "4 Hours of Photo Coverage",
+      description: "Great photography for birthdays, family reunions, anniversaries, or private dinner parties.",
       deliverables: [
-        "Candid & Posed Coverage",
-        "150+ Signature Styled Proofs",
-        "Client Selection & Sharing enabled",
-        "High-speed image delivery",
-        "High-resolution digital downloads",
+        "Natural candid and group photos",
+        "150+ high-quality edited photos",
+        "Easy online photo sharing with guests",
+        "Quick digital photo delivery",
+        "High-resolution file downloads",
         "Professional low-light camera gear"
       ],
       popular: false
@@ -94,14 +94,14 @@ export default function ServicesPage({ theme, onSelectPackage }: ServicesPagePro
       name: "Product Photography",
       price: "$1,499",
       duration: "Full Studio Shoot",
-      description: "High-end product, lookbook, and campaign photography. Designed with a clean luxury aesthetic for brand packaging.",
+      description: "Professional photo shoots for products, clothing brands, or online stores with a clean layout.",
       deliverables: [
-        "Advanced Product Macro Lighting Setup",
-        "30+ Custom Styled High-End Retouches",
-        "Web + High-Res Commercial Licensing",
-        "Infinite background configurations",
-        "Intelligent search tags embedded",
-        "Secure archive for future retrieval"
+        "Professional studio product lighting setup",
+        "30+ fully retouched custom product photos",
+        "High-resolution files for web and print",
+        "Multiple background colors available",
+        "Helpful image search tags included",
+        "Safe digital storage for future download"
       ],
       popular: false
     }
@@ -114,10 +114,10 @@ export default function ServicesPage({ theme, onSelectPackage }: ServicesPagePro
         {/* Title Block */}
         <div className="text-center mb-16">
           <span className="text-xs tracking-widest text-gold-500 uppercase font-sans">
-            Curated Services
+            Our Services
           </span>
           <h2 className="font-serif text-3xl sm:text-5xl font-light mt-2 mb-4">
-            Bespoke Packages
+            Photography Packages
           </h2>
           <div className="w-12 h-1 bg-gold-500 mx-auto rounded"></div>
         </div>
@@ -125,7 +125,7 @@ export default function ServicesPage({ theme, onSelectPackage }: ServicesPagePro
         {/* Introduction Panel */}
         <div className="max-w-3xl mx-auto text-center mb-16 px-4">
           <p className="font-sans text-neutral-400 text-xs sm:text-sm font-light leading-relaxed">
-            All photography services include consultation, precision color grading, private online client portal selector, high-speed digital delivery, and print authorization. No hidden fees. Custom multi-day projects are available upon request.
+            All photography services include consultations, professional color editing, a private online gallery, fast digital delivery, and full printing rights. No hidden fees. Custom projects are also welcome.
           </p>
         </div>
 
@@ -205,14 +205,14 @@ export default function ServicesPage({ theme, onSelectPackage }: ServicesPagePro
               <Shield className="w-6 h-6 text-gold-500" />
             </div>
             <div>
-              <h4 className="font-serif text-lg font-light">The Secure Proofing Guarantee</h4>
+              <h4 className="font-serif text-lg font-light">Safe and Private Photo Gallery</h4>
               <p className="text-xs text-neutral-400 font-light mt-1 max-w-xl">
-                Every client receives an encrypted individual passcode portal link. Easily view, filter, star favorites, download high-res files, and lock down your final wedding selection directly.
+                Every client gets a secure, private link. You can easily view your photos, mark your favorites, and download high-resolution files.
               </p>
             </div>
           </div>
           <div className="shrink-0">
-            <span className="text-xs tracking-widest text-gold-500 font-mono">100% SECURE CLIENT CONSOLE</span>
+            <span className="text-xs tracking-widest text-gold-500 font-mono">100% SECURE & PRIVATE</span>
           </div>
         </div>
 

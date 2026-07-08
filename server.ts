@@ -717,21 +717,21 @@ app.post("/api/gemini/shoot-consultant", async (req, res) => {
   if (!ai) {
     // Elegant fallback if Gemini is not initialized yet (missing key)
     const lastUserMsg = messages[messages.length - 1]?.text || "";
-    const text = `Hello! I'm Aria, your Creative Director at Lumina. (Note: Gemini API Key is not set, so I'm running in offline assistant mode). Based on your ideas: "${lastUserMsg}", I'd suggest we design a gorgeous, warm sunset photoshoot. Natural lighting, fluid linen outfits, and candid, organic movements will look absolutely breathtaking! I've pre-filled a suggested draft for you. Click 'Apply Aria's Design' to autofill your booking form!`;
+    const text = `Hello! I'm Aria, your studio stylist. (Note: Gemini API Key is not set, so I'm running in offline mode). Based on your ideas: "${lastUserMsg}", I suggest we design a warm sunset photo shoot. We can use natural light, comfortable clothes, and natural movements. I've pre-filled a suggested draft for you. Click 'Apply Aria's Design' to autofill your booking form!`;
     return res.json({
       text,
       draftDetails: {
         location: "Baker Beach Sunset, SF",
         sessionType: "Portrait Sessions",
-        notes: "Aria's Styling Draft:\n- Theme: Organic coastal sunset\n- Color Palette: Warm neutrals, cream, rust, and clay\n- Key Shots: Candid walking on shore, close-up laugh, dramatic silhouette against waves\n- Outfits: Breathable fabrics, linen or soft knitwear",
+        notes: "Aria's Styling Draft:\n- Theme: Warm sunset style\n- Colors: Warm neutrals, cream, and clay\n- Key Shots: Walking along the beach, close-up laughing, beautiful silhouette against the waves\n- Outfits: Simple linen or soft knitwear",
         colors: ["#F9F6F0", "#E6D7C3", "#C58B6E", "#8A543A", "#2E1C15"],
         shotList: [
-          "Candid walk along the shoreline water's edge",
-          "Close-up laugh with wind-swept hair detail",
-          "Dramatic silhouette portrait against wave crests",
-          "Soft focused gaze looking directly into golden hour sun"
+          "Walking along the beach water",
+          "Close-up laugh with wind-swept hair",
+          "Sunset silhouette portrait with waves",
+          "Looking towards the warm sun"
         ],
-        styleKeywords: ["Ethereal", "Organic", "Warm-Toned", "Cinematic"]
+        styleKeywords: ["Warm", "Natural", "Cinematic", "Simple"]
       },
       isAIPowered: false
     });
@@ -744,10 +744,10 @@ app.post("/api/gemini/shoot-consultant", async (req, res) => {
       parts: [{ text: m.text }]
     }));
 
-    const systemInstruction = `You are Aria, the AI Creative Director & Photoshoot Stylist at Lumina Photography.
-Your role is to guide clients in planning their dream photoshoot, helping them refine their creative vision, choose locations, themes, colors, and select matching outfits.
+    const systemInstruction = `You are Aria, the photoshoot stylist at Lumina Photography.
+Your job is to help clients plan their photo shoot. Help them choose locations, colors, and outfit ideas.
 
-Lumina Photography's standard photoshoot packages (sessionType) are:
+Lumina Photography's photo packages (sessionType) are:
 - "Wedding Photography"
 - "Pre-Wedding Session"
 - "Birthday & Social Events"
@@ -755,18 +755,18 @@ Lumina Photography's standard photoshoot packages (sessionType) are:
 - "Portrait Sessions"
 - "Product Photography"
 
-Be encouraging, warm, creative, and highly descriptive. Offer 2-3 tailored outfit/color scheme suggestions or shoot location ideas in the San Francisco Bay Area (or general visual ideas if outside).
+Write in very simple, plain, friendly English. Do NOT use complex artistic jargon, overly grand adjectives, or fancy marketing words. Keep your response clear, helpful, and easy to read.
 
 You MUST respond in JSON format matching this schema:
 {
-  "text": "Your warm conversational reply to the client, explaining your creative suggestions. Use line breaks if needed.",
+  "text": "Your friendly reply in simple English, explaining your suggestions.",
   "draftDetails": {
-    "location": "A proposed location or venue style (optional/if decided, e.g. 'Baker Beach, SF' or 'Industrial Loft Studio')",
-    "sessionType": "One of the standard packages (optional/if decided, e.g. 'Portrait Sessions')",
-    "notes": "A concise, beautiful summary of the planned shoot theme, outfits, and key shot lists (optional/if decided) that can be directly applied to their booking request",
-    "colors": ["A list of 4 to 5 hex codes that represent the ideal photo mood/color palette for this session. Choose beautiful aesthetic colors, e.g. ['#FDFBF7', '#D4AF37', '#4A3B32']"],
-    "shotList": ["A list of 3 to 5 conceptual/specific shot ideas for this session (e.g., 'Groom looking back laughing', 'Bride's train detail near water', 'Candid close-up smile')"],
-    "styleKeywords": ["3 to 4 short adjectives describing the artistic style of the photoshoot, e.g., ['Dreamy', 'Cinematic', 'Minimalist', 'Editorial']"]
+    "location": "A proposed location (e.g. 'Baker Beach, SF' or 'Indoor Studio')",
+    "sessionType": "One of the standard packages (e.g. 'Portrait Sessions')",
+    "notes": "A simple, clear summary of the planned theme, outfits, and key shot ideas that the client can apply to their booking request",
+    "colors": ["A list of 4 to 5 hex codes that represent the ideal color palette for this session. Choose beautiful colors, e.g. ['#FDFBF7', '#D4AF37', '#4A3B32']"],
+    "shotList": ["A list of 3 to 5 clear, simple shot ideas for this session (e.g., 'Walking on the beach', 'Laughing close-up', 'Detail shot of details')"],
+    "styleKeywords": ["3 to 4 short, simple adjectives describing the style of the photoshoot, e.g., ['Dreamy', 'Natural', 'Minimalist', 'Warm']"]
   }
 }
 
@@ -821,16 +821,16 @@ app.post("/api/gemini/admin-copilot", async (req, res) => {
   ).join("\n");
 
   if (!ai) {
-    // Elegant fallback response with customized templates if Gemini key is missing
+    // Simple fallback response if Gemini key is missing
     const lastUserMsg = messages[messages.length - 1]?.text?.toLowerCase() || "";
-    let text = "Greetings! I am your AI Studio Assistant. (Note: Gemini API Key is not set, running in offline analytics mode).\n\n";
+    let text = "Hello! I am your studio assistant. (Note: Gemini API Key is not set, running in offline mode).\n\n";
     
     if (lastUserMsg.includes("email") || lastUserMsg.includes("proposal") || lastUserMsg.includes("draft")) {
-      text += `Here is a drafted response for you:\n\nSubject: Planning Your Dream Photoshoot with Lumina\n\nDear Client,\n\nThank you for reaching out to Lumina! We are absolutely thrilled to discuss your vision. Based on our studio schedules, we would love to secure your date. Below is our proposed creative theme summary.\n\nLet's collaborate to make these memories permanent!\n\nWarmest regards,\nAria Sterling\nLead Photographer, Lumina Studio`;
+      text += `Here is a draft email for you:\n\nSubject: Booking details for your photo shoot\n\nDear Client,\n\nThank you for choosing Lumina! We are excited to work with you and help bring your ideas to life. We have saved your date in our calendar. Please let us know if you have any questions.\n\nBest regards,\nAria Sterling\nLumina Studio`;
     } else if (lastUserMsg.includes("summar") || lastUserMsg.includes("stats") || lastUserMsg.includes("analy")) {
-      text += `Based on the local database metrics, here is your studio health overview:\n- Active Galleries: ${db.galleries?.length || 0}\n- Total Bookings logged: ${db.bookings?.length || 0}\n- Pending confirmation requests: ${db.bookings?.filter((b: any) => b.status === "pending").length || 0}\n- Starred favorites rate: Excellent engagement across portfolios.\n\nEverything looks operational and healthy!`;
+      text += `Here is a summary of your studio records:\n- Photo Galleries: ${db.galleries?.length || 0}\n- Total Bookings: ${db.bookings?.length || 0}\n- Pending Bookings: ${db.bookings?.filter((b: any) => b.status === "pending").length || 0}\n\nEverything is running well!`;
     } else {
-      text += `I am ready to help you manage your photography studio. You can ask me to:\n1. "Draft a personalized email proposal for pending bookings"\n2. "Provide an analytical summary of recent client activity"\n3. "Suggest marketing tactics for our Portrait Sessions package"\n\nLet me know how I can assist you today!`;
+      text += `I can help you manage your photography studio. You can ask me to:\n1. "Draft an email to a client for their booking"\n2. "Show a summary of studio numbers"\n3. "Give some simple ideas to get more clients for Portrait Sessions"\n\nHow can I help you today?`;
     }
 
     return res.json({ text, isAIPowered: false });
@@ -842,24 +842,23 @@ app.post("/api/gemini/admin-copilot", async (req, res) => {
       parts: [{ text: m.text }]
     }));
 
-    const systemInstruction = `You are the ultimate AI Studio Co-Pilot & Administrative Assistant for Lumina Photography Studio.
-Your role is to help the lead photographer, Aria Sterling, manage bookings, write outstanding proposals, draft email responses, analyze studio stats, suggest visual marketing trends, and analyze recent client proofing activities.
+    const systemInstruction = `You are the AI Studio Assistant for Lumina Photography Studio.
+Your role is to help the photographer, Aria Sterling, manage bookings, write simple emails, and summarize studio numbers.
 
-Below is the REAL current state of the photography database for your context:
+Below is the current state of the photography database:
 
---- ACTIVE BOOKING PROPOSALS ---
+--- BOOKING REQUESTS ---
 ${bookingsSummary || "No bookings found."}
 
---- ACTIVE CLIENT GALLERIES & PROOFING STATUS ---
+--- CLIENT GALLERIES ---
 ${galleriesSummary || "No client galleries setup."}
 
---- RECENT CLIENT ENGAGEMENT FEED ---
+--- RECENT CLIENT ACTIVITY ---
 ${activitiesSummary || "No client activities recorded yet."}
 
 ---
 
-When drafting email templates, make them absolutely pristine, elegant, warm, and highly personalized using the actual details of the client booking or gallery selection. 
-Be highly strategic, professional, and helpful. You can also format your answers in clean, beautiful Markdown.`;
+Write in very simple, plain, friendly, and direct English. Do NOT use fancy marketing jargon or complicated words. Keep everything clear and easy to understand. Format your answers in simple Markdown.`;
 
     const response = await ai.models.generateContent({
       model: "gemini-3.5-flash",

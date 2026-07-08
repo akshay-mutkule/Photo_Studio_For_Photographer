@@ -30,7 +30,7 @@ export default function AdminDashboard({ theme, onAdminAuthenticated }: AdminDas
   const [copilotMessages, setCopilotMessages] = useState<{ role: "user" | "model"; text: string }[]>([
     {
       role: "model",
-      text: "Greetings, Lead Photographer! I am your Studio Intelligence Assistant. I have indexed the active bookings, client galleries, and live proofing activity logs.\n\nAsk me to:\n- 'Draft an email proposal for Robert Miller's wedding'\n- 'Summarize active galleries selection progress'\n- 'Suggest marketing tactics for our Portrait Sessions package'"
+      text: "Hello! I am your studio assistant. I can help you manage bookings, galleries, and client emails.\n\nYou can ask me to:\n- 'Draft an email to a client'\n- 'Summarize our active bookings'\n- 'Suggest simple ideas to get more clients'"
     }
   ]);
   const [copilotInput, setCopilotInput] = useState("");
@@ -520,7 +520,7 @@ export default function AdminDashboard({ theme, onAdminAuthenticated }: AdminDas
                     <div className="space-y-4">
                       <h3 className="font-serif text-lg font-light flex items-center gap-1.5">
                         <Bot className="w-4 h-4 text-gold-500" />
-                        <span>Studio Intelligence Assistant</span>
+                        <span>Studio Assistant</span>
                       </h3>
                       
                       <div className="p-4 rounded-lg border border-neutral-900 bg-neutral-950 flex flex-col h-[340px] justify-between gap-3 text-xs font-sans">
@@ -558,17 +558,17 @@ export default function AdminDashboard({ theme, onAdminAuthenticated }: AdminDas
                         <div className="flex gap-1 flex-wrap shrink-0">
                           <button
                             type="button"
-                            onClick={() => setCopilotInput("Draft email proposal for pending wedding booking")}
+                            onClick={() => setCopilotInput("Draft email for pending booking")}
                             className="px-2 py-1 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 hover:border-gold-500/30 text-neutral-400 hover:text-white rounded text-[9px] font-mono transition-colors"
                           >
-                            ✉️ Draft Proposal
+                            ✉️ Draft Email
                           </button>
                           <button
                             type="button"
-                            onClick={() => setCopilotInput("Summarize studio bookings statistics")}
+                            onClick={() => setCopilotInput("Summarize bookings")}
                             className="px-2 py-1 bg-neutral-900 hover:bg-neutral-850 border border-neutral-800 hover:border-gold-500/30 text-neutral-400 hover:text-white rounded text-[9px] font-mono transition-colors"
                           >
-                            📊 Booking Stats
+                            📊 Bookings Summary
                           </button>
                         </div>
 
@@ -578,14 +578,14 @@ export default function AdminDashboard({ theme, onAdminAuthenticated }: AdminDas
                             type="text"
                             value={copilotInput}
                             onChange={(e) => setCopilotInput(e.target.value)}
-                            placeholder="Ask Co-Pilot to write email drafts, summarize stats..."
+                            placeholder="Ask me to draft emails, summarize bookings..."
                             disabled={copilotLoading}
                             className="flex-grow text-[11px] font-sans px-2.5 py-1.5 rounded border border-neutral-800 bg-black text-white focus:border-gold-500 outline-none transition-colors"
                           />
                           <button
                             type="submit"
                             disabled={copilotLoading || !copilotInput.trim()}
-                            className="p-1.5 bg-neutral-900 text-gold-500 hover:bg-neutral-800 border border-neutral-800 rounded flex items-center justify-center transition-colors disabled:opacity-40"
+                            className="p-1.5 bg-neutral-900 text-gold-500 hover:bg-neutral-850 border border-neutral-800 rounded flex items-center justify-center transition-colors disabled:opacity-40"
                           >
                             <Send className="w-3.5 h-3.5" />
                           </button>

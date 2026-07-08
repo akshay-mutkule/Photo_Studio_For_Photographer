@@ -37,7 +37,7 @@ export default function Hero({ onViewPortfolio, onBookShoot, theme }: HeroProps)
           className="inline-flex items-center gap-1.5 px-4 py-1.5 mb-6 border border-gold-500/30 bg-gold-950/20 rounded-full text-[10px] sm:text-xs tracking-widest text-gold-400 uppercase font-sans"
         >
           <Sparkles className="w-3.5 h-3.5" />
-          <span>Premier Fine-Art Photography Studio</span>
+          <span>Professional Photography Studio</span>
         </motion.div>
 
         {/* Brand Headline */}
@@ -47,9 +47,9 @@ export default function Hero({ onViewPortfolio, onBookShoot, theme }: HeroProps)
           transition={{ duration: 1, delay: 0.4 }}
           className="font-serif text-4xl sm:text-6xl md:text-7xl font-light tracking-tight leading-tight mb-6"
         >
-          Capturing the <span className="italic text-gold-300 font-normal">Soul</span> of
+          Capturing the <span className="italic text-gold-300 font-normal">beauty</span> of
           <br />
-          Your Most Sacred Moments
+          Your Special Moments
         </motion.h1>
 
         {/* Subtitle */}
@@ -59,8 +59,8 @@ export default function Hero({ onViewPortfolio, onBookShoot, theme }: HeroProps)
           transition={{ duration: 0.8, delay: 0.6 }}
           className="font-sans text-neutral-300 text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-light tracking-wide leading-relaxed mb-10"
         >
-          Award-winning editorial photography tailored for modern souls. Based in SF,
-          shooting worldwide across weddings, luxury portraits, and commercial editorials.
+          Beautiful photography for your special events. Based in San Francisco,
+          covering weddings, portraits, and corporate events.
         </motion.p>
 
         {/* Call to Actions */}
@@ -96,19 +96,19 @@ export default function Hero({ onViewPortfolio, onBookShoot, theme }: HeroProps)
         >
           <div>
             <div className="font-serif text-xl sm:text-2xl text-gold-400 font-light">12+</div>
-            <div className="text-[10px] tracking-widest uppercase mt-1">Years Experience</div>
+            <div className="text-[10px] tracking-widest uppercase mt-1">Years of Experience</div>
           </div>
           <div>
             <div className="font-serif text-xl sm:text-2xl text-gold-400 font-light">450+</div>
-            <div className="text-[10px] tracking-widest uppercase mt-1">Weddings Captured</div>
+            <div className="text-[10px] tracking-widest uppercase mt-1">Happy Clients</div>
           </div>
           <div>
-            <div className="font-serif text-xl sm:text-2xl text-gold-400 font-light">International</div>
-            <div className="text-[10px] tracking-widest uppercase mt-1">Fearless Photo Awards</div>
+            <div className="font-serif text-xl sm:text-2xl text-gold-400 font-light">Award Winner</div>
+            <div className="text-[10px] tracking-widest uppercase mt-1">Local & National Awards</div>
           </div>
           <div>
-            <div className="font-serif text-xl sm:text-2xl text-gold-400 font-light">Sony Alphas</div>
-            <div className="text-[10px] tracking-widest uppercase mt-1">Brand Ambassador</div>
+            <div className="font-serif text-xl sm:text-2xl text-gold-400 font-light">Top Rated</div>
+            <div className="text-[10px] tracking-widest uppercase mt-1">By Our Customers</div>
           </div>
         </motion.div>
       </div>
