@@ -14,19 +14,19 @@ export default function ExtraFeatures({ theme }: { theme: "dark" | "light" }) {
   const faqs = [
     {
       q: "How does the client portal and photo selection work?",
-      a: "Once your photoshoot session concludes, we import the raw proofs and create an encrypted private gallery passcode. You will log in securely, star your favorite captures, and select which items you would like us to apply our final signature fine-art edits on. Once submitted, we will begin detailed post-processing."
+      a: "After your shoot, we will send you a secure link and a passcode. You can log in, choose your favorite photos, and tell us which ones you want us to edit. Once you submit, we will start working on them."
     },
     {
       q: "When will I receive my finished photos?",
-      a: "For weddings, we deliver a curated 'sneak peek' within 48 hours, and your full completed gallery within 4 to 6 weeks. Portraits and lifestyle edits are delivered within 5 to 7 days."
+      a: "For weddings, we will send you some preview photos within 48 hours, and the full gallery in 4 to 6 weeks. Portraits are ready in 5 to 7 days."
     },
     {
-      q: "Do you travel for international photoshoots?",
-      a: "Absolutely! Lumina operates worldwide. Whether you are planning an intimate elopement in Paris or an editorial lookbook campaign in Tokyo, we provide custom travel packages."
+      q: "Do you travel for international shoots?",
+      a: "Yes, we travel all over the world. We can create a custom travel package for your photo shoot anywhere."
     },
     {
-      q: "What is your high-end retouching philosophy?",
-      a: "We believe in authentic beauty. Our signature grading focuses on balanced lighting, elegant color contrasts, and subtle, natural skin smoothing. We never apply heavy, artificial plastic-looking filters."
+      q: "What is your photo editing style?",
+      a: "We believe in natural beauty. We focus on soft, clean lighting, gentle color adjustments, and smooth skin tones. We never make your photos look artificial."
     }
   ];
 
@@ -96,11 +96,11 @@ export default function ExtraFeatures({ theme }: { theme: "dark" | "light" }) {
             <div className="space-y-6">
               <div>
                 <span className="text-xs tracking-widest text-gold-500 uppercase font-sans">
-                  The Lumina Dispatch
+                  Newsletter
                 </span>
                 <h3 className="font-serif text-2xl sm:text-3xl font-light mt-2">Subscribe to our newsletter</h3>
                 <p className="text-xs text-neutral-400 font-light mt-2 max-w-md mx-auto leading-relaxed">
-                  Join our inner circle for exclusive seasonal travel alerts, styling masterclasses, and photography workshop discounts.
+                  Join our list for travel schedules, styling tips, and special offers.
                 </p>
               </div>
 
@@ -131,9 +131,9 @@ export default function ExtraFeatures({ theme }: { theme: "dark" | "light" }) {
           ) : (
             <div className="py-6 space-y-3">
               <CheckCircle2 className="w-12 h-12 text-gold-500 mx-auto" />
-              <h4 className="font-serif text-xl font-light">Welcome to the Inner Circle</h4>
+              <h4 className="font-serif text-xl font-light">Thank You for Subscribing</h4>
               <p className="text-xs text-neutral-400 font-light max-w-xs mx-auto">
-                You have successfully subscribed to the Lumina Dispatch newsletter. Keep an eye out for our upcoming luxury lookbook.
+                You have successfully joined our newsletter. We will send you updates and special offers soon.
               </p>
             </div>
           )}

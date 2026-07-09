@@ -265,15 +265,21 @@ export default function ClientPortal({ theme, initialGalleryId, onClientAuthenti
 
               {/* Real-time selector stats counters */}
               <div className="flex gap-4 sm:gap-6 shrink-0 flex-wrap justify-center">
-                <div className="text-center px-4 py-2 bg-black/40 border border-neutral-800 rounded">
-                  <div className="font-mono text-lg text-gold-400 font-bold">{gallery.images.length}</div>
+                <div className={`text-center px-4 py-2 border rounded ${
+                  isDark ? "bg-neutral-950/40 border-neutral-900" : "bg-neutral-100/60 border-neutral-200"
+                }`}>
+                  <div className="font-mono text-lg text-gold-500 font-bold">{gallery.images.length}</div>
                   <div className="text-[9px] tracking-widest uppercase text-neutral-500">Total Shots</div>
                 </div>
-                <div className="text-center px-4 py-2 bg-black/40 border border-neutral-800 rounded">
-                  <div className="font-mono text-lg text-red-400 font-bold">{gallery.favorites.length}</div>
+                <div className={`text-center px-4 py-2 border rounded ${
+                  isDark ? "bg-neutral-950/40 border-neutral-900" : "bg-neutral-100/60 border-neutral-200"
+                }`}>
+                  <div className="font-mono text-lg text-red-500 font-bold">{gallery.favorites.length}</div>
                   <div className="text-[9px] tracking-widest uppercase text-neutral-500">Favorites</div>
                 </div>
-                <div className="text-center px-4 py-2 bg-black/40 border border-neutral-800 rounded">
+                <div className={`text-center px-4 py-2 border rounded ${
+                  isDark ? "bg-neutral-950/40 border-neutral-900" : "bg-neutral-100/60 border-neutral-200"
+                }`}>
                   <div className="font-mono text-lg text-gold-500 font-bold">{gallery.selected.length}</div>
                   <div className="text-[9px] tracking-widest uppercase text-neutral-500">Selected</div>
                 </div>
@@ -281,16 +287,18 @@ export default function ClientPortal({ theme, initialGalleryId, onClientAuthenti
             </div>
 
             {/* Instruction Warning banner */}
-            <div className="flex gap-3 items-start p-4 bg-gold-950/10 border border-gold-500/20 text-gold-400 rounded text-xs max-w-4xl">
-              <Info className="w-4.5 h-4.5 shrink-0 mt-0.5" />
+            <div className={`flex gap-3 items-start p-4 border text-xs max-w-4xl rounded-lg ${
+              isDark ? "bg-gold-950/10 border-gold-500/20 text-gold-400" : "bg-amber-50 border-amber-200 text-amber-800"
+            }`}>
+              <Info className="w-4.5 h-4.5 shrink-0 mt-0.5 text-gold-500" />
               <div>
                 <p className="font-semibold uppercase tracking-wide text-[10px]">Client Proofing Guidelines</p>
-                <p className="text-neutral-300 font-light mt-1">
-                  1. Click the <Heart className="inline w-3.5 h-3.5 mx-0.5 text-neutral-400" /> icon to mark images as personal favorites.
+                <p className="opacity-90 font-light mt-1">
+                  1. Click the <Heart className="inline w-3.5 h-3.5 mx-0.5" /> icon to mark images as favorites.
                   <br />
-                  2. Check the <CheckSquare className="inline w-3.5 h-3.5 mx-0.5 text-neutral-400" /> checkbox on the images you approve for final premium color grading and retouching.
+                  2. Check the <CheckSquare className="inline w-3.5 h-3.5 mx-0.5" /> checkbox on the images you approve for final editing.
                   <br />
-                  3. When complete, click the <strong>Submit Final Selection</strong> button in the action bar.
+                  3. When done, click the <strong>Submit Approved Selection</strong> button at the bottom of the page.
                 </p>
               </div>
             </div>
@@ -305,11 +313,13 @@ export default function ClientPortal({ theme, initialGalleryId, onClientAuthenti
                   <div
                     key={img.id}
                     id={`client-img-card-${img.id}`}
-                    className={`relative rounded-lg overflow-hidden border transition-all duration-300 bg-neutral-950 ${
+                    className={`relative rounded-lg overflow-hidden border transition-all duration-300 ${
                       isSelected
                         ? "border-gold-500 shadow-lg shadow-gold-500/5 ring-1 ring-gold-500"
-                        : "border-neutral-900"
-                    }`}
+                        : isDark
+                        ? "border-neutral-900"
+                        : "border-neutral-200"
+                    } ${isDark ? "bg-neutral-950" : "bg-neutral-50"}`}
                   >
                     <div className="aspect-[4/3] overflow-hidden relative group">
                       <img
@@ -360,7 +370,7 @@ export default function ClientPortal({ theme, initialGalleryId, onClientAuthenti
                           }`}
                         >
                           {isSelected ? (
-                            <CheckSquare className="w-4 h-4" />
+                             <CheckSquare className="w-4 h-4" />
                           ) : (
                             <Square className="w-4 h-4" />
                           )}
@@ -369,7 +379,11 @@ export default function ClientPortal({ theme, initialGalleryId, onClientAuthenti
                     </div>
 
                     {/* Metadata strip */}
-                    <div className="p-3 flex justify-between items-center text-[10px] font-mono text-neutral-400 border-t border-neutral-900 bg-neutral-950/80">
+                    <div className={`p-3 flex justify-between items-center text-[10px] font-mono border-t ${
+                      isDark
+                        ? "text-neutral-400 border-neutral-900 bg-neutral-950/80"
+                        : "text-neutral-600 border-neutral-200 bg-neutral-100"
+                    }`}>
                       <span className="truncate max-w-[120px]">{img.originalName}</span>
                       <div className="flex gap-1">
                         {isFavorite && <span className="text-red-500 font-sans">❤ Starred</span>}

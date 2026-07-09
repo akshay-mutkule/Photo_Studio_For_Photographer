@@ -7,7 +7,7 @@ export default function BlogSection({ theme }: { theme: "dark" | "light" }) {
     {
       id: "blog-1",
       title: "How to Choose the Perfect Outfits for Your Sunset Shoot",
-      excerpt: "The ultimate guide to coordinating colors, fabrics, and movement style for dramatic, fine-art sunset portraits.",
+      excerpt: "Our simple guide to choosing the best colors, clothes, and styles for your sunset photo shoot.",
       date: "June 28, 2026",
       readTime: "5 min read",
       cover: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=600&q=80"
@@ -15,7 +15,7 @@ export default function BlogSection({ theme }: { theme: "dark" | "light" }) {
     {
       id: "blog-2",
       title: "The Art of Natural Lighting: Behind the Scenes",
-      excerpt: "A deep dive into how Aria Sterling utilizes golden hour refractions and soft shadow gradients to craft raw, emotional portraits.",
+      excerpt: "Learn how Aria Sterling uses soft golden hour lighting and natural shadows to take beautiful, emotional photos.",
       date: "May 14, 2026",
       readTime: "8 min read",
       cover: "https://images.unsplash.com/photo-1554080353-a576cf803bda?auto=format&fit=crop&w=600&q=80"
@@ -23,7 +23,7 @@ export default function BlogSection({ theme }: { theme: "dark" | "light" }) {
     {
       id: "blog-3",
       title: "Top 5 Secret Photoshoot Locations in Northern California",
-      excerpt: "We reveal our favorite, secluded coastal cliffs and misty redwood canopies for breathtaking pre-wedding sessions.",
+      excerpt: "We share our favorite coastal cliffs and quiet redwood forests for beautiful pre-wedding photo shoots.",
       date: "April 02, 2026",
       readTime: "6 min read",
       cover: "https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=600&q=80"
@@ -39,10 +39,10 @@ export default function BlogSection({ theme }: { theme: "dark" | "light" }) {
         {/* Title Block */}
         <div className="text-center mb-16">
           <span className="text-xs tracking-widest text-gold-500 uppercase font-sans">
-            Our Thoughts
+            Our Journal
           </span>
           <h2 className="font-serif text-3xl sm:text-5xl font-light mt-2 mb-4">
-            The Journal
+            Latest Articles
           </h2>
           <div className="w-12 h-1 bg-gold-500 mx-auto rounded"></div>
         </div>
@@ -80,7 +80,7 @@ export default function BlogSection({ theme }: { theme: "dark" | "light" }) {
               
               <div className="p-6 pt-0">
                 <button className="text-[10px] tracking-widest uppercase font-sans font-semibold text-gold-500 hover:text-gold-400 flex items-center gap-1 transition-colors">
-                  Read Article <ArrowRight className="w-3 h-3" />
+                  Read More <ArrowRight className="w-3 h-3" />
                 </button>
               </div>
             </div>
