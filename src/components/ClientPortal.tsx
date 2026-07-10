@@ -158,7 +158,7 @@ export default function ClientPortal({ theme, initialGalleryId, onClientAuthenti
     // Here we'll create a synthetic anchor link to download Unsplash proxy for client experience
     const link = document.createElement("a");
     link.href = img.url;
-    link.download = img.originalName || "lumina-photo.jpg";
+    link.download = img.originalName || "vs-photo.jpg";
     link.target = "_blank";
     document.body.appendChild(link);
     link.click();
@@ -187,8 +187,8 @@ export default function ClientPortal({ theme, initialGalleryId, onClientAuthenti
                 <Lock className="w-5 h-5 text-gold-500 animate-pulse" />
               </div>
               <h2 className="font-serif text-3xl font-light mb-2">Secure Proofing Portal</h2>
-              <p className="text-xs text-neutral-400 font-sans tracking-wide">
-                Please enter the unique passcode provided by Lumina to access your private shoot gallery.
+              <p className={`text-xs font-sans tracking-wide ${isDark ? "text-neutral-400" : "text-neutral-600"}`}>
+                Please enter the unique passcode provided by VS Photography to access your private shoot gallery.
               </p>
             </div>
 
@@ -197,7 +197,9 @@ export default function ClientPortal({ theme, initialGalleryId, onClientAuthenti
             }`}>
               <form onSubmit={handleAuth} className="space-y-6">
                 <div>
-                  <label className="block text-xs font-sans tracking-wider uppercase font-semibold text-neutral-400 mb-2">
+                  <label className={`block text-xs font-sans tracking-wider uppercase font-semibold mb-2 ${
+                    isDark ? "text-neutral-400" : "text-neutral-600"
+                  }`}>
                     Enter Passcode
                   </label>
                   <input
@@ -234,7 +236,7 @@ export default function ClientPortal({ theme, initialGalleryId, onClientAuthenti
               </form>
 
               <div className="mt-6 text-center text-[10px] text-neutral-500">
-                Contact Lumina Support if you misplaced your passcode credentials.
+                Contact VS Photography Support if you misplaced your passcode credentials.
               </div>
             </div>
           </div>
@@ -252,7 +254,7 @@ export default function ClientPortal({ theme, initialGalleryId, onClientAuthenti
                   Secure Client Proofing Console
                 </span>
                 <h2 className="font-serif text-2xl sm:text-3xl font-light mt-1 mb-2">{gallery.title}</h2>
-                <p className="text-xs text-neutral-400 font-light max-w-xl leading-relaxed">
+                <p className={`text-xs font-light max-w-xl leading-relaxed ${isDark ? "text-neutral-400" : "text-neutral-600"}`}>
                   {gallery.description || "Review and select your favorite shots for high-end post-production retouching."}
                 </p>
                 

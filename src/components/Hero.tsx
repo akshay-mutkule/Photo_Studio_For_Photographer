@@ -17,7 +17,7 @@ export default function Hero({ onViewPortfolio, onBookShoot, theme }: HeroProps)
       <div className="absolute inset-0 z-0">
         <img
           src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=2000&q=90"
-          alt="Lumina Cinematic Backdrop"
+          alt="VS Photography Backdrop"
           className="w-full h-full object-cover object-center opacity-65 scale-105 animate-[scaleUp_20s_infinite_alternate]"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/80 z-10" />
@@ -30,15 +30,7 @@ export default function Hero({ onViewPortfolio, onBookShoot, theme }: HeroProps)
       {/* Hero Content */}
       <div className="relative z-20 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white select-none">
         {/* Animated Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="inline-flex items-center gap-1.5 px-4 py-1.5 mb-6 border border-gold-500/30 bg-gold-950/20 rounded-full text-[10px] sm:text-xs tracking-widest text-gold-400 uppercase font-sans"
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Professional Photography Studio</span>
-        </motion.div>
+       
 
         {/* Brand Headline */}
         <motion.h1

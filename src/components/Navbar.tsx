@@ -58,7 +58,7 @@ export default function Navbar({
           >
             <Camera className="w-6 h-6 text-gold-500 transition-transform duration-500 group-hover:rotate-45" />
             <span className="font-serif text-lg tracking-widest font-semibold uppercase">
-              LUMINA
+              VS PHOTOGRAPHY
             </span>
           </div>
 

@@ -210,7 +210,7 @@ export default function BookingPage({ theme, preSelectedPackage }: BookingPagePr
     const shotListText = moodboardShots.map(s => `[${s.checked ? "X" : " "}] ${s.text}`).join("\n");
 
     const fileContent = `============================================================
-           LUMINA BESPOKE CREATIVE PHOTO BLUEPRINT          
+           VS PHOTOGRAPHY STYLING & CREATIVE BLUEPRINT          
 ============================================================
 Artistic Style Keywords: [${styleLabels}]
 Proposed Category: ${draftDetails.sessionType || "Custom Shoot"}
@@ -226,7 +226,7 @@ ${shotListText || "No conceptual shots planned yet."}
 ${draftDetails.notes || "No extra styling notes."}
 
 ------------------------------------------------------------
-Generated with Lumina AI Creative Director & Stylist.
+Generated with VS Photography Stylist.
 Thank you for co-creating with us!
 ============================================================`;
 
@@ -234,7 +234,7 @@ Thank you for co-creating with us!
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `Lumina_Creative_Blueprint_${draftDetails.sessionType || "Shoot"}.txt`.replace(/\s+/g, "_");
+    link.download = `VS_Photography_Blueprint_${draftDetails.sessionType || "Shoot"}.txt`.replace(/\s+/g, "_");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -333,7 +333,9 @@ Thank you for co-creating with us!
                     
                     {/* Name Input */}
                     <div>
-                      <label className="block text-xs font-sans tracking-wider uppercase font-semibold text-neutral-400 mb-2">
+                      <label className={`block text-xs font-sans tracking-wider uppercase font-semibold mb-2 ${
+                        isDark ? "text-neutral-400" : "text-neutral-600"
+                      }`}>
                         Full Name *
                       </label>
                       <div className="relative">
@@ -358,7 +360,9 @@ Thank you for co-creating with us!
 
                     {/* Email Input */}
                     <div>
-                      <label className="block text-xs font-sans tracking-wider uppercase font-semibold text-neutral-400 mb-2">
+                      <label className={`block text-xs font-sans tracking-wider uppercase font-semibold mb-2 ${
+                        isDark ? "text-neutral-400" : "text-neutral-600"
+                      }`}>
                         Email Address *
                       </label>
                       <div className="relative">
@@ -383,7 +387,9 @@ Thank you for co-creating with us!
 
                     {/* Phone Input */}
                     <div>
-                      <label className="block text-xs font-sans tracking-wider uppercase font-semibold text-neutral-400 mb-2">
+                      <label className={`block text-xs font-sans tracking-wider uppercase font-semibold mb-2 ${
+                        isDark ? "text-neutral-400" : "text-neutral-600"
+                      }`}>
                         Phone Number
                       </label>
                       <div className="relative">
@@ -407,7 +413,9 @@ Thank you for co-creating with us!
 
                     {/* Session Date */}
                     <div>
-                      <label className="block text-xs font-sans tracking-wider uppercase font-semibold text-neutral-400 mb-2">
+                      <label className={`block text-xs font-sans tracking-wider uppercase font-semibold mb-2 ${
+                        isDark ? "text-neutral-400" : "text-neutral-600"
+                      }`}>
                         Desired Event Date *
                       </label>
                       <div className="relative">
@@ -431,7 +439,9 @@ Thank you for co-creating with us!
 
                     {/* Location */}
                     <div>
-                      <label className="block text-xs font-sans tracking-wider uppercase font-semibold text-neutral-400 mb-2">
+                      <label className={`block text-xs font-sans tracking-wider uppercase font-semibold mb-2 ${
+                        isDark ? "text-neutral-400" : "text-neutral-600"
+                      }`}>
                         Venue Location
                       </label>
                       <div className="relative">
@@ -455,7 +465,9 @@ Thank you for co-creating with us!
 
                     {/* Session Category Selector */}
                     <div>
-                      <label className="block text-xs font-sans tracking-wider uppercase font-semibold text-neutral-400 mb-2">
+                      <label className={`block text-xs font-sans tracking-wider uppercase font-semibold mb-2 ${
+                        isDark ? "text-neutral-400" : "text-neutral-600"
+                      }`}>
                         Photography Style / Category *
                       </label>
                       <select
@@ -480,7 +492,9 @@ Thank you for co-creating with us!
 
                   {/* Additional Notes */}
                   <div>
-                    <label className="block text-xs font-sans tracking-wider uppercase font-semibold text-neutral-400 mb-2">
+                    <label className={`block text-xs font-sans tracking-wider uppercase font-semibold mb-2 ${
+                      isDark ? "text-neutral-400" : "text-neutral-600"
+                    }`}>
                       Tell us about your dream vision...
                     </label>
                     <textarea
@@ -825,7 +839,7 @@ Thank you for co-creating with us!
               <CheckCircle2 className="w-12 h-12 text-gold-500 mx-auto mb-4" />
               <h3 className="font-serif text-2xl font-light mb-2">Proposal Received!</h3>
               <p className="text-xs text-neutral-400 font-sans tracking-wide max-w-md mx-auto mb-6 leading-relaxed">
-                Thank you for reaching out to Lumina. Aria and the team have received your details. We've reserved the temporary block for <span className="text-gold-400 font-semibold">{date}</span> and will send confirmation shortly.
+                Thank you for reaching out to VS Photography. Aria and the team have received your details. We've reserved the temporary block for <span className="text-gold-400 font-semibold">{date}</span> and will send confirmation shortly.
               </p>
               
               <div className="inline-flex items-center gap-1.5 px-4 py-1.5 border border-gold-500/20 bg-gold-950/10 rounded-full text-[10px] tracking-widest text-gold-400 uppercase font-sans mb-6">

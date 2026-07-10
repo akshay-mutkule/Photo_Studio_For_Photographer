@@ -12,7 +12,7 @@ export default function BeforeAfter({
   beforeImage,
   afterImage,
   beforeLabel = "Raw / Unedited",
-  afterLabel = "Lumina Fine-Art Signature Edit",
+  afterLabel = "VS Photography Signature Edit",
 }: BeforeAfterProps) {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);

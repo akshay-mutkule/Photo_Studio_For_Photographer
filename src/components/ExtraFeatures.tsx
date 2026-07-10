@@ -146,7 +146,7 @@ export default function ExtraFeatures({ theme }: { theme: "dark" | "light" }) {
               Behind the lens
             </span>
             <h3 className="font-serif text-xl sm:text-2xl font-light mt-1 flex items-center justify-center gap-1.5">
-              <Instagram className="w-4.5 h-4.5 text-gold-500" /> Follow us @LuminaFineArt
+              <Instagram className="w-4.5 h-4.5 text-gold-500" /> Follow us @VSPhotography
             </h3>
           </div>
 

@@ -170,7 +170,7 @@ export default function App() {
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-white">
                 <Camera className="w-5 h-5 text-gold-500" />
-                <span className="font-serif tracking-widest uppercase font-semibold text-sm text-gold-500">LUMINA</span>
+                <span className="font-serif tracking-widest uppercase font-semibold text-sm text-gold-500">VS PHOTOGRAPHY</span>
               </div>
               <p className="font-light leading-relaxed max-w-xs">
                 Capturing raw human connections, bespoke fine-art edits, and timeless wedding stories globally from San Francisco.
@@ -214,7 +214,7 @@ export default function App() {
 
           {/* Copyright bar */}
           <div className="pt-8 border-t border-neutral-900/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] text-neutral-500 font-mono">
-            <span>© 2026 LUMINA PHOTOGRAPHY STUDIO. ALL RIGHTS RESERVED.</span>
+            <span>© 2026 VS PHOTOGRAPHY. ALL RIGHTS RESERVED.</span>
             <div className="flex gap-4">
               <span>SECURE SSL CONNECTIONS ENCRYPTED</span>
               <span>POWERED BY GEMINI 3.5 FLASH</span>

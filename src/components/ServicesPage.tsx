@@ -172,7 +172,9 @@ export default function ServicesPage({ theme, onSelectPackage }: ServicesPagePro
                   {pkg.deliverables.map((item, idx) => (
                     <li key={idx} className="flex gap-2.5 items-start">
                       <Check className="w-4 h-4 text-gold-500 shrink-0 mt-0.5" />
-                      <span className="text-[11px] text-neutral-300 font-light tracking-wide">{item}</span>
+                      <span className={`text-[11px] font-light tracking-wide ${
+                        pkg.popular || isDark ? "text-neutral-300" : "text-neutral-700"
+                      }`}>{item}</span>
                     </li>
                   ))}
                 </ul>

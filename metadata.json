@@ -1,5 +1,5 @@
 {
-  "name": "Lumina Photography & Client Portal",
+  "name": "VS Photography & Client Portal",
   "description": "Premium photography portfolio and booking platform featuring a secure client portal for proofing, selecting, and favoriting photoshoot images.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

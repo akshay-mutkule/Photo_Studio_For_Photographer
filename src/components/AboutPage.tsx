@@ -14,7 +14,7 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
             Behind the Lens
           </span>
           <h2 className="font-serif text-3xl sm:text-5xl font-light mt-2 mb-4">
-            The Story of Lumina
+            The Story of VS Photography
           </h2>
           <div className="w-12 h-1 bg-gold-500 mx-auto rounded"></div>
         </div>
@@ -24,7 +24,7 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
           
           {/* Left Column: Portrait */}
           <div className="relative">
-            <div className="relative z-10 aspect-3/4 rounded-lg overflow-hidden border border-neutral-800 shadow-2xl">
+            <div className={`relative z-10 aspect-[3/4] rounded-lg overflow-hidden border shadow-2xl ${isDark ? "border-neutral-800" : "border-neutral-200"}`}>
               <img
                 src="https://images.unsplash.com/photo-1554080353-a576cf803bda?auto=format&fit=crop&w=1200&q=80"
                 alt="Photographer behind the lens"
@@ -43,11 +43,11 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
               Hi, I'm <span className="text-gold-500 italic font-normal">Aria Sterling</span>.
             </h3>
             
-            <p className={`font-sans text-sm sm:text-base leading-relaxed font-light ${isDark ? "text-neutral-300" : "text-neutral-600"}`}>
+            <p className={`font-sans text-sm sm:text-base leading-relaxed font-light ${isDark ? "text-neutral-300" : "text-neutral-700"}`}>
               For over ten years, I have loved taking beautiful, timeless photos. My style is natural, elegant, and simple. I believe a great photo should show the true feeling of a moment so you can cherish it forever.
             </p>
 
-            <p className={`font-sans text-sm leading-relaxed font-light ${isDark ? "text-neutral-400" : "text-neutral-500"}`}>
+            <p className={`font-sans text-sm leading-relaxed font-light ${isDark ? "text-neutral-400" : "text-neutral-600"}`}>
               We believe every photo shoot should be a relaxed, happy experience. We do not use stiff or artificial poses. Instead, we capture natural smiles, soft natural light, and real moments to tell your true story.
             </p>
 
@@ -59,7 +59,7 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
                   <h4 className="font-sans text-xs tracking-wider uppercase font-semibold text-gold-500">
                     Custom Style
                   </h4>
-                  <p className="text-[11px] text-neutral-400 font-light">
+                  <p className={`text-[11px] font-light ${isDark ? "text-neutral-400" : "text-neutral-600"}`}>
                     We plan every shoot to match your favorite colors and style.
                   </p>
                 </div>
@@ -70,7 +70,7 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
                   <h4 className="font-sans text-xs tracking-wider uppercase font-semibold text-gold-500">
                     Easy Process
                   </h4>
-                  <p className="text-[11px] text-neutral-400 font-light">
+                  <p className={`text-[11px] font-light ${isDark ? "text-neutral-400" : "text-neutral-600"}`}>
                     A simple, stress-free way to view and select your photos online.
                   </p>
                 </div>
@@ -90,7 +90,7 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
               <h4 className="font-sans text-sm tracking-wider uppercase font-semibold mb-1">
                 Outstanding Photo Award
               </h4>
-              <p className="text-xs text-neutral-400 font-light">
+              <p className={`text-xs font-light ${isDark ? "text-neutral-400" : "text-neutral-600"}`}>
                 Awarded for outstanding photo stories in 2024 and 2025.
               </p>
             </div>
@@ -99,7 +99,7 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
               <h4 className="font-sans text-sm tracking-wider uppercase font-semibold mb-1">
                 Featured in Magazines
               </h4>
-              <p className="text-xs text-neutral-400 font-light">
+              <p className={`text-xs font-light ${isDark ? "text-neutral-400" : "text-neutral-600"}`}>
                 Featured as a top local photography studio in Northern California.
               </p>
             </div>
@@ -108,7 +108,7 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
               <h4 className="font-sans text-sm tracking-wider uppercase font-semibold mb-1">
                 Professional Equipment
               </h4>
-              <p className="text-xs text-neutral-400 font-light">
+              <p className={`text-xs font-light ${isDark ? "text-neutral-400" : "text-neutral-600"}`}>
                 Recognized partner using professional cameras for the best quality portraits.
               </p>
             </div>
@@ -126,21 +126,21 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
             </h3>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div className="aspect-video rounded-lg overflow-hidden border border-neutral-800">
+            <div className={`aspect-video rounded-lg overflow-hidden border ${isDark ? "border-neutral-800" : "border-neutral-200"}`}>
               <img
                 src="https://images.unsplash.com/photo-1452421822248-d4c2b47f0c81?auto=format&fit=crop&w=600&q=80"
                 alt="Behind the scenes shoot gear"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               />
             </div>
-            <div className="aspect-video rounded-lg overflow-hidden border border-neutral-800">
+            <div className={`aspect-video rounded-lg overflow-hidden border ${isDark ? "border-neutral-800" : "border-neutral-200"}`}>
               <img
                 src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=600&q=80"
                 alt="Setting up lighting"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               />
             </div>
-            <div className="aspect-video rounded-lg overflow-hidden border border-neutral-800">
+            <div className={`aspect-video rounded-lg overflow-hidden border ${isDark ? "border-neutral-800" : "border-neutral-200"}`}>
               <img
                 src="https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=600&q=80"
                 alt="Editing raw photos in Lightroom"

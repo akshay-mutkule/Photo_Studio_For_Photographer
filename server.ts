@@ -615,7 +615,7 @@ app.post("/api/gemini/ai-search", async (req, res) => {
 
     const response = await ai.models.generateContent({
       model: "gemini-3.5-flash",
-      contents: `You are an AI-powered image search engine for Lumina Photography studio.
+      contents: `You are an AI-powered image search engine for VS Photography studio.
 Analyze this user query: "${query}"
 Select which of the following image items match this query conceptually or literally. Return a JSON list of matched IDs ONLY, ranked in order of relevance.
 
@@ -655,7 +655,7 @@ app.post("/api/gemini/tag-image", async (req, res) => {
 
   if (!ai) {
     // Return dummy intelligent-looking tags if Gemini API Key isn't provided yet
-    const defaults = ["photography", "fine-art", "ambient-lighting", "cinematic", "lumina"];
+    const defaults = ["photography", "fine-art", "ambient-lighting", "cinematic", "vs-photography"];
     return res.json({ tags: defaults, isAIPowered: false });
   }
 
@@ -696,7 +696,7 @@ app.post("/api/gemini/tag-image", async (req, res) => {
       tags = JSON.parse(response.text?.trim() || "[]");
     } catch (e) {
       console.error("Failed parsing tags json, raw output: ", response.text);
-      tags = ["professional", "lumina", "gallery"];
+      tags = ["professional", "vs-photography", "gallery"];
     }
 
     res.json({ tags, isAIPowered: true });
@@ -744,10 +744,10 @@ app.post("/api/gemini/shoot-consultant", async (req, res) => {
       parts: [{ text: m.text }]
     }));
 
-    const systemInstruction = `You are Aria, the photoshoot stylist at Lumina Photography.
+    const systemInstruction = `You are Aria, the photoshoot stylist at VS Photography.
 Your job is to help clients plan their photo shoot. Help them choose locations, colors, and outfit ideas.
 
-Lumina Photography's photo packages (sessionType) are:
+VS Photography's photo packages (sessionType) are:
 - "Wedding Photography"
 - "Pre-Wedding Session"
 - "Birthday & Social Events"
@@ -826,7 +826,7 @@ app.post("/api/gemini/admin-copilot", async (req, res) => {
     let text = "Hello! I am your studio assistant. (Note: Gemini API Key is not set, running in offline mode).\n\n";
     
     if (lastUserMsg.includes("email") || lastUserMsg.includes("proposal") || lastUserMsg.includes("draft")) {
-      text += `Here is a draft email for you:\n\nSubject: Booking details for your photo shoot\n\nDear Client,\n\nThank you for choosing Lumina! We are excited to work with you and help bring your ideas to life. We have saved your date in our calendar. Please let us know if you have any questions.\n\nBest regards,\nAria Sterling\nLumina Studio`;
+      text += `Here is a draft email for you:\n\nSubject: Booking details for your photo shoot\n\nDear Client,\n\nThank you for choosing VS Photography! We are excited to work with you and help bring your ideas to life. We have saved your date in our calendar. Please let us know if you have any questions.\n\nBest regards,\nAria Sterling\nVS Photography Studio`;
     } else if (lastUserMsg.includes("summar") || lastUserMsg.includes("stats") || lastUserMsg.includes("analy")) {
       text += `Here is a summary of your studio records:\n- Photo Galleries: ${db.galleries?.length || 0}\n- Total Bookings: ${db.bookings?.length || 0}\n- Pending Bookings: ${db.bookings?.filter((b: any) => b.status === "pending").length || 0}\n\nEverything is running well!`;
     } else {
@@ -842,7 +842,7 @@ app.post("/api/gemini/admin-copilot", async (req, res) => {
       parts: [{ text: m.text }]
     }));
 
-    const systemInstruction = `You are the AI Studio Assistant for Lumina Photography Studio.
+    const systemInstruction = `You are the AI Studio Assistant for VS Photography Studio.
 Your role is to help the photographer, Aria Sterling, manage bookings, write simple emails, and summarize studio numbers.
 
 Below is the current state of the photography database:

@@ -14,7 +14,7 @@ export default function ContactPage({ theme }: { theme: "dark" | "light" }) {
   // WhatsApp chat generator
   const handleWhatsAppChat = () => {
     const phoneNumber = "15550199"; // Example studio number
-    const baseText = "Hi Aria, I'm viewing Lumina's portfolio. I would love to check availability for a custom photoshoot session!";
+    const baseText = "Hi Aria, I'm viewing VS Photography's portfolio. I would love to check availability for a custom photoshoot session!";
     const encoded = encodeURIComponent(baseText);
     const link = `https://wa.me/${phoneNumber}?text=${encoded}`;
     window.open(link, "_blank");
@@ -55,7 +55,7 @@ export default function ContactPage({ theme }: { theme: "dark" | "light" }) {
           {/* Left Column: Info & WhatsApp & Map */}
           <div className="space-y-8">
             <div>
-              <h3 className="font-serif text-xl sm:text-2xl font-light mb-4">Lumina Headquarters</h3>
+              <h3 className="font-serif text-xl sm:text-2xl font-light mb-4">VS Photography Headquarters</h3>
               <p className="text-xs sm:text-sm text-neutral-400 font-light leading-relaxed mb-6">
                 Our flagship boutique studio is nestled in the creative heart of San Francisco. Available for bookings, consults, and custom portrait commissions.
               </p>
@@ -79,7 +79,7 @@ export default function ContactPage({ theme }: { theme: "dark" | "light" }) {
                 </div>
                 <div>
                   <h4 className="font-semibold text-[10px] tracking-wider uppercase text-neutral-500">Studio Mail</h4>
-                  <p className="text-neutral-300">aria@luminaphotography.com</p>
+                  <p className="text-neutral-300">aria@vsphotography.com</p>
                 </div>
               </div>
 
@@ -145,7 +145,9 @@ export default function ContactPage({ theme }: { theme: "dark" | "light" }) {
                 {!success ? (
                   <form onSubmit={handleContactSubmit} className="space-y-6">
                     <div>
-                      <label className="block text-xs font-sans tracking-wider uppercase font-semibold text-neutral-400 mb-2">
+                      <label className={`block text-xs font-sans tracking-wider uppercase font-semibold mb-2 ${
+                        isDark ? "text-neutral-400" : "text-neutral-600"
+                      }`}>
                         Your Name
                       </label>
                       <input
@@ -164,7 +166,9 @@ export default function ContactPage({ theme }: { theme: "dark" | "light" }) {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-sans tracking-wider uppercase font-semibold text-neutral-400 mb-2">
+                      <label className={`block text-xs font-sans tracking-wider uppercase font-semibold mb-2 ${
+                        isDark ? "text-neutral-400" : "text-neutral-600"
+                      }`}>
                         Email Address
                       </label>
                       <input
@@ -183,7 +187,9 @@ export default function ContactPage({ theme }: { theme: "dark" | "light" }) {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-sans tracking-wider uppercase font-semibold text-neutral-400 mb-2">
+                      <label className={`block text-xs font-sans tracking-wider uppercase font-semibold mb-2 ${
+                        isDark ? "text-neutral-400" : "text-neutral-600"
+                      }`}>
                         Message Inquiry
                       </label>
                       <textarea
