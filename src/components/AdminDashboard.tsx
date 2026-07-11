@@ -1,6 +1,6 @@
 import React, { useState, useEffect, FormEvent, DragEvent, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Lock, Eye, Trash2, Check, X, Calendar, Plus, Link, Upload, Tag, RefreshCw, BarChart3, ListCollapse, Image, Sparkles, FolderPlus, Download, UserCheck, AlertTriangle, Bot, Send } from "lucide-react";
+import { Lock, Eye, Trash2, Check, X, Calendar, Plus, Link, Upload, Tag, RefreshCw, BarChart3, ListCollapse, Image, Sparkles, FolderPlus, Download, UserCheck, AlertTriangle, Bot, Send, Folder, FolderCheck, Copy, ChevronDown, ChevronRight, Clock, FileText, FileDown } from "lucide-react";
 import { Gallery, Booking, ClientActivity, DashboardStats, ImageItem } from "../types.js";
 
 interface AdminDashboardProps {
@@ -17,7 +17,7 @@ export default function AdminDashboard({ theme, onAdminAuthenticated }: AdminDas
   const [loginError, setLoginError] = useState("");
 
   // Dashboard Tab state
-  const [activeSubTab, setActiveSubTab] = useState<"analytics" | "galleries" | "bookings" | "activity">("analytics");
+  const [activeSubTab, setActiveSubTab] = useState<"analytics" | "galleries" | "folders" | "bookings" | "activity">("analytics");
 
   // Fetching States
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -46,6 +46,10 @@ export default function AdminDashboard({ theme, onAdminAuthenticated }: AdminDas
   const [newGalleryAllowDownload, setNewGalleryAllowDownload] = useState(true);
   const [uploadedImages, setUploadedImages] = useState<ImageItem[]>([]);
   const [isCreatingGallery, setIsCreatingGallery] = useState(false);
+  
+  // Folder manager states
+  const [expandedFolderId, setExpandedFolderId] = useState<string | null>(null);
+  const [copiedFolderId, setCopiedFolderId] = useState<string | null>(null);
 
   // Drag and Drop State
   const [isDragging, setIsDragging] = useState(false);
@@ -150,6 +154,23 @@ export default function AdminDashboard({ theme, onAdminAuthenticated }: AdminDas
       }
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  // Update gallery retouch workflow status
+  const handleUpdateRetouchStatus = async (galleryId: string, retouchStatus: 'pending' | 'in-progress' | 'completed') => {
+    try {
+      const response = await fetch(`/api/admin/galleries/${galleryId}/retouch-status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ retouchStatus })
+      });
+
+      if (response.ok) {
+        loadAdminData(); // refresh
+      }
+    } catch (err) {
+      console.error("Failed to update retouch status", err);
     }
   };
 
@@ -414,6 +435,15 @@ export default function AdminDashboard({ theme, onAdminAuthenticated }: AdminDas
                   }`}
                 >
                   <Image className="w-3.5 h-3.5 inline mr-1.5" /> Client Galleries
+                </button>
+                <button
+                  id="sub-tab-folders"
+                  onClick={() => setActiveSubTab("folders")}
+                  className={`px-4 py-2 rounded text-[10px] tracking-widest uppercase font-sans font-semibold transition-all ${
+                    activeSubTab === "folders" ? "bg-gold-500 text-black" : "text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  <Folder className="w-3.5 h-3.5 inline mr-1.5" /> Selected Folders
                 </button>
                 <button
                   id="sub-tab-bookings"
@@ -868,6 +898,325 @@ export default function AdminDashboard({ theme, onAdminAuthenticated }: AdminDas
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* Sub-Tab: Client Selected Folders */}
+            {activeSubTab === "folders" && (
+              <div className="space-y-6 animate-[fadeIn_0.5s_ease]">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h3 className="font-serif text-xl font-light flex items-center gap-2">
+                      <Folder className="w-5 h-5 text-gold-500" />
+                      <span>Client Selection Folders</span>
+                    </h3>
+                    <p className={`text-xs mt-1 font-sans ${isDark ? "text-neutral-400" : "text-neutral-650"}`}>
+                      When clients select photos in their proofing portal, we automatically construct a virtual folder of selected images for your post-production workflow.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Filter / Summary of Folders */}
+                {(() => {
+                  const selectionGalleries = galleries.filter(g => g.selected && g.selected.length > 0);
+                  if (selectionGalleries.length === 0) {
+                    return (
+                      <div className={`p-12 text-center rounded-xl border border-dashed ${
+                        isDark ? "bg-neutral-950/40 border-neutral-900" : "bg-neutral-50 border-neutral-200"
+                      }`}>
+                        <Folder className="w-12 h-12 text-neutral-600 mx-auto mb-4 animate-pulse" />
+                        <h4 className="font-serif text-lg font-light mb-1">No Selection Folders Yet</h4>
+                        <p className="text-xs text-neutral-500 max-w-md mx-auto font-sans">
+                          Once a client logs into their Portal, marks their preferred photos, and saves or finalizes them, their dedicated selection folders will appear here instantly.
+                        </p>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div className="space-y-6">
+                      {/* Grid of folders */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {selectionGalleries.map((gal) => {
+                          const isExpanded = expandedFolderId === gal.id;
+                          
+                          // Determine status styles
+                          const status = gal.retouchStatus || "pending";
+                          let statusLabel = "⏳ Pending Retouch";
+                          let statusClass = "bg-amber-950/20 text-amber-400 border border-amber-500/20";
+                          if (status === "in-progress") {
+                            statusLabel = "🖌 In Retouching";
+                            statusClass = "bg-blue-950/20 text-blue-400 border border-blue-500/20";
+                          } else if (status === "completed") {
+                            statusLabel = "🎉 Done & Delivered";
+                            statusClass = "bg-green-950/20 text-green-400 border border-green-500/20";
+                          }
+
+                          return (
+                            <div
+                              key={gal.id}
+                              id={`folder-card-${gal.id}`}
+                              className={`rounded-xl border transition-all relative overflow-hidden flex flex-col justify-between ${
+                                isExpanded
+                                  ? "border-gold-500 ring-1 ring-gold-500/20 bg-neutral-950 shadow-lg"
+                                  : isDark
+                                  ? "border-neutral-900 bg-neutral-950 hover:border-neutral-800"
+                                  : "border-neutral-200 bg-neutral-50 hover:border-neutral-350"
+                              }`}
+                            >
+                              {/* Virtual Folder Tab Top Effect */}
+                              <div className="absolute top-0 left-0 w-28 h-5 bg-gold-600/10 border-r border-b border-gold-500/20 rounded-br-lg flex items-center justify-center pointer-events-none">
+                                <span className="text-[8px] font-mono tracking-wider text-gold-500 uppercase font-bold">
+                                  FOLDER TAB
+                                </span>
+                              </div>
+
+                              <div className="p-6 pt-8">
+                                {/* Folder Title block */}
+                                <div className="flex justify-between items-start gap-2 mb-3">
+                                  <div className="flex gap-2.5 items-start">
+                                    <div className="p-2 bg-gold-950/20 border border-gold-500/30 rounded-lg text-gold-400">
+                                      {status === "completed" ? (
+                                        <FolderCheck className="w-6 h-6" />
+                                      ) : (
+                                        <Folder className="w-6 h-6" />
+                                      )}
+                                    </div>
+                                    <div>
+                                      <h4 className="font-serif text-base font-light tracking-wide leading-tight group-hover:text-gold-400">
+                                        {gal.clientName.replace(/\s+/g, "_")}_Selected
+                                      </h4>
+                                      <p className="text-[10px] text-neutral-500 font-mono mt-0.5">
+                                        GALLERY: {gal.title}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div className="space-y-3.5 my-4">
+                                  {/* Folder Info Details */}
+                                  <div className="grid grid-cols-2 gap-2 text-[10px] bg-black/30 border border-neutral-900/60 p-2.5 rounded-lg">
+                                    <div>
+                                      <span className="text-neutral-500 uppercase tracking-widest text-[8px]">Selection Size</span>
+                                      <p className="font-mono text-sm text-gold-400 font-bold mt-0.5">
+                                        {gal.selected.length} <span className="text-xs font-normal text-neutral-400">images</span>
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <span className="text-neutral-500 uppercase tracking-widest text-[8px]">Client Submission</span>
+                                      <p className="font-sans text-[10px] text-neutral-300 font-normal mt-1 truncate">
+                                        {gal.selectionSubmitted ? "✅ Submitted" : "⏳ Draft Mode"}
+                                      </p>
+                                    </div>
+                                  </div>
+
+                                  <div className="flex justify-between items-center text-[10px]">
+                                    <span className="text-neutral-500 font-sans">Workflow Stage:</span>
+                                    <span className={`px-2 py-0.5 rounded text-[9px] font-mono font-semibold uppercase ${statusClass}`}>
+                                      {statusLabel}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Footer Action Bar for the folder card */}
+                              <div className="p-4 bg-black/40 border-t border-neutral-900/60 flex items-center justify-between gap-2">
+                                <button
+                                  onClick={() => setExpandedFolderId(isExpanded ? null : gal.id)}
+                                  className={`flex-1 py-2 text-[10px] tracking-widest uppercase font-sans font-bold border rounded transition-colors flex items-center justify-center gap-1.5 ${
+                                    isExpanded
+                                      ? "bg-gold-500 text-black border-gold-500"
+                                      : "bg-neutral-900 border-neutral-800 hover:border-gold-500 text-neutral-300 hover:text-gold-500"
+                                  }`}
+                                >
+                                  {isExpanded ? (
+                                    <>
+                                      <span>Close Folder</span>
+                                      <ChevronDown className="w-3.5 h-3.5" />
+                                    </>
+                                  ) : (
+                                    <>
+                                      <span>Open Folder ({gal.selected.length})</span>
+                                      <ChevronRight className="w-3.5 h-3.5" />
+                                    </>
+                                  )}
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Expanded Folder Detail Overlay/Drawer */}
+                      {(() => {
+                        const activeGal = galleries.find(g => g.id === expandedFolderId);
+                        if (!activeGal) return null;
+
+                        const selectedImages = activeGal.images.filter(img => activeGal.selected.includes(img.id));
+                        
+                        // Generate comma-separated filenames list for Lightroom filtering
+                        const lightroomFilenamesString = selectedImages.map(img => img.originalName).join(", ");
+
+                        const handleCopyLightroomList = () => {
+                          navigator.clipboard.writeText(lightroomFilenamesString);
+                          setCopiedFolderId(activeGal.id);
+                          setTimeout(() => setCopiedFolderId(null), 3000);
+                        };
+
+                        return (
+                          <div className={`p-6 rounded-xl border animate-[fadeIn_0.4s_ease] ${
+                            isDark ? "bg-neutral-950 border-neutral-900" : "bg-neutral-50 border-neutral-200"
+                          }`}>
+                            {/* Inner Header */}
+                            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-neutral-900/50 mb-6">
+                              <div>
+                                <div className="flex items-center gap-2">
+                                  <Folder className="w-4 h-4 text-gold-500" />
+                                  <span className="text-xs font-mono tracking-widest uppercase text-neutral-500">
+                                    Active Folder Inspect Panel
+                                  </span>
+                                </div>
+                                <h4 className="font-serif text-xl font-light mt-1 text-gold-400">
+                                  📁 {activeGal.clientName.replace(/\s+/g, "_")}_Selected_Photos_Folder
+                                </h4>
+                                <p className="text-xs text-neutral-400 mt-1">
+                                  Photos selected from: <strong className="text-white font-normal">{activeGal.title}</strong> ({activeGal.clientEmail})
+                                </p>
+                              </div>
+
+                              {/* Lightroom Filename Quick Copy and Download */}
+                              <div className="flex flex-wrap gap-2">
+                                <button
+                                  onClick={handleCopyLightroomList}
+                                  className="px-4 py-2 border border-neutral-800 hover:border-gold-500 text-neutral-300 hover:text-gold-500 font-sans text-[10px] tracking-widest uppercase font-semibold text-center rounded transition-colors flex items-center gap-1.5"
+                                  title="Copy comma-separated filenames list to paste directly into Adobe Lightroom Search"
+                                >
+                                  <Copy className="w-3.5 h-3.5" />
+                                  <span>{copiedFolderId === activeGal.id ? "Copied Filenames!" : "Copy Lightroom Filename List"}</span>
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Workflow control panel & statistics */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                              {/* 1. Client Details & Stats */}
+                              <div className="p-4 bg-black/30 border border-neutral-900 rounded-lg space-y-2">
+                                <span className="text-[9px] font-mono tracking-widest uppercase text-neutral-500 block font-semibold">
+                                  Folder Stats & Details
+                                </span>
+                                <div className="text-xs font-light space-y-1.5 font-sans">
+                                  <p className="text-neutral-400">
+                                    <strong className="text-neutral-300">Client:</strong> {activeGal.clientName}
+                                  </p>
+                                  <p className="text-neutral-400">
+                                    <strong className="text-neutral-300">Email:</strong> {activeGal.clientEmail}
+                                  </p>
+                                  <p className="text-neutral-400">
+                                    <strong className="text-neutral-300">Submit Status:</strong>{" "}
+                                    {activeGal.selectionSubmitted ? (
+                                      <span className="text-green-400 font-semibold">Submitted Final (Locked)</span>
+                                    ) : (
+                                      <span className="text-amber-400 font-semibold">Client Draft Mode</span>
+                                    )}
+                                  </p>
+                                  {activeGal.selectionSubmittedAt && (
+                                    <p className="text-neutral-400">
+                                      <strong className="text-neutral-300">Submitted At:</strong>{" "}
+                                      <span className="font-mono text-[10px]">
+                                        {new Date(activeGal.selectionSubmittedAt).toLocaleString()}
+                                      </span>
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* 2. Retouch workflow settings */}
+                              <div className="p-4 bg-black/30 border border-neutral-900 rounded-lg space-y-3">
+                                <span className="text-[9px] font-mono tracking-widest uppercase text-neutral-500 block font-semibold">
+                                  Update Post-Production Stage
+                                </span>
+                                <div className="space-y-2">
+                                  <label className="block text-[10px] text-neutral-400 font-sans">
+                                    Select workflow status for this folder:
+                                  </label>
+                                  <select
+                                    value={activeGal.retouchStatus || "pending"}
+                                    onChange={(e) => handleUpdateRetouchStatus(activeGal.id, e.target.value as any)}
+                                    className="w-full p-2 bg-black border border-neutral-800 text-white text-xs rounded outline-none focus:border-gold-500 font-sans"
+                                  >
+                                    <option value="pending">⏳ Pending Retouching</option>
+                                    <option value="in-progress">🖌 In Retouching / Editing</option>
+                                    <option value="completed">🎉 Retouch Completed & Delivered</option>
+                                  </select>
+                                </div>
+                              </div>
+
+                              {/* 3. Helper notes */}
+                              <div className="p-4 bg-black/30 border border-neutral-900 rounded-lg flex flex-col justify-between">
+                                <div>
+                                  <span className="text-[9px] font-mono tracking-widest uppercase text-neutral-500 block font-semibold">
+                                    Lightroom Integration Tip
+                                  </span>
+                                  <p className="text-[11px] text-neutral-400 mt-1 font-light leading-relaxed font-sans">
+                                    Photographers: Click the "Copy Lightroom Filename List" button, open Adobe Lightroom's Library module, set the filter attribute to "Filename", paste the copied text into the search box, and edit only the photos requested by {activeGal.clientName}!
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Interactive selection photo thumbnails grid */}
+                            <div>
+                              <h5 className="font-serif text-sm font-light text-neutral-300 mb-4 flex items-center gap-1.5">
+                                <Image className="w-4 h-4 text-gold-500" />
+                                <span>Folder Images ({selectedImages.length})</span>
+                              </h5>
+
+                              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                                {selectedImages.map((img) => (
+                                  <div
+                                    key={img.id}
+                                    className="group relative rounded-lg overflow-hidden border border-neutral-900 bg-neutral-950 aspect-[4/3] flex flex-col justify-between"
+                                  >
+                                    {/* Thumbnail */}
+                                    <div className="flex-1 overflow-hidden relative">
+                                      <img
+                                        src={img.url}
+                                        alt={img.originalName}
+                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                      />
+                                      
+                                      {/* Watermark or Approved overlay badge */}
+                                      <div className="absolute top-2 left-2 px-1.5 py-0.5 bg-black/70 border border-gold-500/30 rounded text-[8px] font-mono text-gold-400">
+                                        Approved
+                                      </div>
+                                    </div>
+
+                                    {/* Filename footer bar */}
+                                    <div className="p-2 bg-neutral-950 border-t border-neutral-900 flex items-center justify-between text-[9px] font-mono text-neutral-400">
+                                      <span className="truncate max-w-[120px]" title={img.originalName}>
+                                        {img.originalName}
+                                      </span>
+                                      <button
+                                        onClick={() => {
+                                          navigator.clipboard.writeText(img.originalName);
+                                          alert(`Filename copied: ${img.originalName}`);
+                                        }}
+                                        className="text-gold-500 hover:text-gold-400 px-1 font-sans"
+                                        title="Copy this image name"
+                                      >
+                                        Copy
+                                      </button>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  );
+                })()}
               </div>
             )}
 

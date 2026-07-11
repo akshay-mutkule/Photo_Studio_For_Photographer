@@ -457,6 +457,7 @@ app.post("/api/client/gallery-action", (req, res) => {
   if (submitSelection) {
     gallery.selectionSubmitted = true;
     gallery.selectionSubmittedAt = new Date().toISOString();
+    gallery.retouchStatus = 'pending';
     logActivity(
       gallery.id,
       gallery.title,
@@ -520,6 +521,22 @@ app.patch("/api/admin/galleries/:id/downloads", (req, res) => {
   }
 
   db.galleries[index].downloadApproved = downloadApproved;
+  writeDb(db);
+  res.json(db.galleries[index]);
+});
+
+// Admin update gallery retouch status
+app.patch("/api/admin/galleries/:id/retouch-status", (req, res) => {
+  const { id } = req.params;
+  const { retouchStatus } = req.body;
+
+  const db = readDb();
+  const index = db.galleries.findIndex((g: Gallery) => g.id === id);
+  if (index === -1) {
+    return res.status(404).json({ error: "Gallery not found" });
+  }
+
+  db.galleries[index].retouchStatus = retouchStatus;
   writeDb(db);
   res.json(db.galleries[index]);
 });

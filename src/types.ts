@@ -22,6 +22,7 @@ export interface Gallery {
   allowDownload: boolean;
   downloadApproved: boolean;
   views: number;
+  retouchStatus?: 'pending' | 'in-progress' | 'completed';
   createdAt: string;
   expirationDate?: string;
 }
