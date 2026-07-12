@@ -65,12 +65,21 @@ export default function BookingPage({ theme, preSelectedPackage }: BookingPagePr
   const [newShotText, setNewShotText] = useState("");
   const [copiedColor, setCopiedColor] = useState<string | null>(null);
 
-  const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll chat to bottom
+  // Auto-scroll chat container to bottom without scrolling the whole window
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chatMessages, chatLoading]);
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    }
+  }, [chatMessages, chatLoading, activeRightTab]);
+
+  // Sync package selection when prop updates
+  useEffect(() => {
+    if (preSelectedPackage) {
+      setSessionType(preSelectedPackage);
+    }
+  }, [preSelectedPackage]);
 
   // Form submit
   const handleSubmit = async (e: FormEvent) => {
@@ -353,7 +362,7 @@ Thank you for co-creating with us!
                           required
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                          placeholder="e.g., Alexandra Carter"
+                          placeholder="Akshay Mutkule"
                           className={`w-full text-sm font-sans pl-10 pr-3 py-2.5 border rounded outline-none transition-colors ${
                             isDark
                               ? "bg-black border-neutral-800 text-white focus:border-gold-500"
@@ -380,7 +389,7 @@ Thank you for co-creating with us!
                           required
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          placeholder="alexandra@example.com"
+                          placeholder="akshay@gmail.com"
                           className={`w-full text-sm font-sans pl-10 pr-3 py-2.5 border rounded outline-none transition-colors ${
                             isDark
                               ? "bg-black border-neutral-800 text-white focus:border-gold-500"
@@ -593,7 +602,7 @@ Thank you for co-creating with us!
                 </div>
 
                 {/* Main Dynamic Viewport */}
-                <div className="flex-grow overflow-y-auto p-4 scrollbar-thin flex flex-col">
+                <div ref={chatContainerRef} className="flex-grow overflow-y-auto p-4 scrollbar-thin flex flex-col">
                   {activeRightTab === "chat" ? (
                     <div className="flex-grow flex flex-col h-full justify-between gap-4">
                       {/* Chat Logs */}
@@ -627,7 +636,6 @@ Thank you for co-creating with us!
                             </div>
                           </div>
                         )}
-                        <div ref={chatEndRef} />
                       </div>
 
                       {/* Applied Trigger inside Chat tab */}

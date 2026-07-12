@@ -4,7 +4,6 @@ import Hero from "./components/Hero.jsx";
 import AboutPage from "./components/AboutPage.jsx";
 import PortfolioPage from "./components/PortfolioPage.jsx";
 import ServicesPage from "./components/ServicesPage.jsx";
-import BookingPage from "./components/BookingPage.jsx";
 import ClientPortal from "./components/ClientPortal.jsx";
 import AdminDashboard from "./components/AdminDashboard.jsx";
 import ContactPage from "./components/ContactPage.jsx";
@@ -19,6 +18,7 @@ export default function App() {
   const [isClientAuthenticated, setIsClientAuthenticated] = useState(false);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
   const [preSelectedPackage, setPreSelectedPackage] = useState("");
+  const [scrollToBooking, setScrollToBooking] = useState(false);
   const [urlGalleryId, setUrlGalleryId] = useState<string | undefined>(undefined);
 
   // Check URL parameters on mount for self-referential shareable links
@@ -43,14 +43,29 @@ export default function App() {
     }
   }, [theme]);
 
+  // Reset scroll to top when changing tabs
+  useEffect(() => {
+    // A micro-timeout ensures the scroll reset occurs after the browser processes the new DOM tree layout and image sizing.
+    const timer = setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [activeTab]);
+
   const toggleTheme = () => {
     setTheme(prev => (prev === "dark" ? "light" : "dark"));
   };
 
   const handleSelectPackageFromServices = (packageName: string) => {
     setPreSelectedPackage(packageName);
-    setActiveTab("booking");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setActiveTab("services");
+    setScrollToBooking(true);
+  };
+
+  const handleBookShootRedirect = () => {
+    setPreSelectedPackage("");
+    setActiveTab("services");
+    setScrollToBooking(true);
   };
 
   return (
@@ -95,7 +110,7 @@ export default function App() {
             {/* Cinematic Hero */}
             <Hero
               onViewPortfolio={() => setActiveTab("portfolio")}
-              onBookShoot={() => setActiveTab("booking")}
+              onBookShoot={handleBookShootRedirect}
               theme={theme}
             />
 
@@ -150,13 +165,9 @@ export default function App() {
           <ServicesPage
             theme={theme}
             onSelectPackage={handleSelectPackageFromServices}
-          />
-        )}
-
-        {activeTab === "booking" && (
-          <BookingPage
-            theme={theme}
             preSelectedPackage={preSelectedPackage}
+            scrollToBooking={scrollToBooking}
+            onScrollReset={() => setScrollToBooking(false)}
           />
         )}
 
@@ -214,7 +225,7 @@ export default function App() {
               <h4 className="font-serif text-white tracking-wider uppercase mb-4 text-xs font-semibold">Client Relations</h4>
               <ul className="space-y-2.5 font-light">
                 <li><button onClick={() => setActiveTab("client-portal")} className="hover:text-gold-500 transition-colors">Client proof selection</button></li>
-                <li><button onClick={() => setActiveTab("booking")} className="hover:text-gold-500 transition-colors">Book a shoot</button></li>
+                <li><button onClick={handleBookShootRedirect} className="hover:text-gold-500 transition-colors">Book a shoot</button></li>
                 <li><button onClick={() => setActiveTab("contact")} className="hover:text-gold-500 transition-colors">General Inquiry</button></li>
               </ul>
             </div>
@@ -243,10 +254,6 @@ export default function App() {
           {/* Copyright bar */}
           <div className="pt-8 border-t border-neutral-900/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] text-neutral-500 font-mono">
             <span>© 2026 VS PHOTOGRAPHY. ALL RIGHTS RESERVED.</span>
-            <div className="flex gap-4">
-              <span>SECURE SSL CONNECTIONS ENCRYPTED</span>
-              <span>POWERED BY GEMINI 3.5 FLASH</span>
-            </div>
           </div>
         </div>
       </footer>

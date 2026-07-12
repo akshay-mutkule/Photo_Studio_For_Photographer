@@ -40,11 +40,11 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
           {/* Right Column: Bio */}
           <div className="space-y-6">
             <h3 className="font-serif text-2xl sm:text-3xl font-light">
-              Hi, I'm <span className="text-gold-500 italic font-normal">Aria Sterling</span>.
+              Hi, I'm <span className="text-gold-500 italic font-normal">Vinayak Sable</span>.
             </h3>
             
             <p className={`font-sans text-sm sm:text-base leading-relaxed font-light ${isDark ? "text-neutral-300" : "text-neutral-700"}`}>
-              For over ten years, I have loved taking beautiful, timeless photos. My style is natural, elegant, and simple. I believe a great photo should show the true feeling of a moment so you can cherish it forever.
+              With over 7+ years of professional experience in this field, I have loved taking beautiful, timeless photos. My style is natural, elegant, and simple. I believe a great photo should show the true feeling of a moment so you can cherish it forever.
             </p>
 
             <p className={`font-sans text-sm leading-relaxed font-light ${isDark ? "text-neutral-400" : "text-neutral-600"}`}>

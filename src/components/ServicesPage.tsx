@@ -1,12 +1,49 @@
+import { useRef, useState, useEffect } from "react";
 import { Shield, Sparkles, Check, Clock, Award, FileSpreadsheet } from "lucide-react";
+import BookingPage from "./BookingPage";
 
 interface ServicesPageProps {
   theme: "dark" | "light";
   onSelectPackage: (packageName: string) => void;
+  preSelectedPackage?: string;
+  scrollToBooking?: boolean;
+  onScrollReset?: () => void;
 }
 
-export default function ServicesPage({ theme, onSelectPackage }: ServicesPageProps) {
+export default function ServicesPage({
+  theme,
+  onSelectPackage,
+  preSelectedPackage = "",
+  scrollToBooking = false,
+  onScrollReset,
+}: ServicesPageProps) {
   const isDark = theme === "dark";
+  const [localPreSelectedPackage, setLocalPreSelectedPackage] = useState(preSelectedPackage);
+  const bookingRef = useRef<HTMLDivElement>(null);
+
+  // Sync prop changes
+  useEffect(() => {
+    if (preSelectedPackage) {
+      setLocalPreSelectedPackage(preSelectedPackage);
+    }
+  }, [preSelectedPackage]);
+
+  // Handle scrollToBooking (Scrolls smoothly to the booking details section when coming from the Book a Shoot CTA)
+  useEffect(() => {
+    if (scrollToBooking && bookingRef.current) {
+      const timer = setTimeout(() => {
+        bookingRef.current?.scrollIntoView({ behavior: "smooth" });
+        if (onScrollReset) {
+          onScrollReset();
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [scrollToBooking, onScrollReset]);
+
+  const handleBookClick = (packageName: string) => {
+    setLocalPreSelectedPackage(packageName);
+  };
 
   const packages = [
     {
@@ -183,7 +220,7 @@ export default function ServicesPage({ theme, onSelectPackage }: ServicesPagePro
               {/* Booking Trigger */}
               <button
                 id={`book-${pkg.id}`}
-                onClick={() => onSelectPackage(pkg.name)}
+                onClick={() => handleBookClick(pkg.name)}
                 className={`w-full py-3 rounded text-xs tracking-widest uppercase font-sans font-semibold transition-colors ${
                   pkg.popular
                     ? "bg-gold-500 hover:bg-gold-400 text-black shadow-lg"
@@ -216,6 +253,14 @@ export default function ServicesPage({ theme, onSelectPackage }: ServicesPagePro
           <div className="shrink-0">
             <span className="text-xs tracking-widest text-gold-500 font-mono">100% SECURE & PRIVATE</span>
           </div>
+        </div>
+
+        {/* Integrated Booking Form Section */}
+        <div ref={bookingRef} id="integrated-booking-section" className="mt-20 pt-16 border-t border-neutral-900/20">
+          <BookingPage
+            theme={theme}
+            preSelectedPackage={localPreSelectedPackage}
+          />
         </div>
 
       </div>

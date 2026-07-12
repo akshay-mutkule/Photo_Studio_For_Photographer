@@ -43,3 +43,10 @@
   overflow: hidden;
   user-select: none;
 }
+
+/* Print protection - hides photos and blocks PDF-printing */
+@media print {
+  body {
+    display: none !important;
+  }
+}

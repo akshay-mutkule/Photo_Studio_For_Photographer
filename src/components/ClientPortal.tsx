@@ -42,6 +42,65 @@ export default function ClientPortal({
   const [activeImage, setActiveImage] = useState<ImageItem | null>(null);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [submissionSuccess, setSubmissionSuccess] = useState(false);
+  const [securityNotice, setSecurityNotice] = useState<string | null>(null);
+  const [isWindowBlurred, setIsWindowBlurred] = useState(false);
+
+  // Dismiss security notice after 3.5 seconds
+  useEffect(() => {
+    if (securityNotice) {
+      const timer = setTimeout(() => {
+        setSecurityNotice(null);
+      }, 3500);
+      return () => clearTimeout(timer);
+    }
+  }, [securityNotice]);
+
+  // Window Focus & Screenshot Protection listeners
+  useEffect(() => {
+    if (!gallery) return;
+
+    const handleFocus = () => {
+      setIsWindowBlurred(false);
+    };
+
+    const handleBlur = () => {
+      setIsWindowBlurred(true);
+      setSecurityNotice("Screenshot Protection Active: Screen capture or focus loss detected.");
+    };
+
+    const preventDefaultShortcuts = (e: KeyboardEvent) => {
+      // Prevent Print (Ctrl + P / Cmd + P)
+      if ((e.ctrlKey || e.metaKey) && e.key === "p") {
+        e.preventDefault();
+        setSecurityNotice("Print function disabled on proofing sessions.");
+      }
+      // Prevent Save Page (Ctrl + S / Cmd + S)
+      if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+        e.preventDefault();
+        setSecurityNotice("Saving pages is blocked to safeguard photographer copyright.");
+      }
+      // Prevent Copy (Ctrl + C / Cmd + C) on text/images
+      if ((e.ctrlKey || e.metaKey) && e.key === "c") {
+        e.preventDefault();
+        setSecurityNotice("Content copying is disabled under active copyright protection.");
+      }
+      // Check Print Screen key
+      if (e.key === "PrintScreen") {
+        e.preventDefault();
+        setSecurityNotice("Screenshot Attempt Blocked. Dynamic watermarks are embedded.");
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+    window.addEventListener("blur", handleBlur);
+    window.addEventListener("keydown", preventDefaultShortcuts);
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      window.removeEventListener("blur", handleBlur);
+      window.removeEventListener("keydown", preventDefaultShortcuts);
+    };
+  }, [gallery]);
 
   // Load gallery directly if pre-fetched via direct share link parameters
   useEffect(() => {
@@ -305,9 +364,35 @@ export default function ClientPortal({
   };
 
   return (
-    <div className={`py-12 sm:py-20 transition-colors duration-300 min-h-[80vh] flex flex-col justify-center ${
-      isDark ? "bg-black text-white" : "bg-white text-black"
-    }`}>
+    <div
+      onContextMenu={(e) => {
+        if (gallery) {
+          e.preventDefault();
+          setSecurityNotice("Right-click is protected. Image downloads and saving are disabled.");
+        }
+      }}
+      className={`py-12 sm:py-20 transition-colors duration-300 min-h-[80vh] flex flex-col justify-center relative select-none ${
+        isDark ? "bg-black text-white" : "bg-white text-black"
+      }`}
+    >
+      {/* Copyright Security Toast */}
+      <AnimatePresence>
+        {securityNotice && (
+          <motion.div
+            initial={{ opacity: 0, y: -50, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: -50, x: "-50%" }}
+            className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] max-w-md w-[90%] bg-red-950/95 border border-red-500/40 p-4 rounded-xl shadow-2xl shadow-red-950/80 backdrop-blur-md flex items-start gap-3 text-left font-sans"
+          >
+            <ShieldAlert className="w-5 h-5 text-red-500 shrink-0 mt-0.5 animate-bounce" />
+            <div>
+              <h5 className="font-bold text-xs uppercase tracking-wider text-red-400">Security Protocol</h5>
+              <p className="text-[11px] text-neutral-200 mt-1 font-light leading-relaxed">{securityNotice}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
 
         {/* ================= STAGE 1: AUTHENTICATION ACCESS GATES ================= */}
@@ -402,7 +487,7 @@ export default function ClientPortal({
                       required
                       value={profileEmail}
                       onChange={(e) => setProfileEmail(e.target.value)}
-                      placeholder="e.g., alexandra@example.com or username"
+                      placeholder="akshay@gmail.com"
                       className={`w-full text-sm p-3 border rounded outline-none transition-colors ${
                         isDark
                           ? "bg-black border-neutral-800 text-white focus:border-gold-500"
@@ -423,7 +508,7 @@ export default function ClientPortal({
                       required
                       value={profilePasscode}
                       onChange={(e) => setProfilePasscode(e.target.value)}
-                      placeholder="e.g., VS-1234"
+                      placeholder="Password"
                       className={`w-full text-sm font-mono tracking-wider p-3 border rounded outline-none transition-colors ${
                         isDark
                           ? "bg-black border-neutral-800 text-white focus:border-gold-500"
@@ -745,34 +830,53 @@ export default function ClientPortal({
                       <img
                         src={img.url}
                         alt={img.originalName}
-                        className="w-full h-full object-cover"
+                        onDragStart={(e) => e.preventDefault()}
+                        onContextMenu={(e) => e.preventDefault()}
+                        className={`w-full h-full object-cover transition-all duration-300 ${
+                          isWindowBlurred ? "filter blur-lg select-none scale-[0.98]" : ""
+                        }`}
                         loading="lazy"
                       />
+
+                      {/* Fully Transparent Interceptor Cover to block dragging or holding to save */}
+                      <div className="absolute inset-0 z-10 bg-transparent select-none" onContextMenu={(e) => e.preventDefault()} />
+
+                      {/* Repeating Diagonal Watermark Overlay */}
+                      <div className="absolute inset-0 z-20 pointer-events-none opacity-[0.22] select-none overflow-hidden flex items-center justify-center">
+                        <div className="w-[160%] h-[160%] rotate-[-35deg] flex flex-wrap gap-x-20 gap-y-12 items-center justify-center font-sans text-[9px] tracking-[0.25em] font-extrabold text-white select-none pointer-events-none uppercase">
+                          {Array.from({ length: 12 }).map((_, i) => (
+                            <span key={i} className="whitespace-nowrap select-none">
+                              ARIA STERLING Fine Art Proof
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Focus Loss Warning Overlay */}
+                      {isWindowBlurred && (
+                        <div className="absolute inset-0 z-30 bg-black/60 backdrop-blur-md flex flex-col items-center justify-center p-3 text-center transition-all duration-300">
+                          <ShieldAlert className="w-8 h-8 text-gold-500 mb-2 animate-bounce" />
+                          <p className="font-sans text-[10px] font-bold tracking-widest text-gold-400 uppercase">Protection Active</p>
+                          <p className="font-sans text-[9px] text-neutral-300 mt-1 max-w-[200px] leading-tight font-light">Refocus tab to preview image.</p>
+                        </div>
+                      )}
+
                       {/* Hover action overlay */}
-                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                      <div className="absolute inset-0 z-25 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
                         <button
                           onClick={() => {
                             setActiveImage(img);
                             setZoomLevel(1);
                           }}
-                          className="p-2 bg-neutral-900 text-white hover:text-gold-500 border border-neutral-800 rounded transition-colors"
+                          className="p-2 bg-neutral-900 text-white hover:text-gold-500 border border-neutral-800 rounded transition-colors cursor-pointer"
                           title="Full-Screen Preview"
                         >
                           <Eye className="w-4 h-4" />
                         </button>
-                        {gallery.allowDownload && gallery.downloadApproved && (
-                          <button
-                            onClick={() => handleDownloadImage(img)}
-                            className="p-2 bg-neutral-900 text-white hover:text-gold-500 border border-neutral-800 rounded transition-colors"
-                            title="Download Proof"
-                          >
-                            <Download className="w-4 h-4" />
-                          </button>
-                        )}
                       </div>
 
                       {/* Top Action Tags */}
-                      <div className="absolute top-3 left-3 right-3 flex justify-between pointer-events-auto">
+                      <div className="absolute top-3 left-3 right-3 flex justify-between pointer-events-auto z-25">
                         <button
                           onClick={() => handleToggleFavorite(img.id)}
                           className={`p-1.5 rounded bg-black/60 hover:bg-black/90 transition-colors ${
@@ -827,15 +931,9 @@ export default function ClientPortal({
                 >
                   Exit Portal
                 </button>
-                {gallery.allowDownload && (
-                  <span className={`text-[10px] font-sans px-2.5 py-1 rounded border ${
-                    gallery.downloadApproved
-                      ? "bg-green-950/20 border-green-500/20 text-green-400"
-                      : "bg-amber-950/20 border-amber-500/20 text-amber-400"
-                  }`}>
-                    {gallery.downloadApproved ? "✔ Downloads Approved" : "⏳ Downloads Pending Approval"}
-                  </span>
-                )}
+                <span className="text-[10px] font-sans px-2.5 py-1 rounded border bg-red-950/10 border-red-500/20 text-red-400 flex items-center gap-1.5 font-medium">
+                  <ShieldAlert className="w-3.5 h-3.5 text-red-500" /> Screen Capture Guard Active
+                </span>
               </div>
 
               {/* Submission CTA Block */}
@@ -876,15 +974,9 @@ export default function ClientPortal({
                   Thank you, <span className="text-gold-400">{gallery.clientName}</span>. Your chosen <span className="text-gold-400 font-bold">{gallery.selected.length}</span> images have been submitted directly to Aria Sterling for premium fine-art retouching and final preparation.
                 </p>
 
-                {gallery.allowDownload && gallery.downloadApproved ? (
-                  <div className="p-4 rounded border border-green-500/20 bg-green-950/10 mb-6 text-xs text-green-400 font-sans tracking-wide">
-                    🎉 Download approval has been pre-granted! You can now close this box to save and download your high-res unwatermarked originals.
-                  </div>
-                ) : (
-                  <div className="p-4 rounded border border-neutral-800 bg-neutral-900/40 mb-6 text-xs text-neutral-400 font-sans tracking-wide">
-                    We will notify you once retouching is finished. High-resolution downloads will become available as soon as post-processing completes.
-                  </div>
-                )}
+                <div className="p-4 rounded border border-neutral-800 bg-neutral-900/40 mb-6 text-xs text-neutral-400 font-sans tracking-wide">
+                  The photographer has been notified of your favorites and selections. The final premium retouched photos will be delivered as per your agreed package terms!
+                </div>
 
                 <div className="flex gap-3 justify-center">
                   <button
@@ -927,22 +1019,51 @@ export default function ClientPortal({
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Image Container with zoom capability */}
-                <div className="relative overflow-hidden rounded border border-neutral-900 bg-neutral-950">
+                <div className="relative overflow-hidden rounded border border-neutral-900 bg-neutral-950 max-h-[70vh] flex items-center justify-center">
                   <img
                     src={activeImage.url}
                     alt={activeImage.originalName}
+                    onDragStart={(e) => e.preventDefault()}
+                    onContextMenu={(e) => e.preventDefault()}
                     style={{ transform: `scale(${zoomLevel})` }}
-                    className="max-h-[70vh] object-contain mx-auto transition-transform duration-300"
+                    className={`max-h-[70vh] object-contain mx-auto transition-all duration-300 ${
+                      isWindowBlurred ? "filter blur-xl select-none" : ""
+                    }`}
                   />
+
+                  {/* Fully Transparent Interceptor Cover to block dragging or holding to save */}
+                  <div className="absolute inset-0 z-10 bg-transparent select-none" onContextMenu={(e) => e.preventDefault()} />
+
+                  {/* Repeating Diagonal Watermark Overlay */}
+                  <div className="absolute inset-0 z-20 pointer-events-none opacity-[0.25] select-none overflow-hidden flex items-center justify-center">
+                    <div className="w-[180%] h-[180%] rotate-[-30deg] flex flex-wrap gap-x-24 gap-y-16 items-center justify-center font-sans text-[10px] tracking-[0.25em] font-extrabold text-white select-none pointer-events-none uppercase">
+                      {Array.from({ length: 24 }).map((_, i) => (
+                        <span key={i} className="whitespace-nowrap select-none">
+                          ARIA STERLING Copyrighted Proof
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Focus Loss Warning Overlay */}
+                  {isWindowBlurred && (
+                    <div className="absolute inset-0 z-30 bg-black/85 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center transition-all duration-300">
+                      <ShieldAlert className="w-12 h-12 text-gold-500 mb-3 animate-pulse" />
+                      <p className="font-sans text-xs font-bold tracking-widest text-gold-400 uppercase">High-Security Snapshot Guard</p>
+                      <p className="font-sans text-[10px] text-neutral-300 mt-2 max-w-sm leading-relaxed font-light">
+                        To protect the artist's original fine-art works, screenshots and window focus switching are disabled. Refocus the page to unlock.
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Lightbox actions strip */}
-                <div className="flex gap-4 mt-6 items-center bg-neutral-950/90 border border-neutral-900 rounded-full px-6 py-3 backdrop-blur-sm">
+                <div className="flex gap-4 mt-6 items-center bg-neutral-950/90 border border-neutral-900 rounded-full px-6 py-3 backdrop-blur-sm z-30">
                   {/* Favorite action */}
                   <button
                     onClick={() => handleToggleFavorite(activeImage.id)}
                     className={`flex items-center gap-1 text-[10px] tracking-widest uppercase font-sans ${
-                      gallery.favorites.includes(activeImage.id) ? "text-red-500" : "text-neutral-400 hover:text-white"
+                      gallery.favorites.includes(activeImage.id) ? "text-red-500 font-bold" : "text-neutral-400 hover:text-white"
                     }`}
                   >
                     <Heart className="w-4 h-4 fill-current" />
@@ -956,7 +1077,7 @@ export default function ClientPortal({
                     disabled={gallery.selectionSubmitted}
                     onClick={() => handleToggleSelect(activeImage.id)}
                     className={`flex items-center gap-1.5 text-[10px] tracking-widest uppercase font-sans ${
-                      gallery.selected.includes(activeImage.id) ? "text-gold-400" : "text-neutral-400 hover:text-white"
+                      gallery.selected.includes(activeImage.id) ? "text-gold-400 font-bold" : "text-neutral-400 hover:text-white"
                     }`}
                   >
                     {gallery.selected.includes(activeImage.id) ? (
@@ -987,19 +1108,6 @@ export default function ClientPortal({
                   >
                     <ZoomIn className="w-4 h-4" />
                   </button>
-
-                  {gallery.allowDownload && gallery.downloadApproved && (
-                    <>
-                      <div className="h-4 w-px bg-neutral-800" />
-                      <button
-                        onClick={() => handleDownloadImage(activeImage)}
-                        className="flex items-center gap-1 text-[10px] tracking-widest uppercase font-sans text-neutral-400 hover:text-gold-400"
-                      >
-                        <Download className="w-4 h-4" />
-                        <span>Download</span>
-                      </button>
-                    </>
-                  )}
                 </div>
 
                 {/* Subtext info */}

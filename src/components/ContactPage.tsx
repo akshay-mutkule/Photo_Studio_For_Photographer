@@ -189,7 +189,7 @@ export default function ContactPage({ theme }: { theme: "dark" | "light" }) {
                         required
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        placeholder="brandon@example.com"
+                        placeholder="akshay@gmail.com"
                         className={`w-full text-sm font-sans p-3 border rounded outline-none transition-colors ${
                           isDark
                             ? "bg-black border-neutral-800 text-white focus:border-gold-500"
