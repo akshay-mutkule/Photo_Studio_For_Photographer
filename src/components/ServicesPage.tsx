@@ -10,98 +10,98 @@ export default function ServicesPage({ theme, onSelectPackage }: ServicesPagePro
 
   const packages = [
     {
-      id: "pkg-wedding",
-      name: "Wedding Photography",
-      price: "$3,499",
-      duration: "8-10 Hours of Photo Coverage",
-      description: "Full day of wedding photography. We capture everything from morning preparations to the dance party at night.",
+      id: "pkg-wedding-premium",
+      name: "Premium Multi-Day Wedding",
+      price: "₹2,99,999",
+      duration: "3-Day Full Festivities Coverage",
+      description: "Complete cinematic coverage of Haldi, Mehendi, Sangeet, Main Wedding, and Reception. Includes custom cinematic highlights.",
       deliverables: [
-        "Two photographers to cover your day",
-        "500+ high-quality edited images",
-        "Private online photo gallery",
-        "Beautiful leather photo album",
-        "Easy digital download of all photos",
-        "First sneak peek within 48 hours"
+        "Two senior photographers (Traditional + Candid)",
+        "One cinematic videographer",
+        "High-definition 3-minute video teaser & full film",
+        "800+ fully edited high-resolution photos",
+        "Luxury leather-bound wedding album trunk box",
+        "Private online proof selection gallery active for 2 years"
       ],
       popular: true
     },
     {
+      id: "pkg-wedding-traditional",
+      name: "Traditional Wedding Ceremony",
+      price: "₹1,49,999",
+      duration: "Single Day (Up to 12 Hours)",
+      description: "Full-day coverage of your traditional Indian wedding rituals, Var Mala, Mangalashtak, and evening Reception.",
+      deliverables: [
+        "One candid photographer and one traditional photographer",
+        "400+ high-quality edited images",
+        "Premium Karizma layout printed album",
+        "Private online gallery & easy client portal access",
+        "First sneak peek highlights in 48 hours",
+        "High-resolution digital downloads"
+      ],
+      popular: false
+    },
+    {
       id: "pkg-pre-wedding",
-      name: "Pre-Wedding Session",
-      price: "$1,299",
-      duration: "4 Hours of Photo Coverage",
-      description: "A beautiful pre-wedding photo shoot at up to two scenic outdoor locations of your choice.",
+      name: "Pre-Wedding Scenic Shoot",
+      price: "₹34,999",
+      duration: "Full Day (Up to 8 Hours)",
+      description: "A gorgeous pre-wedding shoot at up to two picturesque local outdoor/heritage locations of your choice with outfit styling.",
       deliverables: [
-        "Aria Sterling as your lead photographer",
-        "120+ high-quality edited images",
-        "Easy online photo gallery and selection",
-        "Help with outfits and styling ideas",
-        "Travel included up to 50 miles",
-        "Online photo gallery active for 1 year"
+        "Vinayak Sable as your lead photographer",
+        "100+ fully retouched high-resolution images",
+        "Creative cinematic pre-wedding invite video (1 min)",
+        "Drone photography included (location permitting)",
+        "Help with outfits, poses, and props styling",
+        "Online gallery with direct favorite marking"
       ],
       popular: false
     },
     {
-      id: "pkg-portraits",
-      name: "Portrait Sessions",
-      price: "$599",
+      id: "pkg-haldi-mehendi",
+      name: "Haldi & Mehendi Festivities",
+      price: "₹49,999",
+      duration: "Up to 6 Hours Coverage",
+      description: "Vibrant, colorful candid photoshoot capturing the emotions, dance, and music of your pre-wedding rituals.",
+      deliverables: [
+        "One pro candid photographer",
+        "200+ beautifully styled high-resolution images",
+        "Highlight video reel optimized for Instagram/YouTube",
+        "Same-day social media preview photos",
+        "Private digital delivery via client portal",
+        "Full printing and personal sharing rights"
+      ],
+      popular: false
+    },
+    {
+      id: "pkg-maternity-baby",
+      name: "Maternity & Dohale Jevan",
+      price: "₹19,999",
+      duration: "3 Hour Portrait Session",
+      description: "Timeless portraiture for expectant parents or traditional Dohale Jevan (baby shower) celebrations.",
+      deliverables: [
+        "Outdoor scenic or cozy indoor home setup",
+        "50+ professionally edited high-quality photos",
+        "Access to select creative props and drapes",
+        "Exclusive online proof selection suite",
+        "Family and companion portraits included",
+        "Fast 5-day digital delivery guarantee"
+      ],
+      popular: false
+    },
+    {
+      id: "pkg-festive-portrait",
+      name: "Festive & Family Portrait",
+      price: "₹11,999",
       duration: "2 Hour Session",
-      description: "Custom studio or outdoor portrait photos for professionals, couples, or personal lifestyle use.",
+      description: "Celebrate Diwali, Navratri, or special family milestones with beautifully lit traditional portraits.",
       deliverables: [
-        "One-on-one session with pro lighting",
-        "45+ fully edited high-quality photos",
-        "Simple online photo selection system",
-        "Up to 2 outfit changes",
-        "Full printing rights for personal use",
-        "Fast 5-day delivery guarantee"
-      ],
-      popular: false
-    },
-    {
-      id: "pkg-corporate",
-      name: "Corporate Events",
-      price: "$1,899",
-      duration: "6 Hours of Photo Coverage",
-      description: "Professional team headshots and coverage for business events, retreats, or company websites.",
-      deliverables: [
-        "Full coverage of your business event",
-        "Team headshots and natural candid photos",
-        "Fast next-day online preview gallery",
-        "Full rights for commercial use",
-        "Secure digital photo downloads",
-        "Clean, professional photo styling"
-      ],
-      popular: false
-    },
-    {
-      id: "pkg-birthday",
-      name: "Birthday & Social Events",
-      price: "$899",
-      duration: "4 Hours of Photo Coverage",
-      description: "Great photography for birthdays, family reunions, anniversaries, or private dinner parties.",
-      deliverables: [
-        "Natural candid and group photos",
-        "150+ high-quality edited photos",
-        "Easy online photo sharing with guests",
-        "Quick digital photo delivery",
-        "High-resolution file downloads",
-        "Professional low-light camera gear"
-      ],
-      popular: false
-    },
-    {
-      id: "pkg-product",
-      name: "Product Photography",
-      price: "$1,499",
-      duration: "Full Studio Shoot",
-      description: "Professional photo shoots for products, clothing brands, or online stores with a clean layout.",
-      deliverables: [
-        "Professional studio product lighting setup",
-        "30+ fully retouched custom product photos",
-        "High-resolution files for web and print",
-        "Multiple background colors available",
-        "Helpful image search tags included",
-        "Safe digital storage for future download"
+        "One-on-one session with premium portable lighting",
+        "30+ fully retouched digital images",
+        "Traditional clothing and styling coordination",
+        "High-quality digital copy for printing",
+        "Private password-protected digital folder",
+        "Special printed framed portrait (8x10)"
       ],
       popular: false
     }

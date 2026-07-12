@@ -166,8 +166,8 @@ function initDb() {
         clientEmail: "jane.doe@example.com",
         clientPhone: "+1 (555) 234-5678",
         date: "2026-07-25",
-        location: "Golden Gate Park, SF",
-        sessionType: "Portrait Sessions",
+        location: "Hillside Temple Heritage",
+        sessionType: "Festive & Family Portrait",
         notes: "Looking for an elegant outdoor sunset portrait session with warm tones.",
         status: "confirmed",
         createdAt: new Date().toISOString()
@@ -178,8 +178,8 @@ function initDb() {
         clientEmail: "robert.miller@example.com",
         clientPhone: "+1 (555) 345-6789",
         date: "2026-08-12",
-        location: "The Grand Pavilion",
-        sessionType: "Wedding Photography",
+        location: "The Royal Marquee Hall",
+        sessionType: "Traditional Wedding Ceremony",
         notes: "Full day coverage, from bridal prep to exit.",
         status: "pending",
         createdAt: new Date().toISOString()
@@ -229,10 +229,15 @@ initDb();
 function readDb() {
   try {
     const data = fs.readFileSync(DB_FILE, "utf-8");
-    return JSON.parse(data);
+    const parsed = JSON.parse(data);
+    if (!parsed.profiles) {
+      parsed.profiles = [];
+      fs.writeFileSync(DB_FILE, JSON.stringify(parsed, null, 2));
+    }
+    return parsed;
   } catch (error) {
     console.error("Error reading database", error);
-    return { portfolio: [], galleries: [], bookings: [], activities: [] };
+    return { portfolio: [], galleries: [], bookings: [], activities: [], profiles: [] };
   }
 }
 
@@ -315,6 +320,9 @@ app.post("/api/bookings", (req, res) => {
   }
 
   const db = readDb();
+  db.bookings = db.bookings || [];
+  db.profiles = db.profiles || [];
+
   const newBooking: Booking = {
     id: "bk-" + Math.random().toString(36).substr(2, 9),
     clientName,
@@ -329,8 +337,60 @@ app.post("/api/bookings", (req, res) => {
   };
 
   db.bookings.unshift(newBooking);
+
+  // Profile Generation & Notification creation
+  let profile = db.profiles.find(
+    (p: any) => p.clientEmail.toLowerCase() === clientEmail.toLowerCase()
+  );
+
+  let isNewProfile = false;
+  let passcode = "";
+
+  if (!profile) {
+    isNewProfile = true;
+    passcode = "VS-" + Math.floor(1000 + Math.random() * 9000);
+    profile = {
+      id: "prof-" + Math.random().toString(36).substr(2, 9),
+      clientName,
+      clientEmail,
+      clientPhone: clientPhone || "",
+      passcode,
+      createdAt: new Date().toISOString(),
+      notifications: [
+        {
+          id: "notif-" + Math.random().toString(36).substr(2, 9),
+          title: "Welcome to VS Photography! 📸",
+          message: `Your client profile has been created successfully. Use your passcode "${passcode}" with your email "${clientEmail}" to log into the Client Portal, where you can view booking statuses, read messages, and access your photo shoots.`,
+          read: false,
+          createdAt: new Date().toISOString()
+        },
+        {
+          id: "notif-" + Math.random().toString(36).substr(2, 9),
+          title: "Photoshoot Booking Received ⏳",
+          message: `Your booking request for a ${sessionType} photoshoot on ${date} at ${location || "Studio"} has been received and is currently pending photographer approval. We'll update you here as soon as it is approved!`,
+          read: false,
+          createdAt: new Date().toISOString()
+        }
+      ]
+    };
+    db.profiles.push(profile);
+  } else {
+    passcode = profile.passcode;
+    profile.notifications.unshift({
+      id: "notif-" + Math.random().toString(36).substr(2, 9),
+      title: "New Photoshoot Booking Requested ⏳",
+      message: `Your new booking request for a ${sessionType} session on ${date} has been received. Our team will review the details and update your booking status shortly.`,
+      read: false,
+      createdAt: new Date().toISOString()
+    });
+  }
+
   writeDb(db);
-  res.status(201).json(newBooking);
+  res.status(201).json({
+    booking: newBooking,
+    profilePasscode: passcode,
+    isNewProfile
+  });
 });
 
 // Admin update booking status
@@ -343,12 +403,46 @@ app.patch("/api/bookings/:id", (req, res) => {
   }
 
   const db = readDb();
+  db.bookings = db.bookings || [];
+  db.profiles = db.profiles || [];
+
   const index = db.bookings.findIndex((b: Booking) => b.id === id);
   if (index === -1) {
     return res.status(404).json({ error: "Booking not found" });
   }
 
+  const oldStatus = db.bookings[index].status;
   db.bookings[index].status = status;
+
+  // Add notification to client profile if status changed
+  if (oldStatus !== status) {
+    const clientEmail = db.bookings[index].clientEmail;
+    const profile = db.profiles.find(
+      (p: any) => p.clientEmail.toLowerCase() === clientEmail.toLowerCase()
+    );
+
+    if (profile) {
+      let title = "Booking Status Updated 📅";
+      let message = `Your photoshoot booking request status has been updated to: ${status}.`;
+
+      if (status === "confirmed") {
+        title = "Photoshoot Approved! 🎉";
+        message = `Good news! Your photoshoot booking for a ${db.bookings[index].sessionType} session on ${db.bookings[index].date} has been approved by VS Photography. We are looking forward to capturing your beautiful moments!`;
+      } else if (status === "declined") {
+        title = "Photoshoot Update 📅";
+        message = `Your photoshoot booking request for a ${db.bookings[index].sessionType} session on ${db.bookings[index].date} could not be confirmed at this time. Please get in touch with us to reschedule or select a different date.`;
+      }
+
+      profile.notifications.unshift({
+        id: "notif-" + Math.random().toString(36).substr(2, 9),
+        title,
+        message,
+        read: false,
+        createdAt: new Date().toISOString()
+      });
+    }
+  }
+
   writeDb(db);
   res.json(db.bookings[index]);
 });
@@ -471,6 +565,70 @@ app.post("/api/client/gallery-action", (req, res) => {
   res.json(gallery);
 });
 
+// Client Profile Authentication & Fetch Data
+app.post("/api/client/profile-auth", (req, res) => {
+  const { email, passcode } = req.body;
+  if (!email || !passcode) {
+    return res.status(400).json({ error: "Both Client Email and Profile Passcode are required." });
+  }
+
+  const db = readDb();
+  db.profiles = db.profiles || [];
+
+  const profile = db.profiles.find(
+    (p: any) => p.clientEmail.toLowerCase() === email.toLowerCase().trim() && p.passcode.toLowerCase() === passcode.toLowerCase().trim()
+  );
+
+  if (!profile) {
+    return res.status(401).json({ error: "Invalid Email or Profile Passcode. Please check and try again." });
+  }
+
+  // Find all bookings and galleries linked to this client's email
+  const bookings = (db.bookings || []).filter(
+    (b: any) => b.clientEmail.toLowerCase() === email.toLowerCase().trim()
+  );
+
+  const galleries = (db.galleries || []).filter(
+    (g: any) => g.clientEmail.toLowerCase() === email.toLowerCase().trim()
+  );
+
+  res.json({
+    profile,
+    bookings,
+    galleries
+  });
+});
+
+// Mark Client Notification as Read
+app.post("/api/client/notifications/read", (req, res) => {
+  const { email, passcode, notificationId } = req.body;
+  if (!email || !passcode || !notificationId) {
+    return res.status(400).json({ error: "Auth info and Notification ID are required." });
+  }
+
+  const db = readDb();
+  db.profiles = db.profiles || [];
+
+  const profileIndex = db.profiles.findIndex(
+    (p: any) => p.clientEmail.toLowerCase() === email.toLowerCase().trim() && p.passcode.toLowerCase() === passcode.toLowerCase().trim()
+  );
+
+  if (profileIndex === -1) {
+    return res.status(401).json({ error: "Unauthorized access to profile notifications." });
+  }
+
+  const notifIndex = db.profiles[profileIndex].notifications.findIndex(
+    (n: any) => n.id === notificationId
+  );
+
+  if (notifIndex !== -1) {
+    db.profiles[profileIndex].notifications[notifIndex].read = true;
+  }
+
+  writeDb(db);
+  res.json({ success: true, profile: db.profiles[profileIndex] });
+});
+
 // 4. Admin Gallery Management Routes
 app.get("/api/admin/galleries", (req, res) => {
   const db = readDb();
@@ -484,12 +642,16 @@ app.post("/api/admin/galleries", (req, res) => {
   }
 
   const db = readDb();
+  db.profiles = db.profiles || [];
+  
+  const actualPasscode = passcode || Math.random().toString(36).substr(2, 6);
+
   const newGallery: Gallery = {
     id: "gal-" + Math.random().toString(36).substr(2, 9),
     title,
     description: description || "",
     date: date || new Date().toISOString().split("T")[0],
-    passcode: passcode || Math.random().toString(36).substr(2, 6),
+    passcode: actualPasscode,
     clientName,
     clientEmail,
     coverImage: coverImage || "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
@@ -505,6 +667,34 @@ app.post("/api/admin/galleries", (req, res) => {
   };
 
   db.galleries.unshift(newGallery);
+
+  // Link or auto-create client profile & send notification
+  let profile = db.profiles.find(
+    (p: any) => p.clientEmail.toLowerCase() === clientEmail.toLowerCase()
+  );
+
+  if (!profile) {
+    const generatedPasscode = "VS-" + Math.floor(1000 + Math.random() * 9000);
+    profile = {
+      id: "prof-" + Math.random().toString(36).substr(2, 9),
+      clientName,
+      clientEmail,
+      clientPhone: "",
+      passcode: generatedPasscode,
+      createdAt: new Date().toISOString(),
+      notifications: []
+    };
+    db.profiles.push(profile);
+  }
+
+  profile.notifications.unshift({
+    id: "notif-" + Math.random().toString(36).substr(2, 9),
+    title: "New Photo Shoot Published! 📸",
+    message: `Your proofing gallery "${title}" is ready for selection! Log in to view the photos and mark your favorites. Use passcode "${actualPasscode}" to open it directly.`,
+    read: false,
+    createdAt: new Date().toISOString()
+  });
+
   writeDb(db);
   res.status(201).json(newGallery);
 });
@@ -738,10 +928,10 @@ app.post("/api/gemini/shoot-consultant", async (req, res) => {
     return res.json({
       text,
       draftDetails: {
-        location: "Baker Beach Sunset, SF",
-        sessionType: "Portrait Sessions",
-        notes: "Aria's Styling Draft:\n- Theme: Warm sunset style\n- Colors: Warm neutrals, cream, and clay\n- Key Shots: Walking along the beach, close-up laughing, beautiful silhouette against the waves\n- Outfits: Simple linen or soft knitwear",
-        colors: ["#F9F6F0", "#E6D7C3", "#C58B6E", "#8A543A", "#2E1C15"],
+        location: "Scenic Lake Overlook",
+        sessionType: "Pre-Wedding Scenic Shoot",
+        notes: "Aria's Styling Draft:\n- Theme: Traditional pre-wedding elegance\n- Colors: Vibrant gold, warm marigold, and silk ivory\n- Key Shots: Walking hand-in-hand by the lake, traditional dupatta pose, candid laughter close-up\n- Outfits: Vibrant ethnic wear (Lehenga/Sherwani)",
+        colors: ["#F9F6F0", "#FFD700", "#FF8C00", "#8B0000", "#2E1C15"],
         shotList: [
           "Walking along the beach water",
           "Close-up laugh with wind-swept hair",
@@ -765,12 +955,12 @@ app.post("/api/gemini/shoot-consultant", async (req, res) => {
 Your job is to help clients plan their photo shoot. Help them choose locations, colors, and outfit ideas.
 
 VS Photography's photo packages (sessionType) are:
-- "Wedding Photography"
-- "Pre-Wedding Session"
-- "Birthday & Social Events"
-- "Corporate Events"
-- "Portrait Sessions"
-- "Product Photography"
+- "Premium Multi-Day Wedding"
+- "Traditional Wedding Ceremony"
+- "Pre-Wedding Scenic Shoot"
+- "Haldi & Mehendi Festivities"
+- "Maternity & Dohale Jevan"
+- "Festive & Family Portrait"
 
 Write in very simple, plain, friendly English. Do NOT use complex artistic jargon, overly grand adjectives, or fancy marketing words. Keep your response clear, helpful, and easy to read.
 

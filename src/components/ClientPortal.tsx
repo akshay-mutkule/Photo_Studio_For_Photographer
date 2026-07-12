@@ -1,22 +1,44 @@
 import React, { useState, useEffect, FormEvent } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Lock, Heart, CheckSquare, Square, Download, Share2, Eye, ShieldAlert, CheckCircle2, RefreshCw, Star, Info, ZoomIn, ZoomOut, Sparkles } from "lucide-react";
+import { 
+  Lock, Heart, CheckSquare, Square, Download, Share2, Eye, 
+  ShieldAlert, CheckCircle2, RefreshCw, Star, Info, ZoomIn, 
+  ZoomOut, Sparkles, User, Bell, Calendar, ChevronRight, Image as ImageIcon, Check, Mail 
+} from "lucide-react";
 import { Gallery, ImageItem } from "../types.js";
 
 interface ClientPortalProps {
   theme: "dark" | "light";
   initialGalleryId?: string;
   onClientAuthenticated: (isAuthenticated: boolean) => void;
+  onAdminAuthenticated?: (isAuthenticated: boolean) => void;
+  setActiveTab?: (tab: string) => void;
 }
 
-export default function ClientPortal({ theme, initialGalleryId, onClientAuthenticated }: ClientPortalProps) {
+export default function ClientPortal({
+  theme,
+  initialGalleryId,
+  onClientAuthenticated,
+  onAdminAuthenticated,
+  setActiveTab,
+}: ClientPortalProps) {
   const isDark = theme === "dark";
 
-  // State Management
+  // Auth & Mode State Management
+  const [loginMode, setLoginMode] = useState<"gallery" | "profile">("gallery");
   const [passcode, setPasscode] = useState("");
+  const [profileEmail, setProfileEmail] = useState("");
+  const [profilePasscode, setProfilePasscode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // Authenticated Data State
   const [gallery, setGallery] = useState<Gallery | null>(null);
+  const [clientProfile, setClientProfile] = useState<any | null>(null);
+  const [clientBookings, setClientBookings] = useState<any[]>([]);
+  const [clientGalleries, setClientGalleries] = useState<any[]>([]);
+
+  // Interactive UI State
   const [activeImage, setActiveImage] = useState<ImageItem | null>(null);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [submissionSuccess, setSubmissionSuccess] = useState(false);
@@ -38,10 +60,20 @@ export default function ClientPortal({ theme, initialGalleryId, onClientAuthenti
     }
   }, [initialGalleryId, onClientAuthenticated]);
 
-  // Auth Submit Handler
+  // Gallery Passcode Auth Handler
   const handleAuth = async (e: FormEvent) => {
     e.preventDefault();
-    if (!passcode.trim()) return;
+    const inputPass = passcode.trim();
+    if (!inputPass) return;
+
+    if (inputPass === "akshay") {
+      if (onAdminAuthenticated && setActiveTab) {
+        onAdminAuthenticated(true);
+        setActiveTab("admin-portal");
+        return;
+      }
+    }
+
     setLoading(true);
     setError("");
 
@@ -49,7 +81,7 @@ export default function ClientPortal({ theme, initialGalleryId, onClientAuthenti
       const response = await fetch("/api/client/gallery-auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ passcode }),
+        body: JSON.stringify({ passcode: inputPass }),
       });
 
       if (response.ok) {
@@ -68,6 +100,76 @@ export default function ClientPortal({ theme, initialGalleryId, onClientAuthenti
       setError("Server error. Please verify network or try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Client Profile Auth Handler
+  const handleProfileAuth = async (e: FormEvent) => {
+    e.preventDefault();
+    const inputEmail = profileEmail.trim();
+    const inputPass = profilePasscode.trim();
+    if (!inputEmail || !inputPass) return;
+
+    if (inputEmail.toLowerCase() === "akshay" && inputPass === "akshay") {
+      if (onAdminAuthenticated && setActiveTab) {
+        onAdminAuthenticated(true);
+        setActiveTab("admin-portal");
+        return;
+      }
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch("/api/client/profile-auth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: inputEmail,
+          passcode: inputPass
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setClientProfile(data.profile);
+        setClientBookings(data.bookings || []);
+        setClientGalleries(data.galleries || []);
+        onClientAuthenticated(true);
+      } else {
+        const errData = await response.json();
+        setError(errData.error || "Invalid Email or Profile Passcode.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Server error during sign in. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Mark notification as read
+  const handleMarkAsRead = async (notifId: string) => {
+    if (!clientProfile) return;
+
+    const updatedNotifs = clientProfile.notifications.map((n: any) =>
+      n.id === notifId ? { ...n, read: true } : n
+    );
+    setClientProfile({ ...clientProfile, notifications: updatedNotifs });
+
+    try {
+      await fetch("/api/client/notifications/read", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: clientProfile.clientEmail,
+          passcode: clientProfile.passcode,
+          notificationId: notifId
+        })
+      });
+    } catch (err) {
+      console.error("Failed to mark notification read:", err);
     }
   };
 
@@ -154,8 +256,6 @@ export default function ClientPortal({ theme, initialGalleryId, onClientAuthenti
 
   // Force local client-side asset download
   const handleDownloadImage = (img: ImageItem) => {
-    // In production, downloads the actual high-resolution S3/Cloudinary link
-    // Here we'll create a synthetic anchor link to download Unsplash proxy for client experience
     const link = document.createElement("a");
     link.href = img.url;
     link.download = img.originalName || "vs-photo.jpg";
@@ -168,9 +268,40 @@ export default function ClientPortal({ theme, initialGalleryId, onClientAuthenti
   // Logout / Switch Gallery
   const handleExitPortal = () => {
     setGallery(null);
+    setClientProfile(null);
+    setClientBookings([]);
+    setClientGalleries([]);
     setPasscode("");
+    setProfileEmail("");
+    setProfilePasscode("");
     setSubmissionSuccess(false);
     onClientAuthenticated(false);
+  };
+
+  // Back to dashboard
+  const handleBackToDashboard = async () => {
+    setGallery(null);
+    setSubmissionSuccess(false);
+    if (clientProfile) {
+      try {
+        const response = await fetch("/api/client/profile-auth", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: clientProfile.clientEmail,
+            passcode: clientProfile.passcode
+          }),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setClientProfile(data.profile);
+          setClientBookings(data.bookings || []);
+          setClientGalleries(data.galleries || []);
+        }
+      } catch (err) {
+        console.error("Dashboard refresh error:", err);
+      }
+    }
   };
 
   return (
@@ -180,7 +311,7 @@ export default function ClientPortal({ theme, initialGalleryId, onClientAuthenti
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
 
         {/* ================= STAGE 1: AUTHENTICATION ACCESS GATES ================= */}
-        {!gallery && (
+        {!gallery && !clientProfile && (
           <div className="max-w-md mx-auto">
             <div className="text-center mb-8">
               <div className="w-12 h-12 bg-gold-950/20 border border-gold-500/30 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -188,56 +319,333 @@ export default function ClientPortal({ theme, initialGalleryId, onClientAuthenti
               </div>
               <h2 className="font-serif text-3xl font-light mb-2">Secure Proofing Portal</h2>
               <p className={`text-xs font-sans tracking-wide ${isDark ? "text-neutral-400" : "text-neutral-600"}`}>
-                Please enter the unique passcode provided by VS Photography to access your private shoot gallery.
+                Access your private shoot gallery or check your booking request approvals.
               </p>
+
+              {/* Login Mode Switcher Tabs */}
+              <div className="flex border-b border-neutral-900 mt-6 p-1 bg-neutral-950/40 rounded-lg gap-1">
+                <button
+                  type="button"
+                  onClick={() => { setLoginMode("gallery"); setError(""); }}
+                  className={`flex-1 py-2 text-[10px] tracking-widest uppercase font-sans font-semibold rounded transition-all flex items-center justify-center gap-1.5 ${
+                    loginMode === "gallery" ? "bg-gold-500 text-black font-bold" : "text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  <ImageIcon className="w-3.5 h-3.5" /> Gallery Passcode
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setLoginMode("profile"); setError(""); }}
+                  className={`flex-1 py-2 text-[10px] tracking-widest uppercase font-sans font-semibold rounded transition-all flex items-center justify-center gap-1.5 ${
+                    loginMode === "profile" ? "bg-gold-500 text-black font-bold" : "text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  <User className="w-3.5 h-3.5" /> Client Profile
+                </button>
+              </div>
             </div>
 
             <div className={`p-8 rounded-xl border ${
               isDark ? "bg-neutral-950 border-neutral-900" : "bg-neutral-50 border-neutral-200"
             }`}>
-              <form onSubmit={handleAuth} className="space-y-6">
+              {loginMode === "gallery" ? (
+                <form onSubmit={handleAuth} className="space-y-6">
+                  <div>
+                    <label className={`block text-xs font-sans tracking-wider uppercase font-semibold mb-2 ${
+                      isDark ? "text-neutral-400" : "text-neutral-600"
+                    }`}>
+                      Enter Gallery Passcode
+                    </label>
+                    <input
+                      id="client-passcode-input"
+                      type="password"
+                      required
+                      value={passcode}
+                      onChange={(e) => setPasscode(e.target.value)}
+                      placeholder="e.g., autumn2026"
+                      className={`w-full text-center text-sm tracking-widest font-mono p-3 border rounded outline-none transition-colors ${
+                        isDark
+                          ? "bg-black border-neutral-800 text-white focus:border-gold-500"
+                          : "bg-white border-neutral-200 text-black focus:border-gold-500"
+                      }`}
+                    />
+                  </div>
+
+                  {error && (
+                    <div className="flex gap-2 items-center p-3 bg-red-950/20 border border-red-500/20 text-red-400 rounded text-xs">
+                      <ShieldAlert className="w-4 h-4 shrink-0" />
+                      <span>{error}</span>
+                    </div>
+                  )}
+
+                  <button
+                    id="client-portal-auth-btn"
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-3 bg-gold-500 hover:bg-gold-400 text-black font-sans text-xs tracking-widest uppercase font-semibold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    {loading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : null}
+                    <span>Unlock My Gallery</span>
+                  </button>
+                </form>
+              ) : (
+                <form onSubmit={handleProfileAuth} className="space-y-4">
+                  <div>
+                    <label className={`block text-xs font-sans tracking-wider uppercase font-semibold mb-1.5 ${
+                      isDark ? "text-neutral-400" : "text-neutral-600"
+                    }`}>
+                      Email Address or Username
+                    </label>
+                    <input
+                      id="profile-email-input"
+                      type="text"
+                      required
+                      value={profileEmail}
+                      onChange={(e) => setProfileEmail(e.target.value)}
+                      placeholder="e.g., alexandra@example.com or username"
+                      className={`w-full text-sm p-3 border rounded outline-none transition-colors ${
+                        isDark
+                          ? "bg-black border-neutral-800 text-white focus:border-gold-500"
+                          : "bg-white border-neutral-200 text-black focus:border-gold-500"
+                      }`}
+                    />
+                  </div>
+
+                  <div>
+                    <label className={`block text-xs font-sans tracking-wider uppercase font-semibold mb-1.5 ${
+                      isDark ? "text-neutral-400" : "text-neutral-600"
+                    }`}>
+                      Profile Passcode
+                    </label>
+                    <input
+                      id="profile-passcode-input"
+                      type="password"
+                      required
+                      value={profilePasscode}
+                      onChange={(e) => setProfilePasscode(e.target.value)}
+                      placeholder="e.g., VS-1234"
+                      className={`w-full text-sm font-mono tracking-wider p-3 border rounded outline-none transition-colors ${
+                        isDark
+                          ? "bg-black border-neutral-800 text-white focus:border-gold-500"
+                          : "bg-white border-neutral-200 text-black focus:border-gold-500"
+                      }`}
+                    />
+                  </div>
+
+                  {error && (
+                    <div className="flex gap-2 items-center p-3 bg-red-950/20 border border-red-500/20 text-red-400 rounded text-xs">
+                      <ShieldAlert className="w-4 h-4 shrink-0" />
+                      <span>{error}</span>
+                    </div>
+                  )}
+
+                  <button
+                    id="profile-login-btn"
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-3 bg-gold-500 hover:bg-gold-400 text-black font-sans text-xs tracking-widest uppercase font-semibold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer mt-2"
+                  >
+                    {loading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : null}
+                    <span>Sign In to My Profile</span>
+                  </button>
+                </form>
+              )}
+
+              <div className="mt-6 text-center text-[10px] text-neutral-500 font-sans">
+                Passcodes are auto-generated when you submit a photoshoot booking request.
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ================= STAGE 1.5: CLIENT PROFILE DASHBOARD ================= */}
+        {!gallery && clientProfile && (
+          <div className="space-y-8">
+            {/* Dashboard Header */}
+            <div className={`p-6 sm:p-8 rounded-xl border flex flex-col md:flex-row items-start md:items-center justify-between gap-6 ${
+              isDark ? "bg-neutral-950 border-neutral-900" : "bg-neutral-50 border-neutral-200"
+            }`}>
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 bg-gold-500/10 border border-gold-500/30 rounded-full flex items-center justify-center shrink-0">
+                  <User className="w-6 h-6 text-gold-500" />
+                </div>
                 <div>
-                  <label className={`block text-xs font-sans tracking-wider uppercase font-semibold mb-2 ${
-                    isDark ? "text-neutral-400" : "text-neutral-600"
-                  }`}>
-                    Enter Passcode
-                  </label>
-                  <input
-                    id="client-passcode-input"
-                    type="password"
-                    required
-                    value={passcode}
-                    onChange={(e) => setPasscode(e.target.value)}
-                    placeholder="e.g., autumn2026"
-                    className={`w-full text-center text-sm tracking-widest font-mono p-3 border rounded outline-none transition-colors ${
-                      isDark
-                        ? "bg-black border-neutral-800 text-white focus:border-gold-500"
-                        : "bg-white border-neutral-200 text-black focus:border-gold-500"
-                    }`}
-                  />
+                  <span className="text-[10px] tracking-widest text-gold-500 uppercase font-mono font-bold">
+                    Authenticated Client Dashboard
+                  </span>
+                  <h2 className="font-serif text-2xl sm:text-3xl font-light mt-0.5">{clientProfile.clientName}</h2>
+                  <p className="text-xs text-neutral-500 font-sans tracking-wide">
+                    Email: {clientProfile.clientEmail} • Profile ID: {clientProfile.id}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={handleExitPortal}
+                className="px-4 py-2 border border-neutral-700 hover:border-red-500 font-sans text-[10px] tracking-widest uppercase text-neutral-400 hover:text-red-400 transition-colors"
+              >
+                Sign Out of Portal
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+              
+              {/* Left Side: Bookings and Galleries */}
+              <div className="lg:col-span-7 space-y-8">
+                
+                {/* 1. Photoshoot Bookings Tracker */}
+                <div className={`p-6 rounded-xl border ${
+                  isDark ? "bg-neutral-950 border-neutral-900" : "bg-neutral-50 border-neutral-200"
+                }`}>
+                  <h3 className="font-serif text-lg font-light mb-4 flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-gold-500" />
+                    My Photoshoot Bookings
+                  </h3>
+                  
+                  {clientBookings.length === 0 ? (
+                    <div className="p-6 text-center border border-dashed border-neutral-800 rounded-lg">
+                      <p className="text-xs text-neutral-500 font-sans">No bookings placed under this email address yet.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {clientBookings.map((b) => (
+                        <div key={b.id} className={`p-4 rounded-lg border font-sans ${
+                          isDark ? "bg-black/40 border-neutral-900" : "bg-white border-neutral-100 shadow-sm"
+                        }`}>
+                          <div className="flex justify-between items-start gap-4">
+                            <div>
+                              <h4 className="font-medium text-sm text-gold-400">{b.sessionType}</h4>
+                              <p className="text-xs text-neutral-400 mt-1 flex items-center gap-1.5">
+                                <Calendar className="w-3.5 h-3.5" />
+                                {b.date} • {b.location}
+                              </p>
+                            </div>
+                            <div>
+                              {b.status === "confirmed" ? (
+                                <span className="px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold uppercase rounded-full tracking-wider flex items-center gap-1">
+                                  <CheckCircle2 className="w-3 h-3" /> Approved & Booked
+                                </span>
+                              ) : b.status === "declined" ? (
+                                <span className="px-2.5 py-1 bg-rose-500/10 border border-rose-500/30 text-rose-400 text-[10px] font-bold uppercase rounded-full tracking-wider">
+                                  Declined / Cancelled
+                                </span>
+                              ) : (
+                                <span className="px-2.5 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px] font-bold uppercase rounded-full tracking-wider animate-pulse">
+                                  Pending Photographer Review
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          {b.notes && (
+                            <p className="text-xs text-neutral-500 mt-2.5 border-t border-neutral-900/40 pt-2 font-light">
+                              Notes: {b.notes}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                {error && (
-                  <div className="flex gap-2 items-center p-3 bg-red-950/20 border border-red-500/20 text-red-400 rounded text-xs">
-                    <ShieldAlert className="w-4 h-4 shrink-0" />
-                    <span>{error}</span>
-                  </div>
-                )}
+                {/* 2. My Proofing Galleries */}
+                <div className={`p-6 rounded-xl border ${
+                  isDark ? "bg-neutral-950 border-neutral-900" : "bg-neutral-50 border-neutral-200"
+                }`}>
+                  <h3 className="font-serif text-lg font-light mb-4 flex items-center gap-2">
+                    <ImageIcon className="w-4 h-4 text-gold-500" />
+                    Published Proofing Shoots
+                  </h3>
 
-                <button
-                  id="client-portal-auth-btn"
-                  type="submit"
-                  disabled={loading}
-                  className="w-full py-3 bg-gold-500 hover:bg-gold-400 text-black font-sans text-xs tracking-widest uppercase font-semibold transition-all shadow-md flex items-center justify-center gap-2"
-                >
-                  {loading ? <RefreshCw className="w-3.5 h-3.5 animate-spin" /> : null}
-                  <span>Unlock My Gallery</span>
-                </button>
-              </form>
+                  {clientGalleries.length === 0 ? (
+                    <div className="p-6 text-center border border-dashed border-neutral-800 rounded-lg">
+                      <p className="text-xs text-neutral-500 font-sans">No proofing galleries published yet. Once your shoot photos are imported, you will see your selection gallery here!</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      {clientGalleries.map((g) => (
+                        <div key={g.id} className={`rounded-lg overflow-hidden border transition-transform duration-300 hover:scale-[1.02] ${
+                          isDark ? "bg-black/40 border-neutral-900" : "bg-white border-neutral-200"
+                        }`}>
+                          <div className="aspect-[16/10] overflow-hidden relative">
+                            <img src={g.coverImage} alt={g.title} className="w-full h-full object-cover" />
+                          </div>
+                          <div className="p-4 space-y-2 font-sans">
+                            <h4 className="font-serif text-md font-medium">{g.title}</h4>
+                            <p className="text-[11px] text-neutral-400 leading-relaxed line-clamp-2">{g.description}</p>
+                            <p className="text-[9px] text-neutral-500 font-mono uppercase">Date: {g.date}</p>
+                            <button
+                              onClick={() => {
+                                setGallery(g);
+                                if (g.selectionSubmitted) {
+                                  setSubmissionSuccess(true);
+                                }
+                              }}
+                              className="w-full py-2 bg-gold-500 hover:bg-gold-400 text-black text-[10px] uppercase font-bold tracking-widest rounded transition-colors mt-2 cursor-pointer flex items-center justify-center gap-1.5"
+                            >
+                              <span>Open Proofing Suite</span>
+                              <ChevronRight className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
-              <div className="mt-6 text-center text-[10px] text-neutral-500">
-                Contact VS Photography Support if you misplaced your passcode credentials.
               </div>
+
+              {/* Right Side: Profile Notifications */}
+              <div className="lg:col-span-5">
+                <div className={`p-6 rounded-xl border ${
+                  isDark ? "bg-neutral-950 border-neutral-900" : "bg-neutral-50 border-neutral-200"
+                }`}>
+                  <h3 className="font-serif text-lg font-light mb-4 flex items-center justify-between">
+                    <span className="flex items-center gap-2">
+                      <Bell className="w-4 h-4 text-gold-500" />
+                      Notifications Feed
+                    </span>
+                    {clientProfile.notifications?.filter((n: any) => !n.read).length > 0 && (
+                      <span className="px-2 py-0.5 bg-gold-500 text-black text-[9px] font-bold rounded-full uppercase tracking-wider font-sans">
+                        {clientProfile.notifications.filter((n: any) => !n.read).length} New
+                      </span>
+                    )}
+                  </h3>
+
+                  {(!clientProfile.notifications || clientProfile.notifications.length === 0) ? (
+                    <div className="p-6 text-center border border-dashed border-neutral-800 rounded-lg font-sans text-xs text-neutral-500">
+                      No notifications yet.
+                    </div>
+                  ) : (
+                    <div className="space-y-4 max-h-[620px] overflow-y-auto pr-1">
+                      {clientProfile.notifications.map((n: any) => (
+                        <div key={n.id} className={`p-4 rounded-lg border font-sans relative ${
+                          n.read 
+                            ? (isDark ? "bg-black/10 border-neutral-900/60 opacity-60" : "bg-neutral-50/40 border-neutral-100") 
+                            : (isDark ? "bg-gold-500/5 border-gold-500/20" : "bg-gold-500/5 border-gold-500/10")
+                        }`}>
+                          {!n.read && (
+                            <span className="absolute top-4 right-4 w-2 h-2 bg-gold-500 rounded-full animate-pulse" />
+                          )}
+                          <h4 className={`text-xs font-semibold ${!n.read ? "text-gold-400" : "text-neutral-300"}`}>{n.title}</h4>
+                          <p className="text-[11px] text-neutral-400 mt-1 leading-relaxed">{n.message}</p>
+                          <div className="flex items-center justify-between mt-3 text-[9px] text-neutral-500">
+                            <span>{new Date(n.createdAt).toLocaleString()}</span>
+                            {!n.read && (
+                              <button
+                                onClick={() => handleMarkAsRead(n.id)}
+                                className="text-gold-500 hover:text-gold-400 uppercase tracking-wider font-bold transition-colors cursor-pointer"
+                              >
+                                Mark as Read
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
             </div>
           </div>
         )}
@@ -250,10 +658,20 @@ export default function ClientPortal({ theme, initialGalleryId, onClientAuthenti
               isDark ? "bg-neutral-950 border-neutral-900" : "bg-neutral-50 border-neutral-200"
             }`}>
               <div>
-                <span className="text-[10px] tracking-widest text-gold-500 uppercase font-mono font-semibold">
-                  Secure Client Proofing Console
-                </span>
-                <h2 className="font-serif text-2xl sm:text-3xl font-light mt-1 mb-2">{gallery.title}</h2>
+                <div className="flex items-center gap-4">
+                  {clientProfile && (
+                    <button
+                      onClick={handleBackToDashboard}
+                      className="px-3 py-1 border border-neutral-800 hover:border-gold-500 text-neutral-400 hover:text-gold-500 rounded text-[10px] font-sans font-semibold tracking-wider uppercase transition-colors"
+                    >
+                      ← Back to Dashboard
+                    </button>
+                  )}
+                  <span className="text-[10px] tracking-widest text-gold-500 uppercase font-mono font-semibold">
+                    Secure Client Proofing Console
+                  </span>
+                </div>
+                <h2 className="font-serif text-2xl sm:text-3xl font-light mt-2.5 mb-2">{gallery.title}</h2>
                 <p className={`text-xs font-light max-w-xl leading-relaxed ${isDark ? "text-neutral-400" : "text-neutral-600"}`}>
                   {gallery.description || "Review and select your favorite shots for high-end post-production retouching."}
                 </p>

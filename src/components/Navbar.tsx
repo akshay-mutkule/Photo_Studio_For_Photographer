@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Camera, Menu, X, Sun, Moon, Lock, UserCheck } from "lucide-react";
+import { Camera, Menu, X, Sun, Moon, Lock, UserCheck, ChevronDown } from "lucide-react";
 
 interface NavbarProps {
   activeTab: string;
@@ -24,6 +24,7 @@ export default function Navbar({
   onLogoutAdmin,
 }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const navItems = [
     { id: "home", label: "Home" },
@@ -107,51 +108,41 @@ export default function Navbar({
               )}
             </button>
 
-            {/* Client portal quick access */}
-            {isClientAuthenticated ? (
-              <button
-                id="client-portal-logout-btn"
-                onClick={() => handleNavClick("client-portal")}
-                className="flex items-center gap-1.5 px-3 py-1.5 border border-gold-500/50 hover:bg-gold-500 hover:text-black rounded text-[10px] tracking-widest uppercase font-sans text-gold-500 transition-all"
-              >
-                <UserCheck className="w-3.5 h-3.5" />
-                Client Portal
-              </button>
+            {/* Unified Authentication & Portal Access */}
+            {isClientAuthenticated || isAdminAuthenticated ? (
+              <div className="flex items-center space-x-3">
+                {isClientAuthenticated && (
+                  <button
+                    id="client-portal-active-btn"
+                    onClick={() => handleNavClick("client-portal")}
+                    className="flex items-center gap-1.5 px-3.5 py-1.5 border border-gold-500/50 hover:bg-gold-500 hover:text-black rounded text-[10px] tracking-widest uppercase font-sans text-gold-500 transition-all cursor-pointer font-bold"
+                  >
+                    <UserCheck className="w-3.5 h-3.5" />
+                    Client Portal
+                  </button>
+                )}
+                {isAdminAuthenticated && (
+                  <button
+                    id="admin-portal-active-btn"
+                    onClick={() => handleNavClick("admin-portal")}
+                    className="px-3.5 py-1.5 bg-gold-500 hover:bg-gold-400 text-black rounded text-[10px] tracking-widest uppercase font-sans font-bold transition-all cursor-pointer"
+                  >
+                    Dashboard
+                  </button>
+                )}
+              </div>
             ) : (
               <button
-                id="client-portal-login-btn"
+                id="nav-portal-login-btn"
                 onClick={() => handleNavClick("client-portal")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-[10px] tracking-widest uppercase font-sans transition-all ${
+                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded text-[10px] tracking-widest uppercase font-sans font-semibold border transition-all cursor-pointer ${
                   theme === "dark"
-                    ? "bg-neutral-900 text-neutral-300 hover:text-white border border-neutral-800"
-                    : "bg-neutral-100 text-neutral-700 hover:text-black border border-neutral-200"
+                    ? "bg-neutral-900 text-neutral-200 hover:text-white border-neutral-800"
+                    : "bg-neutral-100 text-neutral-700 hover:text-black border-neutral-200"
                 }`}
               >
-                <Lock className="w-3.5 h-3.5" />
-                Portal
-              </button>
-            )}
-
-            {/* Photographer Admin portal access */}
-            {isAdminAuthenticated ? (
-              <button
-                id="admin-portal-active-btn"
-                onClick={() => handleNavClick("admin-portal")}
-                className="px-3 py-1.5 bg-gold-500 hover:bg-gold-600 text-black rounded text-[10px] tracking-widest uppercase font-semibold transition-all"
-              >
-                Dashboard
-              </button>
-            ) : (
-              <button
-                id="admin-portal-login-btn"
-                onClick={() => handleNavClick("admin-portal")}
-                className={`px-3 py-1.5 rounded text-[10px] tracking-widest uppercase font-sans transition-all ${
-                  theme === "dark"
-                    ? "bg-neutral-900 text-neutral-300 hover:text-white border border-neutral-800"
-                    : "bg-neutral-100 text-neutral-700 hover:text-black border border-neutral-200"
-                }`}
-              >
-                Admin
+                <Lock className="w-3.5 h-3.5 text-gold-500" />
+                <span>Portal Login</span>
               </button>
             )}
           </div>
@@ -210,30 +201,53 @@ export default function Navbar({
                 </button>
               ))}
 
-              <div className="pt-4 grid grid-cols-2 gap-3">
-                <button
-                  id="mobile-client-portal-btn"
-                  onClick={() => handleNavClick("client-portal")}
-                  className={`flex items-center justify-center gap-1.5 py-3 rounded text-[10px] tracking-widest uppercase font-sans border ${
-                    isClientAuthenticated
-                      ? "border-gold-500 text-gold-500"
-                      : "border-neutral-800 text-neutral-400"
-                  }`}
-                >
-                  <Lock className="w-3 h-3" />
-                  Client Portal
-                </button>
-                <button
-                  id="mobile-admin-portal-btn"
-                  onClick={() => handleNavClick("admin-portal")}
-                  className={`flex items-center justify-center gap-1.5 py-3 rounded text-[10px] tracking-widest uppercase font-sans border ${
-                    isAdminAuthenticated
-                      ? "bg-gold-500 text-black border-gold-500"
-                      : "border-neutral-800 text-neutral-400"
-                  }`}
-                >
-                  Dashboard
-                </button>
+              <div className="pt-4 border-t border-neutral-950/20 space-y-3">
+                <span className="text-[9px] font-mono tracking-widest uppercase text-neutral-500 block px-3">
+                  Secure Access Portal
+                </span>
+                {isClientAuthenticated || isAdminAuthenticated ? (
+                  <div className="grid grid-cols-1 gap-2 px-3">
+                    {isClientAuthenticated && (
+                      <button
+                        id="mobile-client-portal-btn"
+                        onClick={() => handleNavClick("client-portal")}
+                        className={`flex items-center justify-center gap-1.5 py-3 rounded text-[10px] tracking-widest uppercase font-sans border transition-colors cursor-pointer ${
+                          theme === "dark"
+                            ? "border-gold-500 text-gold-500 font-bold bg-gold-950/10"
+                            : "border-gold-500 text-gold-500 font-bold bg-gold-50"
+                        }`}
+                      >
+                        <UserCheck className="w-4 h-4 text-gold-500" />
+                        <span>Client Portal</span>
+                      </button>
+                    )}
+                    {isAdminAuthenticated && (
+                      <button
+                        id="mobile-admin-portal-btn"
+                        onClick={() => handleNavClick("admin-portal")}
+                        className="flex items-center justify-center gap-1.5 py-3 rounded text-[10px] tracking-widest uppercase font-sans bg-gold-500 text-black border border-gold-500 font-bold transition-colors cursor-pointer"
+                      >
+                        <Lock className="w-4 h-4" />
+                        <span>Dashboard</span>
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="px-3">
+                    <button
+                      id="mobile-portal-login-btn"
+                      onClick={() => handleNavClick("client-portal")}
+                      className={`w-full flex items-center justify-center gap-1.5 py-3 rounded text-[10px] tracking-widest uppercase font-sans border transition-colors cursor-pointer ${
+                        theme === "dark"
+                          ? "border-neutral-800 text-neutral-300 hover:text-white bg-neutral-950"
+                          : "border-neutral-200 text-neutral-700 hover:text-black bg-neutral-50"
+                      }`}
+                    >
+                      <Lock className="w-4 h-4 text-gold-500" />
+                      <span>Portal Login</span>
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </motion.div>

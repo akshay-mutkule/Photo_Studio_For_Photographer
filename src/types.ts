@@ -40,6 +40,24 @@ export interface Booking {
   createdAt: string;
 }
 
+export interface ClientNotification {
+  id: string;
+  title: string;
+  message: string;
+  read: boolean;
+  createdAt: string;
+}
+
+export interface ClientProfile {
+  id: string;
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
+  passcode: string; // Code to view profile and notifications
+  createdAt: string;
+  notifications: ClientNotification[];
+}
+
 export interface PortfolioImage {
   id: string;
   url: string;

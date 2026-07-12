@@ -39,10 +39,12 @@ export default function BookingPage({ theme, preSelectedPackage }: BookingPagePr
   const [phone, setPhone] = useState("");
   const [date, setDate] = useState("");
   const [location, setLocation] = useState("");
-  const [sessionType, setSessionType] = useState(preSelectedPackage || "Wedding Photography");
+  const [sessionType, setSessionType] = useState(preSelectedPackage || "Traditional Wedding Ceremony");
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [generatedPasscode, setGeneratedPasscode] = useState("");
+  const [bookedEmail, setBookedEmail] = useState("");
 
   // AI Stylist Chat & Advanced Moodboard State
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
@@ -92,6 +94,9 @@ export default function BookingPage({ theme, preSelectedPackage }: BookingPagePr
       });
 
       if (response.ok) {
+        const resData = await response.json();
+        setGeneratedPasscode(resData.profilePasscode || "");
+        setBookedEmail(email);
         setIsSuccess(true);
         // Clear fields
         setName("");
@@ -268,12 +273,12 @@ Thank you for co-creating with us!
   };
 
   const sessionTypes = [
-    "Wedding Photography",
-    "Pre-Wedding Session",
-    "Birthday & Social Events",
-    "Corporate Events",
-    "Portrait Sessions",
-    "Product Photography",
+    "Premium Multi-Day Wedding",
+    "Traditional Wedding Ceremony",
+    "Pre-Wedding Scenic Shoot",
+    "Haldi & Mehendi Festivities",
+    "Maternity & Dohale Jevan",
+    "Festive & Family Portrait",
   ];
 
   return (
@@ -839,12 +844,47 @@ Thank you for co-creating with us!
               <CheckCircle2 className="w-12 h-12 text-gold-500 mx-auto mb-4" />
               <h3 className="font-serif text-2xl font-light mb-2">Proposal Received!</h3>
               <p className="text-xs text-neutral-400 font-sans tracking-wide max-w-md mx-auto mb-6 leading-relaxed">
-                Thank you for reaching out to VS Photography. Aria and the team have received your details. We've reserved the temporary block for <span className="text-gold-400 font-semibold">{date}</span> and will send confirmation shortly.
+                Thank you for reaching out to VS Photography. Aria and the team have received your details and we've reserved the temporary block for your photoshoot.
               </p>
+
+              {/* Secure Client Profile Display */}
+              {generatedPasscode && (
+                <div className={`p-6 rounded-lg border text-left max-w-lg mx-auto mb-6 space-y-3.5 ${
+                  isDark ? "bg-black/40 border-neutral-800" : "bg-white border-neutral-200 shadow-sm"
+                }`}>
+                  <div className="flex items-center gap-1.5 text-gold-500">
+                    <Sparkles className="w-4 h-4 animate-pulse" />
+                    <span className="text-[10px] uppercase tracking-widest font-bold font-mono">
+                      Secure Client Profile Auto-Created
+                    </span>
+                  </div>
+                  
+                  <p className={`text-xs font-sans leading-relaxed ${isDark ? "text-neutral-300" : "text-neutral-600"}`}>
+                    To let you track booking approvals, see photographer comments, and view your published proofing photosheets, we've created a secure profile. Log into the <strong className="text-gold-500">Client Portal</strong> using:
+                  </p>
+
+                  <div className={`p-3.5 rounded border font-sans space-y-2 ${
+                    isDark ? "bg-neutral-950 border-neutral-900" : "bg-neutral-50 border-neutral-100"
+                  }`}>
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-neutral-500 text-[10px] uppercase font-mono">Login Email:</span>
+                      <span className="font-medium text-neutral-300">{bookedEmail}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-xs border-t border-neutral-900/40 pt-2">
+                      <span className="text-neutral-500 text-[10px] uppercase font-mono">Profile Passcode:</span>
+                      <span className="font-mono font-bold text-gold-500 tracking-wider select-all text-sm">{generatedPasscode}</span>
+                    </div>
+                  </div>
+
+                  <p className="text-[10px] text-neutral-500 font-sans text-center">
+                    🔒 Save this passcode to log into your portal anytime. We'll post approval updates here!
+                  </p>
+                </div>
+              )}
               
               <div className="inline-flex items-center gap-1.5 px-4 py-1.5 border border-gold-500/20 bg-gold-950/10 rounded-full text-[10px] tracking-widest text-gold-400 uppercase font-sans mb-6">
-                <Sparkles className="w-3 h-3" />
-                <span>Next Step: Email Confirmation</span>
+                <Clock className="w-3 h-3" />
+                <span>Next Step: Reviewing and Notification</span>
               </div>
 
               <div>

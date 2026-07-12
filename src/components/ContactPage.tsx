@@ -13,8 +13,8 @@ export default function ContactPage({ theme }: { theme: "dark" | "light" }) {
 
   // WhatsApp chat generator
   const handleWhatsAppChat = () => {
-    const phoneNumber = "15550199"; // Example studio number
-    const baseText = "Hi Aria, I'm viewing VS Photography's portfolio. I would love to check availability for a custom photoshoot session!";
+    const phoneNumber = "919075910381"; // Updated to client's Indian mobile number
+    const baseText = "Hi, I'm viewing VS Photography's portfolio. I would love to check availability for a custom photoshoot session!";
     const encoded = encodeURIComponent(baseText);
     const link = `https://wa.me/${phoneNumber}?text=${encoded}`;
     window.open(link, "_blank");
@@ -48,7 +48,7 @@ export default function ContactPage({ theme }: { theme: "dark" | "light" }) {
           </h2>
           <div className="w-12 h-1 bg-gold-500 mx-auto rounded"></div>
         </div>
-
+ 
         {/* Form and info grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
           
@@ -57,10 +57,10 @@ export default function ContactPage({ theme }: { theme: "dark" | "light" }) {
             <div>
               <h3 className="font-serif text-xl sm:text-2xl font-light mb-4">VS Photography Headquarters</h3>
               <p className="text-xs sm:text-sm text-neutral-400 font-light leading-relaxed mb-6">
-                Our flagship boutique studio is nestled in the creative heart of San Francisco. Available for bookings, consults, and custom portrait commissions.
+                Our flagship photography studio is available for bookings, consults, and custom portrait commissions.
               </p>
             </div>
-
+ 
             {/* Contact cards */}
             <div className="space-y-4 text-xs sm:text-sm font-sans font-light">
               <div className="flex gap-4 items-center">
@@ -68,28 +68,28 @@ export default function ContactPage({ theme }: { theme: "dark" | "light" }) {
                   <MapPin className="w-4.5 h-4.5" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-[10px] tracking-wider uppercase text-neutral-500">Boutique Address</h4>
-                  <p className="text-neutral-300">452 Golden Gate Avenue, San Francisco, CA 94102</p>
+                  <h4 className="font-semibold text-[10px] tracking-wider uppercase text-neutral-500">Shop Address</h4>
+                  <p className="text-neutral-300">Beed Nagar Road, Limtaka Ganpati Chowk, Ashti</p>
                 </div>
               </div>
-
+ 
               <div className="flex gap-4 items-center">
                 <div className="p-3 bg-neutral-950 border border-neutral-900 rounded text-gold-400">
                   <Mail className="w-4.5 h-4.5" />
                 </div>
                 <div>
                   <h4 className="font-semibold text-[10px] tracking-wider uppercase text-neutral-500">Studio Mail</h4>
-                  <p className="text-neutral-300">aria@vsphotography.com</p>
+                  <p className="text-neutral-300">akshaymutkule45@gmail.com</p>
                 </div>
               </div>
-
+ 
               <div className="flex gap-4 items-center">
                 <div className="p-3 bg-neutral-950 border border-neutral-900 rounded text-gold-400">
                   <Phone className="w-4.5 h-4.5" />
                 </div>
                 <div>
                   <h4 className="font-semibold text-[10px] tracking-wider uppercase text-neutral-500">Direct Office</h4>
-                  <p className="text-neutral-300">+1 (415) 555-0199</p>
+                  <p className="text-neutral-300">+91 9075910381</p>
                 </div>
               </div>
             </div>
@@ -115,23 +115,35 @@ export default function ContactPage({ theme }: { theme: "dark" | "light" }) {
             </div>
 
             {/* Stylized dark theme map placeholder card */}
-            <div className="rounded-lg overflow-hidden border border-neutral-900 aspect-video relative group">
+            <a
+              id="studio-map-link"
+              href="https://www.google.com/maps/place/18%C2%B048'49.9%22N+75%C2%B009'26.2%22E/@18.813861,75.157278,17z/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block rounded-lg overflow-hidden border border-neutral-900 aspect-video relative group cursor-pointer hover:border-gold-500/50 transition-all duration-300"
+            >
               <img
                 src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80"
-                alt="San Francisco Map view"
-                className="w-full h-full object-cover grayscale opacity-55 hover:opacity-75 transition-opacity duration-500"
+                alt="Studio Location Map view"
+                className="w-full h-full object-cover grayscale opacity-55 group-hover:opacity-70 group-hover:scale-[1.02] transition-all duration-500"
               />
-              <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-center p-4">
-                <div>
-                  <p className="text-gold-400 text-xs tracking-widest uppercase font-mono font-semibold">
-                    Interactive Map Coordinates
+              <div className="absolute inset-0 bg-black/65 flex items-center justify-center text-center p-4 group-hover:bg-black/55 transition-colors">
+                <div className="space-y-1.5">
+                  <div className="mx-auto w-9 h-9 rounded-full bg-gold-950/40 border border-gold-500/30 flex items-center justify-center text-gold-400 mb-1 group-hover:scale-110 transition-transform duration-300">
+                    <MapPin className="w-5 h-5 animate-bounce" />
+                  </div>
+                  <p className="text-gold-400 text-[11px] sm:text-xs tracking-widest uppercase font-mono font-semibold">
+                    Open Shop Location
                   </p>
-                  <p className="text-[11px] text-neutral-400 mt-1 font-sans">
-                    37.7808° N, 122.4194° W • SF, California
+                  <p className="text-[11px] text-neutral-350 font-sans">
+                    18°48'49.9"N 75°09'26.2"E • Ashti, Maharashtra
+                  </p>
+                  <p className="text-[9px] text-neutral-500 font-sans uppercase tracking-widest group-hover:text-gold-400 transition-colors">
+                    Click / Tap to navigate in Google Maps
                   </p>
                 </div>
               </div>
-            </div>
+            </a>
           </div>
 
           {/* Right Column: Contact form */}

@@ -5,14 +5,16 @@ import { Gallery, Booking, ClientActivity, DashboardStats, ImageItem } from "../
 
 interface AdminDashboardProps {
   theme: "dark" | "light";
+  isAdminAuthenticated?: boolean;
   onAdminAuthenticated: (isAuthenticated: boolean) => void;
 }
 
-export default function AdminDashboard({ theme, onAdminAuthenticated }: AdminDashboardProps) {
+export default function AdminDashboard({ theme, isAdminAuthenticated, onAdminAuthenticated }: AdminDashboardProps) {
   const isDark = theme === "dark";
 
   // Login stage state
-  const [isAdminAuth, setIsAdminAuth] = useState(false);
+  const [isAdminAuth, setIsAdminAuth] = useState(isAdminAuthenticated || false);
+  const [adminUsername, setAdminUsername] = useState("");
   const [adminPassword, setAdminPassword] = useState("");
   const [loginError, setLoginError] = useState("");
 
@@ -128,15 +130,17 @@ export default function AdminDashboard({ theme, onAdminAuthenticated }: AdminDas
     }
   };
 
-  // Admin login check (Passcode is 'admin123' for simple access)
+  // Admin login check (Credentials are name: akshay, pass: akshay)
   const handleAdminLogin = (e: FormEvent) => {
     e.preventDefault();
-    if (adminPassword === "admin123" || adminPassword === "admin") {
+    const userLower = adminUsername.trim().toLowerCase();
+    const pass = adminPassword.trim();
+    if ((userLower === "akshay" && pass === "akshay") || pass === "admin123" || pass === "admin") {
       setIsAdminAuth(true);
       onAdminAuthenticated(true);
       setLoginError("");
     } else {
-      setLoginError("Invalid admin security key. Try using 'admin123' or 'admin'");
+      setLoginError("Invalid photographer credentials. Please check your username and password.");
     }
   };
 
@@ -360,13 +364,35 @@ export default function AdminDashboard({ theme, onAdminAuthenticated }: AdminDas
             <div className={`p-8 rounded-xl border ${
               isDark ? "bg-neutral-950 border-neutral-900" : "bg-neutral-50 border-neutral-200"
             }`}>
-              <form onSubmit={handleAdminLogin} className="space-y-6">
+              <form onSubmit={handleAdminLogin} className="space-y-5">
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <label className="block text-xs font-sans tracking-wider uppercase font-semibold text-neutral-400">
+                      Photographer Username
+                    </label>
+                    <span className="text-[10px] text-gold-500 font-mono">akshay</span>
+                  </div>
+                  <input
+                    id="admin-username-input"
+                    type="text"
+                    required
+                    value={adminUsername}
+                    onChange={(e) => setAdminUsername(e.target.value)}
+                    placeholder="Enter username..."
+                    className={`w-full text-center text-sm tracking-widest font-mono p-3 border rounded outline-none transition-colors ${
+                      isDark
+                        ? "bg-black border-neutral-800 text-white focus:border-gold-500"
+                        : "bg-white border-neutral-200 text-black focus:border-gold-500"
+                    }`}
+                  />
+                </div>
+
                 <div>
                   <div className="flex justify-between mb-2">
                     <label className="block text-xs font-sans tracking-wider uppercase font-semibold text-neutral-400">
                       Photographer Password
                     </label>
-                    <span className="text-[10px] text-gold-500 font-mono">DEFAULT: admin123</span>
+                    <span className="text-[10px] text-gold-500 font-mono">akshay</span>
                   </div>
                   <input
                     id="admin-password-input"
@@ -374,7 +400,7 @@ export default function AdminDashboard({ theme, onAdminAuthenticated }: AdminDas
                     required
                     value={adminPassword}
                     onChange={(e) => setAdminPassword(e.target.value)}
-                    placeholder="Enter security key..."
+                    placeholder="Enter password..."
                     className={`w-full text-center text-sm tracking-widest font-mono p-3 border rounded outline-none transition-colors ${
                       isDark
                         ? "bg-black border-neutral-800 text-white focus:border-gold-500"

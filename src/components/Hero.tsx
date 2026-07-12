@@ -51,7 +51,7 @@ export default function Hero({ onViewPortfolio, onBookShoot, theme }: HeroProps)
           transition={{ duration: 0.8, delay: 0.6 }}
           className="font-sans text-neutral-300 text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-light tracking-wide leading-relaxed mb-10"
         >
-          Beautiful photography for your special events. Based in San Francisco,
+          Beautiful photography for your special events. Based in Ashti,
           covering weddings, portraits, and corporate events.
         </motion.p>
 

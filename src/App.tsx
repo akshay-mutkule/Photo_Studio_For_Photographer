@@ -11,7 +11,7 @@ import ContactPage from "./components/ContactPage.jsx";
 import ExtraFeatures from "./components/ExtraFeatures.jsx";
 import BlogSection from "./components/BlogSection.jsx";
 import BeforeAfter from "./components/BeforeAfter.jsx";
-import { Camera, Mail, Phone, MapPin, Shield, Instagram, Heart, ArrowUp } from "lucide-react";
+import { Camera, Mail, Phone, MapPin, Shield, Instagram, Heart, ArrowUp, ArrowLeft } from "lucide-react";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("home");
@@ -71,6 +71,25 @@ export default function App() {
 
       {/* Main Orchestration Board */}
       <main className="flex-grow">
+        {activeTab !== "home" && (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 -mb-4 animate-[fadeIn_0.4s_ease]">
+            <button
+              onClick={() => {
+                setActiveTab("home");
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              className={`inline-flex items-center gap-2 group text-xs tracking-widest uppercase font-sans font-medium transition-all duration-300 cursor-pointer py-2 px-3.5 rounded border ${
+                theme === "dark"
+                  ? "text-neutral-400 hover:text-gold-400 bg-neutral-950 border-neutral-900 hover:border-gold-500/30 shadow-md shadow-black/50"
+                  : "text-neutral-600 hover:text-gold-500 bg-neutral-50 border-neutral-200 hover:border-gold-500/30 shadow-sm"
+              }`}
+            >
+              <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1 duration-300 text-gold-500" />
+              <span>Back to Home</span>
+            </button>
+          </div>
+        )}
+
         {activeTab === "home" && (
           <div className="animate-[fadeIn_0.6s_ease]">
             {/* Cinematic Hero */}
@@ -146,6 +165,8 @@ export default function App() {
             theme={theme}
             initialGalleryId={urlGalleryId}
             onClientAuthenticated={setIsClientAuthenticated}
+            onAdminAuthenticated={setIsAdminAuthenticated}
+            setActiveTab={setActiveTab}
           />
         )}
 
@@ -173,7 +194,7 @@ export default function App() {
                 <span className="font-serif tracking-widest uppercase font-semibold text-sm text-gold-500">VS PHOTOGRAPHY</span>
               </div>
               <p className="font-light leading-relaxed max-w-xs">
-                Capturing raw human connections, bespoke fine-art edits, and timeless wedding stories globally from San Francisco.
+                Capturing raw human connections, bespoke fine-art edits, and timeless wedding stories from Ashti.
               </p>
             </div>
 
@@ -193,7 +214,6 @@ export default function App() {
               <h4 className="font-serif text-white tracking-wider uppercase mb-4 text-xs font-semibold">Client Relations</h4>
               <ul className="space-y-2.5 font-light">
                 <li><button onClick={() => setActiveTab("client-portal")} className="hover:text-gold-500 transition-colors">Client proof selection</button></li>
-                <li><button onClick={() => setActiveTab("admin-portal")} className="hover:text-gold-500 transition-colors">Photographer console</button></li>
                 <li><button onClick={() => setActiveTab("booking")} className="hover:text-gold-500 transition-colors">Book a shoot</button></li>
                 <li><button onClick={() => setActiveTab("contact")} className="hover:text-gold-500 transition-colors">General Inquiry</button></li>
               </ul>
@@ -205,7 +225,15 @@ export default function App() {
               <p className="font-light">Mon - Fri: 9:00 AM - 6:00 PM PST</p>
               <p className="font-light">Sat - Sun: Event Coverage Only</p>
               <div className="flex gap-2.5 pt-2">
-                <Instagram className="w-4 h-4 text-neutral-400 hover:text-gold-500 cursor-pointer" />
+                <a
+                  href="https://www.instagram.com/vinayak_sable_photographey?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-neutral-400 hover:text-gold-500 transition-colors"
+                  aria-label="Instagram Profile"
+                >
+                  <Instagram className="w-4 h-4" />
+                </a>
                 <Heart className="w-4 h-4 text-neutral-400 hover:text-gold-500 cursor-pointer" />
               </div>
             </div>

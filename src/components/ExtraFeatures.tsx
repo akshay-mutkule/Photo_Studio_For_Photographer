@@ -145,16 +145,25 @@ export default function ExtraFeatures({ theme }: { theme: "dark" | "light" }) {
             <span className="text-xs tracking-widest text-gold-500 uppercase font-sans">
               Behind the lens
             </span>
-            <h3 className="font-serif text-xl sm:text-2xl font-light mt-1 flex items-center justify-center gap-1.5">
-              <Instagram className="w-4.5 h-4.5 text-gold-500" /> Follow us @VSPhotography
-            </h3>
+            <a
+              href="https://www.instagram.com/vinayak_sable_photographey?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 font-serif text-xl sm:text-2xl font-light mt-1 text-neutral-200 hover:text-gold-500 transition-colors group cursor-pointer"
+            >
+              <Instagram className="w-5 h-5 text-gold-500 group-hover:scale-110 transition-transform" />
+              <span>Follow us @vinayak_sable_photographey</span>
+            </a>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {instagramPosts.map((post) => (
-              <div
+              <a
                 key={post.id}
-                className="relative aspect-square rounded-lg overflow-hidden border border-neutral-800 bg-neutral-900 group"
+                href="https://www.instagram.com/vinayak_sable_photographey?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative aspect-square rounded-lg overflow-hidden border border-neutral-800 bg-neutral-900 group block cursor-pointer"
               >
                 <img
                   src={post.url}
@@ -172,7 +181,7 @@ export default function ExtraFeatures({ theme }: { theme: "dark" | "light" }) {
                     <span className="font-mono">{post.comments}</span>
                   </div>
                 </div>
-              </div>
+              </a>
             ))}
           </div>
         </div>
