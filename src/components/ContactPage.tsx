@@ -240,7 +240,7 @@ export default function ContactPage({ theme }: { theme: "dark" | "light" }) {
                     <CheckCircle className="w-12 h-12 text-gold-500 mx-auto mb-4" />
                     <h4 className="font-serif text-xl font-light mb-2">Message Dispatched!</h4>
                     <p className="text-xs text-neutral-400 font-sans tracking-wide max-w-sm mx-auto mb-6">
-                      Aria Thompson will receive this dispatch immediately on the primary studio terminal. We'll be in touch.
+                      Vinayak Sable will receive this dispatch immediately on the primary studio terminal. We'll be in touch.
                     </p>
                     <button
                       id="reset-contact-btn"

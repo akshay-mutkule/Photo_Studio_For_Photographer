@@ -15,7 +15,7 @@ export default function BlogSection({ theme }: { theme: "dark" | "light" }) {
     {
       id: "blog-2",
       title: "The Art of Natural Lighting: Behind the Scenes",
-      excerpt: "Learn how Aria Sterling uses soft golden hour lighting and natural shadows to take beautiful, emotional photos.",
+      excerpt: "Learn how Vinayak Sable uses soft golden hour lighting and natural shadows to take beautiful, emotional photos.",
       date: "May 14, 2026",
       readTime: "8 min read",
       cover: "https://images.unsplash.com/photo-1554080353-a576cf803bda?auto=format&fit=crop&w=600&q=80"

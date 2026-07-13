@@ -971,7 +971,7 @@ export default function ClientPortal({
                 <CheckCircle2 className="w-16 h-16 text-gold-500 mx-auto mb-4" />
                 <h3 className="font-serif text-3xl font-light mb-2">Selection Finalized!</h3>
                 <p className="text-xs text-neutral-400 font-light leading-relaxed mb-6">
-                  Thank you, <span className="text-gold-400">{gallery.clientName}</span>. Your chosen <span className="text-gold-400 font-bold">{gallery.selected.length}</span> images have been submitted directly to Aria Sterling for premium fine-art retouching and final preparation.
+                  Thank you, <span className="text-gold-400">{gallery.clientName}</span>. Your chosen <span className="text-gold-400 font-bold">{gallery.selected.length}</span> images have been submitted directly to Vinayak Sable for premium fine-art retouching and final preparation.
                 </p>
 
                 <div className="p-4 rounded border border-neutral-800 bg-neutral-900/40 mb-6 text-xs text-neutral-400 font-sans tracking-wide">

@@ -437,7 +437,7 @@ export default function AdminDashboard({ theme, isAdminAuthenticated, onAdminAut
               <div>
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse"></span>
-                  <span className="text-xs text-neutral-400 font-mono uppercase tracking-widest">Aria Sterling • Lead Admin Session</span>
+                  <span className="text-xs text-neutral-400 font-mono uppercase tracking-widest">Vinayak Sable • Lead Admin Session</span>
                 </div>
                 <h2 className="font-serif text-3xl sm:text-4xl font-light mt-1">Studio Workspace</h2>
               </div>

@@ -852,7 +852,7 @@ Thank you for co-creating with us!
               <CheckCircle2 className="w-12 h-12 text-gold-500 mx-auto mb-4" />
               <h3 className="font-serif text-2xl font-light mb-2">Proposal Received!</h3>
               <p className="text-xs text-neutral-400 font-sans tracking-wide max-w-md mx-auto mb-6 leading-relaxed">
-                Thank you for reaching out to VS Photography. Aria and the team have received your details and we've reserved the temporary block for your photoshoot.
+                Thank you for reaching out to VS Photography. Vinayak and the team have received your details and we've reserved the temporary block for your photoshoot.
               </p>
 
               {/* Secure Client Profile Display */}
