@@ -116,8 +116,8 @@ export default function App() {
 
             {/* Premium Before / After Image retouching Slider */}
             <BeforeAfter
-              beforeImage="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=50"
-              afterImage="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=95"
+              beforeImage="/images/portfolio-wedding-1.jpg"
+              afterImage="/images/portfolio-wedding-1.jpg"
             />
 
             {/* Featured Work Summary preview block */}
@@ -126,21 +126,21 @@ export default function App() {
               <h3 className="font-serif text-3xl font-light mt-2 mb-10">Sensory Storytelling</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 <div className="aspect-[4/5] rounded overflow-hidden relative group cursor-pointer" onClick={() => setActiveTab("portfolio")}>
-                  <img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80" alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-750" />
+                  <img src="/images/portfolio-wedding-1.jpg" alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-750" />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6 text-left">
                     <span className="text-[10px] tracking-widest text-gold-400 uppercase font-mono">Weddings</span>
                     <h4 className="font-serif text-lg text-white mt-1">Ethereal Canopy Altar</h4>
                   </div>
                 </div>
                 <div className="aspect-[4/5] rounded overflow-hidden relative group cursor-pointer" onClick={() => setActiveTab("portfolio")}>
-                  <img src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=800&q=80" alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-750" />
+                  <img src="/images/portfolio-engagement.jpg" alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-750" />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6 text-left">
                     <span className="text-[10px] tracking-widest text-gold-400 uppercase font-mono">Engagement</span>
                     <h4 className="font-serif text-lg text-white mt-1">Golden Hour Embrace</h4>
                   </div>
                 </div>
                 <div className="aspect-[4/5] rounded overflow-hidden relative group cursor-pointer" onClick={() => setActiveTab("portfolio")}>
-                  <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80" alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-750" />
+                  <img src="/images/portfolio-portrait-1.jpg" alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-750" />
                   <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6 text-left">
                     <span className="text-[10px] tracking-widest text-gold-400 uppercase font-mono">Portraits</span>
                     <h4 className="font-serif text-lg text-white mt-1">Sienna Editorial</h4>

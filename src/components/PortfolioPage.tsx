@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Search, Sparkles, ZoomIn, ZoomOut, Share2, ArrowRight, Grid, Eye, AlertCircle, RefreshCw } from "lucide-react";
+import { Search, Sparkles, ZoomIn, ZoomOut, Share2, ArrowRight, ArrowLeft, Grid, Eye, AlertCircle, RefreshCw } from "lucide-react";
 import { PortfolioImage } from "../types.js";
 
 interface PortfolioPageProps {
@@ -31,6 +31,18 @@ export default function PortfolioPage({ theme }: PortfolioPageProps) {
     "Wildlife",
     "Commercial",
   ];
+
+  const categoryDescriptions: Record<string, string> = {
+    "Weddings": "Timeless love stories captured in soft, ethereal natural lighting.",
+    "Pre-Wedding": "Intimate narratives and candid laughter captured before the big day.",
+    "Engagement": "The beautiful golden moments of your sweet beginning.",
+    "Portraits": "Striking and professional fine-art character portraits.",
+    "Family": "Warm, authentic gatherings preserving precious generational legacies.",
+    "Maternity": "The radiant, gentle grace of waiting for a new life.",
+    "Fashion": "Avant-garde editorial concepts and urban streetwear styles.",
+    "Wildlife": "Majestic animal species captured in their quiet raw habitats.",
+    "Commercial": "Sleek, high-concept photography designed for iconic brands."
+  };
 
   // Fetch portfolio images
   useEffect(() => {
@@ -200,94 +212,181 @@ export default function PortfolioPage({ theme }: PortfolioPageProps) {
           </div>
         </div>
 
-        {/* Gallery Masonry Grid */}
-        <motion.div
-          layout
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
-        >
-          <AnimatePresence mode="popLayout">
-            {filteredImages.map((img) => (
-              <motion.div
-                layout
-                key={img.id}
-                id={`portfolio-card-${img.id}`}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.4 }}
-                className="relative group rounded-lg overflow-hidden border border-neutral-800 bg-neutral-950 shadow-lg aspect-[4/3] cursor-pointer"
-              >
-                <img
-                  src={img.url}
-                  alt={img.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  loading="lazy"
-                />
+        {/* Category Header and Back Button for single-category view */}
+        {selectedCategory !== "All" && !searchQuery.trim() && !isAISearch && (
+          <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <button
+              onClick={() => setSelectedCategory("All")}
+              className={`inline-flex items-center gap-2 px-4 py-2 text-xs uppercase tracking-widest font-sans font-semibold border rounded transition-all duration-300 self-start ${
+                isDark
+                  ? "border-neutral-800 hover:border-gold-500 bg-neutral-950 text-neutral-300 hover:text-gold-400"
+                  : "border-neutral-200 hover:border-gold-500 bg-neutral-50 text-neutral-600 hover:text-gold-500"
+              }`}
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Back to Collections</span>
+            </button>
+            <div className="text-left sm:text-right">
+              <span className="text-[10px] tracking-widest text-gold-500 uppercase font-mono block">
+                Collection
+              </span>
+              <h3 className="font-serif text-xl sm:text-2xl font-light">
+                {selectedCategory} ({filteredImages.length} Masterpieces)
+              </h3>
+            </div>
+          </div>
+        )}
 
-                {/* Dark Hover overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-6">
-                  {/* Category Header */}
-                  <div className="flex justify-between items-start">
-                    <span className="px-2 py-1 bg-gold-500 text-black text-[9px] tracking-widest font-sans uppercase font-semibold rounded">
-                      {img.category}
-                    </span>
-                    <div className="flex gap-2">
+        {/* Gallery Masonry Grid or Category Cover Grid */}
+        {selectedCategory === "All" && !searchQuery.trim() && !isAISearch ? (
+          <motion.div
+            layout
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+          >
+            <AnimatePresence mode="popLayout">
+              {categories.filter(cat => cat !== "All").map((cat) => {
+                const catImages = images.filter(img => img.category === cat);
+                const count = catImages.length;
+                const coverUrl = catImages[0]?.url || "/images/portfolio-wedding-1.jpg";
+                const desc = categoryDescriptions[cat] || "Fine art photography collection";
+
+                return (
+                  <motion.div
+                    layout
+                    key={cat}
+                    id={`category-card-${cat}`}
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.4 }}
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`group rounded-lg overflow-hidden border cursor-pointer transition-all duration-300 flex flex-col h-full ${
+                      isDark
+                        ? "border-neutral-900 bg-neutral-950 hover:border-gold-500/50"
+                        : "border-neutral-200 bg-neutral-50 hover:border-gold-500/50"
+                    }`}
+                  >
+                    <div className="relative aspect-[4/3] overflow-hidden bg-neutral-900">
+                      <img
+                        src={coverUrl}
+                        alt={cat}
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent flex flex-col justify-end p-6">
+                        <span className="px-2 py-1 bg-gold-500 text-black text-[9px] tracking-widest font-sans uppercase font-semibold rounded self-start mb-2">
+                          {count} {count === 1 ? "Artwork" : "Artworks"}
+                        </span>
+                        <h3 className="font-serif text-xl sm:text-2xl font-light text-white leading-tight">
+                          {cat}
+                        </h3>
+                      </div>
+                    </div>
+                    <div className="p-6 flex-1 flex flex-col justify-between">
+                      <p className={`text-xs font-sans font-light leading-relaxed mb-4 ${
+                        isDark ? "text-neutral-400" : "text-neutral-600"
+                      }`}>
+                        {desc}
+                      </p>
+                      <div className="flex items-center gap-1.5 text-[10px] tracking-widest uppercase font-semibold text-gold-500 group-hover:text-gold-400 font-sans transition-colors pt-2">
+                        <span>Explore Collection</span>
+                        <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </motion.div>
+        ) : (
+          <motion.div
+            layout
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+          >
+            <AnimatePresence mode="popLayout">
+              {filteredImages.map((img) => (
+                <motion.div
+                  layout
+                  key={img.id}
+                  id={`portfolio-card-${img.id}`}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ duration: 0.4 }}
+                  className="relative group rounded-lg overflow-hidden border border-neutral-800 bg-neutral-950 shadow-lg aspect-[4/3] cursor-pointer"
+                >
+                  <img
+                    src={img.url}
+                    alt={img.title}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    loading="lazy"
+                  />
+
+                  {/* Dark Hover overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-6">
+                    {/* Category Header */}
+                    <div className="flex justify-between items-start">
+                      <span className="px-2 py-1 bg-gold-500 text-black text-[9px] tracking-widest font-sans uppercase font-semibold rounded">
+                        {img.category}
+                      </span>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleShare(img);
+                          }}
+                          className="p-1.5 bg-black/40 border border-white/10 rounded hover:border-gold-500 transition-colors"
+                          title="Copy Share Link"
+                        >
+                          <Share2 className="w-3.5 h-3.5 text-neutral-300 hover:text-gold-400" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Title and Action */}
+                    <div>
+                      <h4 className="font-serif text-lg text-white mb-1 font-light">
+                        {img.title}
+                      </h4>
+                      {/* Tags */}
+                      <div className="flex gap-1 flex-wrap mb-4">
+                        {img.tags.slice(0, 3).map((tag) => (
+                          <span key={tag} className="text-[9px] text-neutral-400 bg-neutral-900/60 px-1.5 py-0.5 rounded">
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleShare(img);
+                        onClick={() => {
+                          setLightboxImage(img);
+                          setZoomLevel(1);
                         }}
-                        className="p-1.5 bg-black/40 border border-white/10 rounded hover:border-gold-500 transition-colors"
-                        title="Copy Share Link"
+                        className="inline-flex items-center gap-1.5 text-gold-400 text-xs tracking-widest uppercase font-sans hover:text-gold-300"
                       >
-                        <Share2 className="w-3.5 h-3.5 text-neutral-300 hover:text-gold-400" />
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>Expand Artwork</span>
                       </button>
                     </div>
                   </div>
 
-                  {/* Title and Action */}
-                  <div>
-                    <h4 className="font-serif text-lg text-white mb-1 font-light">
-                      {img.title}
-                    </h4>
-                    {/* Tags */}
-                    <div className="flex gap-1 flex-wrap mb-4">
-                      {img.tags.slice(0, 3).map((tag) => (
-                        <span key={tag} className="text-[9px] text-neutral-400 bg-neutral-900/60 px-1.5 py-0.5 rounded">
-                          #{tag}
-                        </span>
-                      ))}
+                  {/* Sharing toast indicator */}
+                  {sharingStatus === img.id && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/80 text-center z-10 p-4">
+                      <div>
+                        <p className="text-gold-400 text-xs tracking-widest uppercase font-semibold">
+                          Link Copied!
+                        </p>
+                        <p className="text-[10px] text-neutral-400 mt-1">
+                          Share this specific fine-art image with friends.
+                        </p>
+                      </div>
                     </div>
-                    <button
-                      onClick={() => {
-                        setLightboxImage(img);
-                        setZoomLevel(1);
-                      }}
-                      className="inline-flex items-center gap-1.5 text-gold-400 text-xs tracking-widest uppercase font-sans hover:text-gold-300"
-                    >
-                      <Eye className="w-3.5 h-3.5" />
-                      <span>Expand Artwork</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Sharing toast indicator */}
-                {sharingStatus === img.id && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/80 text-center z-10 p-4">
-                    <div>
-                      <p className="text-gold-400 text-xs tracking-widest uppercase font-semibold">
-                        Link Copied!
-                      </p>
-                      <p className="text-[10px] text-neutral-400 mt-1">
-                        Share this specific fine-art image with friends.
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
+                  )}
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        )}
 
         {filteredImages.length === 0 && (
           <div className="text-center py-20 text-neutral-500">

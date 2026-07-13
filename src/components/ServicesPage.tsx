@@ -43,6 +43,9 @@ export default function ServicesPage({
 
   const handleBookClick = (packageName: string) => {
     setLocalPreSelectedPackage(packageName);
+    setTimeout(() => {
+      bookingRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, 50);
   };
 
   const packages = [

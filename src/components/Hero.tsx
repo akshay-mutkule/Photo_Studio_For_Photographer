@@ -16,7 +16,7 @@ export default function Hero({ onViewPortfolio, onBookShoot, theme }: HeroProps)
       {/* Background Image with Dark Vignette */}
       <div className="absolute inset-0 z-0">
         <img
-          src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=2000&q=90"
+          src="/images/hero-bg.jpg"
           alt="VS Photography Backdrop"
           className="w-full h-full object-cover object-center opacity-65 scale-105 animate-[scaleUp_20s_infinite_alternate]"
         />
@@ -87,8 +87,8 @@ export default function Hero({ onViewPortfolio, onBookShoot, theme }: HeroProps)
           className="mt-16 sm:mt-24 pt-8 border-t border-white/5 grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-4xl mx-auto text-center text-neutral-400"
         >
           <div>
-            <div className="font-serif text-xl sm:text-2xl text-gold-400 font-light">12+</div>
-            <div className="text-[10px] tracking-widest uppercase mt-1">Years of Experience</div>
+            <div className="font-serif text-xl sm:text-2xl text-gold-400 font-light">7+ Yrs</div>
+            <div className="text-[10px] tracking-widest uppercase mt-1">Experience</div>
           </div>
           <div>
             <div className="font-serif text-xl sm:text-2xl text-gold-400 font-light">450+</div>

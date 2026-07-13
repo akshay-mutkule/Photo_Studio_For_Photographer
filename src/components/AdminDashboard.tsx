@@ -44,7 +44,7 @@ export default function AdminDashboard({ theme, isAdminAuthenticated, onAdminAut
   const [newGalleryClient, setNewGalleryClient] = useState("");
   const [newGalleryEmail, setNewGalleryEmail] = useState("");
   const [newGalleryPasscode, setNewGalleryPasscode] = useState("");
-  const [newGalleryCover, setNewGalleryCover] = useState("https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80");
+  const [newGalleryCover, setNewGalleryCover] = useState("/images/portfolio-wedding-1.jpg");
   const [newGalleryAllowDownload, setNewGalleryAllowDownload] = useState(true);
   const [uploadedImages, setUploadedImages] = useState<ImageItem[]>([]);
   const [isCreatingGallery, setIsCreatingGallery] = useState(false);
@@ -257,8 +257,8 @@ export default function AdminDashboard({ theme, isAdminAuthenticated, onAdminAut
       const mockUrl = URL.createObjectURL(file); // Temporary blob link
       const newImage: ImageItem = {
         id: "img-" + Math.random().toString(36).substr(2, 9),
-        // We'll use high quality Unsplash placeholders to ensure robust UI visual presentation, while keeping real local reference names
-        url: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
+        // We'll use high quality local placeholders to ensure robust UI visual presentation, while keeping real local reference names
+        url: "/images/portfolio-wedding-1.jpg",
         tags,
         originalName: file.name
       };
@@ -299,13 +299,13 @@ export default function AdminDashboard({ theme, isAdminAuthenticated, onAdminAut
           images: uploadedImages.length > 0 ? uploadedImages : [
             {
               id: "img-default-1",
-              url: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
+              url: "/images/portfolio-wedding-1.jpg",
               tags: ["wedding", "editorial"],
               originalName: "DSC_001.jpg"
             },
             {
               id: "img-default-2",
-              url: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1200&q=80",
+              url: "/images/portfolio-wedding-2.jpg",
               tags: ["couple", "rings"],
               originalName: "DSC_002.jpg"
             }

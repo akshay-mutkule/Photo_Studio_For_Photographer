@@ -26,89 +26,337 @@ function initDb() {
 
   if (!fs.existsSync(DB_FILE)) {
     const initialPortfolio: PortfolioImage[] = [
+      // === WEDDINGS ===
       {
         id: "p1",
-        url: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
+        url: "/images/portfolio-wedding-1.jpg",
         category: "Weddings",
         title: "Ethereal Canopy Altar",
         tags: ["wedding", "altar", "outdoor", "flowers", "ceremony", "nature", "elegant"]
       },
       {
         id: "p2",
-        url: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1200&q=80",
+        url: "/images/portfolio-wedding-2.jpg",
         category: "Weddings",
         title: "Eternal Promise",
         tags: ["wedding", "hands", "rings", "couple", "holding hands", "love", "close-up"]
       },
       {
         id: "p3",
-        url: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=80",
+        url: "/images/blog-wedding.jpg",
+        category: "Weddings",
+        title: "Unveiled Grace",
+        tags: ["wedding", "bride", "veil", "portrait", "elegance", "classic"]
+      },
+      {
+        id: "p4",
+        url: "/images/hero-bg.jpg",
+        category: "Weddings",
+        title: "Sacred Exchange",
+        tags: ["wedding", "vows", "ceremony", "couple", "love", "sacred"]
+      },
+      {
+        id: "p5",
+        url: "/images/portfolio-pre-wedding.jpg",
+        category: "Weddings",
+        title: "Garden Devotion",
+        tags: ["wedding", "garden", "couple", "romance", "outdoor", "happiness"]
+      },
+
+      // === PRE-WEDDING ===
+      {
+        id: "p6",
+        url: "/images/portfolio-pre-wedding.jpg",
         category: "Pre-Wedding",
         title: "Joyous Laughs",
         tags: ["pre-wedding", "couple", "laughing", "garden", "happy", "candid", "dress"]
       },
       {
-        id: "p4",
-        url: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=1200&q=80",
+        id: "p7",
+        url: "/images/about-travel.jpg",
+        category: "Pre-Wedding",
+        title: "Lakeside Romance",
+        tags: ["pre-wedding", "lake", "reflection", "nature", "scenic", "quiet"]
+      },
+      {
+        id: "p8",
+        url: "/images/portfolio-wedding-1.jpg",
+        category: "Pre-Wedding",
+        title: "Scenic Meadows",
+        tags: ["pre-wedding", "meadow", "fields", "outdoor", "scenic", "sunlight"]
+      },
+      {
+        id: "p9",
+        url: "/images/portfolio-wedding-2.jpg",
+        category: "Pre-Wedding",
+        title: "Whispering Woods",
+        tags: ["pre-wedding", "forest", "nature", "pathway", "romantic", "intimate"]
+      },
+      {
+        id: "p10",
+        url: "/images/portfolio-engagement.jpg",
+        category: "Pre-Wedding",
+        title: "Meadow Path",
+        tags: ["pre-wedding", "meadow", "couple", "walking", "together", "holding hands"]
+      },
+
+      // === ENGAGEMENT ===
+      {
+        id: "p11",
+        url: "/images/portfolio-engagement.jpg",
         category: "Engagement",
         title: "Golden Hour Embrace",
         tags: ["engagement", "sunset", "embrace", "golden hour", "couple", "romance", "field"]
       },
       {
-        id: "p5",
-        url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=80",
+        id: "p12",
+        url: "/images/blog-wedding.jpg",
+        category: "Engagement",
+        title: "Sunset Promise",
+        tags: ["engagement", "sunset", "promise", "silhouette", "love", "horizon"]
+      },
+      {
+        id: "p13",
+        url: "/images/portfolio-wedding-1.jpg",
+        category: "Engagement",
+        title: "Ethereal Ring Exchange",
+        tags: ["engagement", "ring", "hands", "exchange", "ceremony", "sparkle"]
+      },
+      {
+        id: "p14",
+        url: "/images/portfolio-pre-wedding.jpg",
+        category: "Engagement",
+        title: "Candid Bliss",
+        tags: ["engagement", "candid", "smile", "laugh", "happy", "outdoor"]
+      },
+      {
+        id: "p15",
+        url: "/images/about-travel.jpg",
+        category: "Engagement",
+        title: "Golden Hour Fields",
+        tags: ["engagement", "golden hour", "fields", "nature", "warm", "sunlight"]
+      },
+
+      // === PORTRAITS ===
+      {
+        id: "p16",
+        url: "/images/portfolio-portrait-1.jpg",
         category: "Portraits",
         title: "Sienna",
         tags: ["portrait", "woman", "model", "editorial", "studio", "fashion", "eyes"]
       },
       {
-        id: "p6",
-        url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1200&q=80",
+        id: "p17",
+        url: "/images/portfolio-portrait-2.jpg",
         category: "Portraits",
         title: "Marcus",
         tags: ["portrait", "man", "headshot", "candid", "smile", "warm", "outdoor"]
       },
       {
-        id: "p7",
-        url: "https://images.unsplash.com/photo-1510972527409-cef5e0be306b?auto=format&fit=crop&w=1200&q=80",
+        id: "p18",
+        url: "/images/about-me.jpg",
+        category: "Portraits",
+        title: "The Creator",
+        tags: ["portrait", "photographer", "lens", "camera", "creative", "black and white"]
+      },
+      {
+        id: "p19",
+        url: "/images/portfolio-fashion.jpg",
+        category: "Portraits",
+        title: "Parisian Gaze",
+        tags: ["portrait", "fashion", "street", "paris", "style", "sunglasses"]
+      },
+      {
+        id: "p20",
+        url: "/images/portfolio-family.jpg",
+        category: "Portraits",
+        title: "Candid Expression",
+        tags: ["portrait", "candid", "smile", "authentic", "natural", "light"]
+      },
+
+      // === FAMILY ===
+      {
+        id: "p21",
+        url: "/images/portfolio-family.jpg",
         category: "Family",
         title: "Beachside Sunset Run",
         tags: ["family", "beach", "sunset", "kids", "running", "fun", "silhouette"]
       },
       {
-        id: "p8",
-        url: "https://images.unsplash.com/photo-1519689680058-324335c77ebe?auto=format&fit=crop&w=1200&q=80",
+        id: "p22",
+        url: "/images/about-family.jpg",
+        category: "Family",
+        title: "Generation Legacy",
+        tags: ["family", "parents", "children", "generation", "love", "home"]
+      },
+      {
+        id: "p23",
+        url: "/images/portfolio-maternity.jpg",
+        category: "Family",
+        title: "Homecoming Glow",
+        tags: ["family", "maternity", "home", "cozy", "indoor", "warmth"]
+      },
+      {
+        id: "p24",
+        url: "/images/portfolio-portrait-2.jpg",
+        category: "Family",
+        title: "Fatherhood Smile",
+        tags: ["family", "father", "son", "smile", "laugh", "bonding"]
+      },
+      {
+        id: "p25",
+        url: "/images/portfolio-portrait-1.jpg",
+        category: "Family",
+        title: "Laughter in the Living Room",
+        tags: ["family", "laughter", "indoor", "fun", "happy", "moments"]
+      },
+
+      // === MATERNITY ===
+      {
+        id: "p26",
+        url: "/images/portfolio-maternity.jpg",
         category: "Maternity",
         title: "Beginning of Life",
         tags: ["maternity", "belly", "pregnant", "couple", "hands", "motherhood", "close-up"]
       },
       {
-        id: "p9",
-        url: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80",
+        id: "p27",
+        url: "/images/portfolio-family.jpg",
+        category: "Maternity",
+        title: "Parental Hopes",
+        tags: ["maternity", "family", "beach", "sunset", "outdoor", "anticipation"]
+      },
+      {
+        id: "p28",
+        url: "/images/portfolio-portrait-1.jpg",
+        category: "Maternity",
+        title: "Maternal Radiance",
+        tags: ["maternity", "portrait", "woman", "gaze", "radiant", "gentle"]
+      },
+      {
+        id: "p29",
+        url: "/images/about-family.jpg",
+        category: "Maternity",
+        title: "New Horizons",
+        tags: ["maternity", "parents", "future", "anticipation", "love", "journey"]
+      },
+      {
+        id: "p30",
+        url: "/images/portfolio-pre-wedding.jpg",
+        category: "Maternity",
+        title: "A Precious Moment",
+        tags: ["maternity", "couple", "candid", "garden", "soft light", "romantic"]
+      },
+
+      // === FASHION ===
+      {
+        id: "p31",
+        url: "/images/portfolio-fashion.jpg",
         category: "Fashion",
         title: "Retro Parisian Vibe",
         tags: ["fashion", "woman", "street style", "urban", "vintage", "sunglasses", "model"]
       },
       {
-        id: "p10",
-        url: "https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=1200&q=80",
+        id: "p32",
+        url: "/images/portfolio-portrait-1.jpg",
+        category: "Fashion",
+        title: "Editorial Chic",
+        tags: ["fashion", "editorial", "woman", "chic", "glamour", "studio"]
+      },
+      {
+        id: "p33",
+        url: "/images/about-me.jpg",
+        category: "Fashion",
+        title: "Sartorial Shadow",
+        tags: ["fashion", "suit", "classic", "monochrome", "style", "shadow"]
+      },
+      {
+        id: "p34",
+        url: "/images/about-editing.jpg",
+        category: "Fashion",
+        title: "Runway Retouch",
+        tags: ["fashion", "retouching", "colors", "creative", "magazine", "contrast"]
+      },
+      {
+        id: "p35",
+        url: "/images/portfolio-portrait-2.jpg",
+        category: "Fashion",
+        title: "High Street Portrait",
+        tags: ["fashion", "street", "man", "urban", "outerwear", "trend"]
+      },
+
+      // === WILDLIFE ===
+      {
+        id: "p36",
+        url: "/images/portfolio-wildlife.jpg",
         category: "Wildlife",
         title: "Misty Buck",
         tags: ["wildlife", "deer", "forest", "fog", "woods", "nature", "animal", "majestic"]
       },
       {
-        id: "p11",
-        url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=80",
+        id: "p37",
+        url: "/images/blog-nature.jpg",
+        category: "Wildlife",
+        title: "Deep Forest Silence",
+        tags: ["wildlife", "forest", "deep", "woods", "trees", "calm", "mist"]
+      },
+      {
+        id: "p38",
+        url: "/images/about-travel.jpg",
+        category: "Wildlife",
+        title: "Mountain Peak Soar",
+        tags: ["wildlife", "bird", "mountain", "peak", "flying", "soaring", "sky"]
+      },
+      {
+        id: "p39",
+        url: "/images/hero-bg.jpg",
+        category: "Wildlife",
+        title: "Primal Sunrise",
+        tags: ["wildlife", "sunrise", "landscape", "morning", "wilderness", "scenic"]
+      },
+      {
+        id: "p40",
+        url: "/images/portfolio-family.jpg",
+        category: "Wildlife",
+        title: "Natural Habits",
+        tags: ["wildlife", "habitat", "nature", "outdoor", "animals", "conservation"]
+      },
+
+      // === COMMERCIAL ===
+      {
+        id: "p41",
+        url: "/images/portfolio-commercial-1.jpg",
         category: "Commercial",
         title: "Acoustic Beats Studio",
         tags: ["commercial", "product", "headphones", "sound", "music", "studio", "advertising"]
       },
       {
-        id: "p12",
-        url: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=80",
+        id: "p42",
+        url: "/images/portfolio-commercial-2.jpg",
         category: "Commercial",
         title: "Velocity Crimson Sneaker",
         tags: ["commercial", "product", "shoe", "sneaker", "red", "advertising", "sportswear"]
+      },
+      {
+        id: "p43",
+        url: "/images/blog-lighting.jpg",
+        category: "Commercial",
+        title: "Product Shadow Play",
+        tags: ["commercial", "lighting", "shadow", "abstract", "artistic", "concept"]
+      },
+      {
+        id: "p44",
+        url: "/images/about-editing.jpg",
+        category: "Commercial",
+        title: "Studio Workflow Focus",
+        tags: ["commercial", "studio", "workflow", "workstation", "professional", "creative"]
+      },
+      {
+        id: "p45",
+        url: "/images/portfolio-fashion.jpg",
+        category: "Commercial",
+        title: "Apparel Campaign",
+        tags: ["commercial", "apparel", "model", "brand", "advertising", "clothing"]
       }
     ];
 
@@ -121,29 +369,29 @@ function initDb() {
         passcode: "autumn2026",
         clientName: "Sophie Jennings",
         clientEmail: "sophie@example.com",
-        coverImage: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
+        coverImage: "/images/portfolio-wedding-1.jpg",
         images: [
           {
             id: "img1",
-            url: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
+            url: "/images/portfolio-wedding-1.jpg",
             tags: ["altar", "flowers", "ceremony"],
             originalName: "DSC_0102.jpg"
           },
           {
             id: "img2",
-            url: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1200&q=80",
+            url: "/images/portfolio-wedding-2.jpg",
             tags: ["hands", "rings", "couple"],
             originalName: "DSC_0156.jpg"
           },
           {
             id: "img3",
-            url: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=80",
+            url: "/images/portfolio-pre-wedding.jpg",
             tags: ["couple", "laughing", "candid"],
             originalName: "DSC_0210.jpg"
           },
           {
             id: "img4",
-            url: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=1200&q=80",
+            url: "/images/portfolio-engagement.jpg",
             tags: ["hug", "sunset", "outdoor"],
             originalName: "DSC_0284.jpg"
           }
@@ -654,7 +902,7 @@ app.post("/api/admin/galleries", (req, res) => {
     passcode: actualPasscode,
     clientName,
     clientEmail,
-    coverImage: coverImage || "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
+    coverImage: coverImage || "/images/portfolio-wedding-1.jpg",
     images: images || [],
     favorites: [],
     selected: [],

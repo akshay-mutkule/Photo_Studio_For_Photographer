@@ -1,0 +1,763 @@
+{
+  "portfolio": [
+    {
+      "id": "p1",
+      "url": "/images/portfolio-wedding-1.jpg",
+      "category": "Weddings",
+      "title": "Ethereal Canopy Altar",
+      "tags": [
+        "wedding",
+        "altar",
+        "outdoor",
+        "flowers",
+        "ceremony",
+        "nature",
+        "elegant"
+      ]
+    },
+    {
+      "id": "p2",
+      "url": "/images/portfolio-wedding-2.jpg",
+      "category": "Weddings",
+      "title": "Eternal Promise",
+      "tags": [
+        "wedding",
+        "hands",
+        "rings",
+        "couple",
+        "holding hands",
+        "love",
+        "close-up"
+      ]
+    },
+    {
+      "id": "p3",
+      "url": "/images/blog-wedding.jpg",
+      "category": "Weddings",
+      "title": "Unveiled Grace",
+      "tags": [
+        "wedding",
+        "bride",
+        "veil",
+        "portrait",
+        "elegance",
+        "classic"
+      ]
+    },
+    {
+      "id": "p4",
+      "url": "/images/hero-bg.jpg",
+      "category": "Weddings",
+      "title": "Sacred Exchange",
+      "tags": [
+        "wedding",
+        "vows",
+        "ceremony",
+        "couple",
+        "love",
+        "sacred"
+      ]
+    },
+    {
+      "id": "p5",
+      "url": "/images/portfolio-pre-wedding.jpg",
+      "category": "Weddings",
+      "title": "Garden Devotion",
+      "tags": [
+        "wedding",
+        "garden",
+        "couple",
+        "romance",
+        "outdoor",
+        "happiness"
+      ]
+    },
+    {
+      "id": "p6",
+      "url": "/images/portfolio-pre-wedding.jpg",
+      "category": "Pre-Wedding",
+      "title": "Joyous Laughs",
+      "tags": [
+        "pre-wedding",
+        "couple",
+        "laughing",
+        "garden",
+        "happy",
+        "candid",
+        "dress"
+      ]
+    },
+    {
+      "id": "p7",
+      "url": "/images/about-travel.jpg",
+      "category": "Pre-Wedding",
+      "title": "Lakeside Romance",
+      "tags": [
+        "pre-wedding",
+        "lake",
+        "reflection",
+        "nature",
+        "scenic",
+        "quiet"
+      ]
+    },
+    {
+      "id": "p8",
+      "url": "/images/portfolio-wedding-1.jpg",
+      "category": "Pre-Wedding",
+      "title": "Scenic Meadows",
+      "tags": [
+        "pre-wedding",
+        "meadow",
+        "fields",
+        "outdoor",
+        "scenic",
+        "sunlight"
+      ]
+    },
+    {
+      "id": "p9",
+      "url": "/images/portfolio-wedding-2.jpg",
+      "category": "Pre-Wedding",
+      "title": "Whispering Woods",
+      "tags": [
+        "pre-wedding",
+        "forest",
+        "nature",
+        "pathway",
+        "romantic",
+        "intimate"
+      ]
+    },
+    {
+      "id": "p10",
+      "url": "/images/portfolio-engagement.jpg",
+      "category": "Pre-Wedding",
+      "title": "Meadow Path",
+      "tags": [
+        "pre-wedding",
+        "meadow",
+        "couple",
+        "walking",
+        "together",
+        "holding hands"
+      ]
+    },
+    {
+      "id": "p11",
+      "url": "/images/portfolio-engagement.jpg",
+      "category": "Engagement",
+      "title": "Golden Hour Embrace",
+      "tags": [
+        "engagement",
+        "sunset",
+        "embrace",
+        "golden hour",
+        "couple",
+        "romance",
+        "field"
+      ]
+    },
+    {
+      "id": "p12",
+      "url": "/images/blog-wedding.jpg",
+      "category": "Engagement",
+      "title": "Sunset Promise",
+      "tags": [
+        "engagement",
+        "sunset",
+        "promise",
+        "silhouette",
+        "love",
+        "horizon"
+      ]
+    },
+    {
+      "id": "p13",
+      "url": "/images/portfolio-wedding-1.jpg",
+      "category": "Engagement",
+      "title": "Ethereal Ring Exchange",
+      "tags": [
+        "engagement",
+        "ring",
+        "hands",
+        "exchange",
+        "ceremony",
+        "sparkle"
+      ]
+    },
+    {
+      "id": "p14",
+      "url": "/images/portfolio-pre-wedding.jpg",
+      "category": "Engagement",
+      "title": "Candid Bliss",
+      "tags": [
+        "engagement",
+        "candid",
+        "smile",
+        "laugh",
+        "happy",
+        "outdoor"
+      ]
+    },
+    {
+      "id": "p15",
+      "url": "/images/about-travel.jpg",
+      "category": "Engagement",
+      "title": "Golden Hour Fields",
+      "tags": [
+        "engagement",
+        "golden hour",
+        "fields",
+        "nature",
+        "warm",
+        "sunlight"
+      ]
+    },
+    {
+      "id": "p16",
+      "url": "/images/portfolio-portrait-1.jpg",
+      "category": "Portraits",
+      "title": "Sienna",
+      "tags": [
+        "portrait",
+        "woman",
+        "model",
+        "editorial",
+        "studio",
+        "fashion",
+        "eyes"
+      ]
+    },
+    {
+      "id": "p17",
+      "url": "/images/portfolio-portrait-2.jpg",
+      "category": "Portraits",
+      "title": "Marcus",
+      "tags": [
+        "portrait",
+        "man",
+        "headshot",
+        "candid",
+        "smile",
+        "warm",
+        "outdoor"
+      ]
+    },
+    {
+      "id": "p18",
+      "url": "/images/about-me.jpg",
+      "category": "Portraits",
+      "title": "The Creator",
+      "tags": [
+        "portrait",
+        "photographer",
+        "lens",
+        "camera",
+        "creative",
+        "black and white"
+      ]
+    },
+    {
+      "id": "p19",
+      "url": "/images/portfolio-fashion.jpg",
+      "category": "Portraits",
+      "title": "Parisian Gaze",
+      "tags": [
+        "portrait",
+        "fashion",
+        "street",
+        "paris",
+        "style",
+        "sunglasses"
+      ]
+    },
+    {
+      "id": "p20",
+      "url": "/images/portfolio-family.jpg",
+      "category": "Portraits",
+      "title": "Candid Expression",
+      "tags": [
+        "portrait",
+        "candid",
+        "smile",
+        "authentic",
+        "natural",
+        "light"
+      ]
+    },
+    {
+      "id": "p21",
+      "url": "/images/portfolio-family.jpg",
+      "category": "Family",
+      "title": "Beachside Sunset Run",
+      "tags": [
+        "family",
+        "beach",
+        "sunset",
+        "kids",
+        "running",
+        "fun",
+        "silhouette"
+      ]
+    },
+    {
+      "id": "p22",
+      "url": "/images/about-family.jpg",
+      "category": "Family",
+      "title": "Generation Legacy",
+      "tags": [
+        "family",
+        "parents",
+        "children",
+        "generation",
+        "love",
+        "home"
+      ]
+    },
+    {
+      "id": "p23",
+      "url": "/images/portfolio-maternity.jpg",
+      "category": "Family",
+      "title": "Homecoming Glow",
+      "tags": [
+        "family",
+        "maternity",
+        "home",
+        "cozy",
+        "indoor",
+        "warmth"
+      ]
+    },
+    {
+      "id": "p24",
+      "url": "/images/portfolio-portrait-2.jpg",
+      "category": "Family",
+      "title": "Fatherhood Smile",
+      "tags": [
+        "family",
+        "father",
+        "son",
+        "smile",
+        "laugh",
+        "bonding"
+      ]
+    },
+    {
+      "id": "p25",
+      "url": "/images/portfolio-portrait-1.jpg",
+      "category": "Family",
+      "title": "Laughter in the Living Room",
+      "tags": [
+        "family",
+        "laughter",
+        "indoor",
+        "fun",
+        "happy",
+        "moments"
+      ]
+    },
+    {
+      "id": "p26",
+      "url": "/images/portfolio-maternity.jpg",
+      "category": "Maternity",
+      "title": "Beginning of Life",
+      "tags": [
+        "maternity",
+        "belly",
+        "pregnant",
+        "couple",
+        "hands",
+        "motherhood",
+        "close-up"
+      ]
+    },
+    {
+      "id": "p27",
+      "url": "/images/portfolio-family.jpg",
+      "category": "Maternity",
+      "title": "Parental Hopes",
+      "tags": [
+        "maternity",
+        "family",
+        "beach",
+        "sunset",
+        "outdoor",
+        "anticipation"
+      ]
+    },
+    {
+      "id": "p28",
+      "url": "/images/portfolio-portrait-1.jpg",
+      "category": "Maternity",
+      "title": "Maternal Radiance",
+      "tags": [
+        "maternity",
+        "portrait",
+        "woman",
+        "gaze",
+        "radiant",
+        "gentle"
+      ]
+    },
+    {
+      "id": "p29",
+      "url": "/images/about-family.jpg",
+      "category": "Maternity",
+      "title": "New Horizons",
+      "tags": [
+        "maternity",
+        "parents",
+        "future",
+        "anticipation",
+        "love",
+        "journey"
+      ]
+    },
+    {
+      "id": "p30",
+      "url": "/images/portfolio-pre-wedding.jpg",
+      "category": "Maternity",
+      "title": "A Precious Moment",
+      "tags": [
+        "maternity",
+        "couple",
+        "candid",
+        "garden",
+        "soft light",
+        "romantic"
+      ]
+    },
+    {
+      "id": "p31",
+      "url": "/images/portfolio-fashion.jpg",
+      "category": "Fashion",
+      "title": "Retro Parisian Vibe",
+      "tags": [
+        "fashion",
+        "woman",
+        "street style",
+        "urban",
+        "vintage",
+        "sunglasses",
+        "model"
+      ]
+    },
+    {
+      "id": "p32",
+      "url": "/images/portfolio-portrait-1.jpg",
+      "category": "Fashion",
+      "title": "Editorial Chic",
+      "tags": [
+        "fashion",
+        "editorial",
+        "woman",
+        "chic",
+        "glamour",
+        "studio"
+      ]
+    },
+    {
+      "id": "p33",
+      "url": "/images/about-me.jpg",
+      "category": "Fashion",
+      "title": "Sartorial Shadow",
+      "tags": [
+        "fashion",
+        "suit",
+        "classic",
+        "monochrome",
+        "style",
+        "shadow"
+      ]
+    },
+    {
+      "id": "p34",
+      "url": "/images/about-editing.jpg",
+      "category": "Fashion",
+      "title": "Runway Retouch",
+      "tags": [
+        "fashion",
+        "retouching",
+        "colors",
+        "creative",
+        "magazine",
+        "contrast"
+      ]
+    },
+    {
+      "id": "p35",
+      "url": "/images/portfolio-portrait-2.jpg",
+      "category": "Fashion",
+      "title": "High Street Portrait",
+      "tags": [
+        "fashion",
+        "street",
+        "man",
+        "urban",
+        "outerwear",
+        "trend"
+      ]
+    },
+    {
+      "id": "p36",
+      "url": "/images/portfolio-wildlife.jpg",
+      "category": "Wildlife",
+      "title": "Misty Buck",
+      "tags": [
+        "wildlife",
+        "deer",
+        "forest",
+        "fog",
+        "woods",
+        "nature",
+        "animal",
+        "majestic"
+      ]
+    },
+    {
+      "id": "p37",
+      "url": "/images/blog-nature.jpg",
+      "category": "Wildlife",
+      "title": "Deep Forest Silence",
+      "tags": [
+        "wildlife",
+        "forest",
+        "deep",
+        "woods",
+        "trees",
+        "calm",
+        "mist"
+      ]
+    },
+    {
+      "id": "p38",
+      "url": "/images/about-travel.jpg",
+      "category": "Wildlife",
+      "title": "Mountain Peak Soar",
+      "tags": [
+        "wildlife",
+        "bird",
+        "mountain",
+        "peak",
+        "flying",
+        "soaring",
+        "sky"
+      ]
+    },
+    {
+      "id": "p39",
+      "url": "/images/hero-bg.jpg",
+      "category": "Wildlife",
+      "title": "Primal Sunrise",
+      "tags": [
+        "wildlife",
+        "sunrise",
+        "landscape",
+        "morning",
+        "wilderness",
+        "scenic"
+      ]
+    },
+    {
+      "id": "p40",
+      "url": "/images/portfolio-family.jpg",
+      "category": "Wildlife",
+      "title": "Natural Habits",
+      "tags": [
+        "wildlife",
+        "habitat",
+        "nature",
+        "outdoor",
+        "animals",
+        "conservation"
+      ]
+    },
+    {
+      "id": "p41",
+      "url": "/images/portfolio-commercial-1.jpg",
+      "category": "Commercial",
+      "title": "Acoustic Beats Studio",
+      "tags": [
+        "commercial",
+        "product",
+        "headphones",
+        "sound",
+        "music",
+        "studio",
+        "advertising"
+      ]
+    },
+    {
+      "id": "p42",
+      "url": "/images/portfolio-commercial-2.jpg",
+      "category": "Commercial",
+      "title": "Velocity Crimson Sneaker",
+      "tags": [
+        "commercial",
+        "product",
+        "shoe",
+        "sneaker",
+        "red",
+        "advertising",
+        "sportswear"
+      ]
+    },
+    {
+      "id": "p43",
+      "url": "/images/blog-lighting.jpg",
+      "category": "Commercial",
+      "title": "Product Shadow Play",
+      "tags": [
+        "commercial",
+        "lighting",
+        "shadow",
+        "abstract",
+        "artistic",
+        "concept"
+      ]
+    },
+    {
+      "id": "p44",
+      "url": "/images/about-editing.jpg",
+      "category": "Commercial",
+      "title": "Studio Workflow Focus",
+      "tags": [
+        "commercial",
+        "studio",
+        "workflow",
+        "workstation",
+        "professional",
+        "creative"
+      ]
+    },
+    {
+      "id": "p45",
+      "url": "/images/portfolio-fashion.jpg",
+      "category": "Commercial",
+      "title": "Apparel Campaign",
+      "tags": [
+        "commercial",
+        "apparel",
+        "model",
+        "brand",
+        "advertising",
+        "clothing"
+      ]
+    }
+  ],
+  "galleries": [
+    {
+      "id": "gal-sophie-luke",
+      "title": "Sophie & Luke's Autumn Wedding",
+      "description": "A gorgeous autumnal celebration captured at the Oakridge Estate. Complete session for review.",
+      "date": "2026-05-15",
+      "passcode": "autumn2026",
+      "clientName": "Sophie Jennings",
+      "clientEmail": "sophie@example.com",
+      "coverImage": "/images/portfolio-wedding-1.jpg",
+      "images": [
+        {
+          "id": "img1",
+          "url": "/images/portfolio-wedding-1.jpg",
+          "tags": [
+            "altar",
+            "flowers",
+            "ceremony"
+          ],
+          "originalName": "DSC_0102.jpg"
+        },
+        {
+          "id": "img2",
+          "url": "/images/portfolio-wedding-2.jpg",
+          "tags": [
+            "hands",
+            "rings",
+            "couple"
+          ],
+          "originalName": "DSC_0156.jpg"
+        },
+        {
+          "id": "img3",
+          "url": "/images/portfolio-pre-wedding.jpg",
+          "tags": [
+            "couple",
+            "laughing",
+            "candid"
+          ],
+          "originalName": "DSC_0210.jpg"
+        },
+        {
+          "id": "img4",
+          "url": "/images/portfolio-engagement.jpg",
+          "tags": [
+            "hug",
+            "sunset",
+            "outdoor"
+          ],
+          "originalName": "DSC_0284.jpg"
+        }
+      ],
+      "favorites": [
+        "img2"
+      ],
+      "selected": [
+        "img2",
+        "img3"
+      ],
+      "selectionSubmitted": false,
+      "allowDownload": true,
+      "downloadApproved": false,
+      "views": 24,
+      "createdAt": "2026-07-13T06:19:16.318Z",
+      "expirationDate": "2026-09-01"
+    }
+  ],
+  "bookings": [
+    {
+      "id": "bk1",
+      "clientName": "Jane Doe",
+      "clientEmail": "jane.doe@example.com",
+      "clientPhone": "+1 (555) 234-5678",
+      "date": "2026-07-25",
+      "location": "Hillside Temple Heritage",
+      "sessionType": "Festive & Family Portrait",
+      "notes": "Looking for an elegant outdoor sunset portrait session with warm tones.",
+      "status": "confirmed",
+      "createdAt": "2026-07-13T06:19:16.318Z"
+    },
+    {
+      "id": "bk2",
+      "clientName": "Robert Miller",
+      "clientEmail": "robert.miller@example.com",
+      "clientPhone": "+1 (555) 345-6789",
+      "date": "2026-08-12",
+      "location": "The Royal Marquee Hall",
+      "sessionType": "Traditional Wedding Ceremony",
+      "notes": "Full day coverage, from bridal prep to exit.",
+      "status": "pending",
+      "createdAt": "2026-07-13T06:19:16.318Z"
+    }
+  ],
+  "activities": [
+    {
+      "id": "act1",
+      "galleryId": "gal-sophie-luke",
+      "galleryTitle": "Sophie & Luke's Autumn Wedding",
+      "clientName": "Sophie Jennings",
+      "action": "viewed",
+      "timestamp": "2026-07-13T05:19:16.318Z",
+      "details": "Accessed client proofing gallery with passcode."
+    },
+    {
+      "id": "act2",
+      "galleryId": "gal-sophie-luke",
+      "galleryTitle": "Sophie & Luke's Autumn Wedding",
+      "clientName": "Sophie Jennings",
+      "action": "favorited",
+      "timestamp": "2026-07-13T05:49:16.318Z",
+      "details": "Added Eternal Promise (DSC_0156.jpg) to favorites."
+    }
+  ],
+  "profiles": []
+}

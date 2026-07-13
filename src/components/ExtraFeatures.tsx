@@ -38,10 +38,10 @@ export default function ExtraFeatures({ theme }: { theme: "dark" | "light" }) {
   };
 
   const instagramPosts = [
-    { id: 1, url: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=400&q=80", likes: 245, comments: 18 },
-    { id: 2, url: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=400&q=80", likes: 189, comments: 12 },
-    { id: 3, url: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=400&q=80", likes: 312, comments: 24 },
-    { id: 4, url: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=400&q=80", likes: 421, comments: 35 }
+    { id: 1, url: "/images/portfolio-wedding-1.jpg", likes: 245, comments: 18 },
+    { id: 2, url: "/images/portfolio-wedding-2.jpg", likes: 189, comments: 12 },
+    { id: 3, url: "/images/portfolio-pre-wedding.jpg", likes: 312, comments: 24 },
+    { id: 4, url: "/images/portfolio-engagement.jpg", likes: 421, comments: 35 }
   ];
 
   return (

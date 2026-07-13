@@ -26,7 +26,7 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
           <div className="relative">
             <div className={`relative z-10 aspect-[3/4] rounded-lg overflow-hidden border shadow-2xl ${isDark ? "border-neutral-800" : "border-neutral-200"}`}>
               <img
-                src="https://images.unsplash.com/photo-1554080353-a576cf803bda?auto=format&fit=crop&w=1200&q=80"
+                src="/images/about-me.jpg"
                 alt="Photographer behind the lens"
                 className="w-full h-full object-cover"
               />
@@ -128,21 +128,21 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div className={`aspect-video rounded-lg overflow-hidden border ${isDark ? "border-neutral-800" : "border-neutral-200"}`}>
               <img
-                src="https://images.unsplash.com/photo-1452421822248-d4c2b47f0c81?auto=format&fit=crop&w=600&q=80"
+                src="/images/about-travel.jpg"
                 alt="Behind the scenes shoot gear"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               />
             </div>
             <div className={`aspect-video rounded-lg overflow-hidden border ${isDark ? "border-neutral-800" : "border-neutral-200"}`}>
               <img
-                src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=600&q=80"
+                src="/images/about-family.jpg"
                 alt="Setting up lighting"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               />
             </div>
             <div className={`aspect-video rounded-lg overflow-hidden border ${isDark ? "border-neutral-800" : "border-neutral-200"}`}>
               <img
-                src="https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=600&q=80"
+                src="/images/about-editing.jpg"
                 alt="Editing raw photos in Lightroom"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
               />
