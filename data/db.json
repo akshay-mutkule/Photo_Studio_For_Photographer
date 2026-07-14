@@ -274,7 +274,7 @@
     },
     {
       "id": "p20",
-      "url": "/images/portfolio-family.jpg",
+      "url": "/images/portfolio-family.svg",
       "category": "Portraits",
       "title": "Candid Expression",
       "tags": [
@@ -288,7 +288,7 @@
     },
     {
       "id": "p21",
-      "url": "/images/portfolio-family.jpg",
+      "url": "/images/portfolio-family.svg",
       "category": "Family",
       "title": "Beachside Sunset Run",
       "tags": [
@@ -317,7 +317,7 @@
     },
     {
       "id": "p23",
-      "url": "/images/portfolio-maternity.jpg",
+      "url": "/images/portfolio-maternity.svg",
       "category": "Family",
       "title": "Homecoming Glow",
       "tags": [
@@ -359,7 +359,7 @@
     },
     {
       "id": "p26",
-      "url": "/images/portfolio-maternity.jpg",
+      "url": "/images/portfolio-maternity.svg",
       "category": "Maternity",
       "title": "Beginning of Life",
       "tags": [
@@ -374,7 +374,7 @@
     },
     {
       "id": "p27",
-      "url": "/images/portfolio-family.jpg",
+      "url": "/images/portfolio-family.svg",
       "category": "Maternity",
       "title": "Parental Hopes",
       "tags": [
@@ -561,7 +561,7 @@
     },
     {
       "id": "p40",
-      "url": "/images/portfolio-family.jpg",
+      "url": "/images/portfolio-family.svg",
       "category": "Wildlife",
       "title": "Natural Habits",
       "tags": [

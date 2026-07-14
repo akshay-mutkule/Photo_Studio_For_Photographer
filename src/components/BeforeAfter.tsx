@@ -80,7 +80,7 @@ export default function BeforeAfter({
           <img
             src={beforeImage}
             alt="Before retouching"
-            className="absolute inset-0 w-full h-full object-cover pointer-events-none max-w-none"
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none max-w-none grayscale contrast-75 brightness-90 saturate-50"
             style={{ width: containerRef.current?.getBoundingClientRect().width || "100%" }}
           />
           <div className="absolute left-4 bottom-4 bg-black/70 border border-neutral-700 text-neutral-300 text-[10px] tracking-widest uppercase px-3 py-1.5 rounded backdrop-blur-sm z-30 whitespace-nowrap">

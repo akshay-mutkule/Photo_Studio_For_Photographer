@@ -168,7 +168,7 @@ function initDb() {
       },
       {
         id: "p20",
-        url: "/images/portfolio-family.jpg",
+        url: "/images/portfolio-family.svg",
         category: "Portraits",
         title: "Candid Expression",
         tags: ["portrait", "candid", "smile", "authentic", "natural", "light"]
@@ -177,7 +177,7 @@ function initDb() {
       // === FAMILY ===
       {
         id: "p21",
-        url: "/images/portfolio-family.jpg",
+        url: "/images/portfolio-family.svg",
         category: "Family",
         title: "Beachside Sunset Run",
         tags: ["family", "beach", "sunset", "kids", "running", "fun", "silhouette"]
@@ -191,7 +191,7 @@ function initDb() {
       },
       {
         id: "p23",
-        url: "/images/portfolio-maternity.jpg",
+        url: "/images/portfolio-maternity.svg",
         category: "Family",
         title: "Homecoming Glow",
         tags: ["family", "maternity", "home", "cozy", "indoor", "warmth"]
@@ -214,14 +214,14 @@ function initDb() {
       // === MATERNITY ===
       {
         id: "p26",
-        url: "/images/portfolio-maternity.jpg",
+        url: "/images/portfolio-maternity.svg",
         category: "Maternity",
         title: "Beginning of Life",
         tags: ["maternity", "belly", "pregnant", "couple", "hands", "motherhood", "close-up"]
       },
       {
         id: "p27",
-        url: "/images/portfolio-family.jpg",
+        url: "/images/portfolio-family.svg",
         category: "Maternity",
         title: "Parental Hopes",
         tags: ["maternity", "family", "beach", "sunset", "outdoor", "anticipation"]
@@ -316,7 +316,7 @@ function initDb() {
       },
       {
         id: "p40",
-        url: "/images/portfolio-family.jpg",
+        url: "/images/portfolio-family.svg",
         category: "Wildlife",
         title: "Natural Habits",
         tags: ["wildlife", "habitat", "nature", "outdoor", "animals", "conservation"]
