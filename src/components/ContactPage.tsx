@@ -7,6 +7,7 @@ export default function ContactPage({ theme }: { theme: "dark" | "light" }) {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [msg, setMsg] = useState("");
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -22,7 +23,7 @@ export default function ContactPage({ theme }: { theme: "dark" | "light" }) {
 
   const handleContactSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!name || !email || !msg) return;
+    if (!name || !email || !password || !msg) return;
     setSending(true);
 
     try {
@@ -40,6 +41,7 @@ export default function ContactPage({ theme }: { theme: "dark" | "light" }) {
           location: "Contact Form",
           sessionType: "General Inquiry",
           notes: msg,
+          profilePassword: password,
         }),
       });
 
@@ -47,6 +49,7 @@ export default function ContactPage({ theme }: { theme: "dark" | "light" }) {
         setSuccess(true);
         setName("");
         setEmail("");
+        setPassword("");
         setMsg("");
       } else {
         console.error("Server error submitting contact inquiry");
@@ -217,6 +220,27 @@ export default function ContactPage({ theme }: { theme: "dark" | "light" }) {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="akshay@gmail.com"
+                        className={`w-full text-sm font-sans p-3 border rounded outline-none transition-colors ${
+                          isDark
+                            ? "bg-black border-neutral-800 text-white focus:border-gold-500"
+                            : "bg-white border-neutral-200 text-black focus:border-gold-500"
+                        }`}
+                      />
+                    </div>
+
+                    <div>
+                      <label className={`block text-xs font-sans tracking-wider uppercase font-semibold mb-2 ${
+                        isDark ? "text-neutral-400" : "text-neutral-600"
+                      }`}>
+                        Create Profile Password
+                      </label>
+                      <input
+                        id="contact-password-input"
+                        type="password"
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Choose password to access your profile"
                         className={`w-full text-sm font-sans p-3 border rounded outline-none transition-colors ${
                           isDark
                             ? "bg-black border-neutral-800 text-white focus:border-gold-500"

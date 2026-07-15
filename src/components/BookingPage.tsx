@@ -36,6 +36,7 @@ export default function BookingPage({ theme, preSelectedPackage }: BookingPagePr
   // Form State
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [date, setDate] = useState("");
   const [location, setLocation] = useState("");
@@ -84,7 +85,7 @@ export default function BookingPage({ theme, preSelectedPackage }: BookingPagePr
   // Form submit
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!name || !email || !date || !sessionType) return;
+    if (!name || !email || !password || !date || !sessionType) return;
     setSubmitting(true);
 
     try {
@@ -99,6 +100,7 @@ export default function BookingPage({ theme, preSelectedPackage }: BookingPagePr
           location,
           sessionType,
           notes,
+          profilePassword: password,
         }),
       });
 
@@ -110,6 +112,7 @@ export default function BookingPage({ theme, preSelectedPackage }: BookingPagePr
         // Clear fields
         setName("");
         setEmail("");
+        setPassword("");
         setPhone("");
         setDate("");
         setLocation("");
@@ -390,6 +393,33 @@ Thank you for co-creating with us!
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           placeholder="akshay@gmail.com"
+                          className={`w-full text-sm font-sans pl-10 pr-3 py-2.5 border rounded outline-none transition-colors ${
+                            isDark
+                              ? "bg-black border-neutral-800 text-white focus:border-gold-500"
+                              : "bg-white border-neutral-200 text-black focus:border-gold-500"
+                          }`}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Profile Password Input */}
+                    <div>
+                      <label className={`block text-xs font-sans tracking-wider uppercase font-semibold mb-2 ${
+                        isDark ? "text-neutral-400" : "text-neutral-600"
+                      }`}>
+                        Create Profile Password *
+                      </label>
+                      <div className="relative">
+                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-neutral-500">
+                          <Lock className="w-4 h-4" />
+                        </span>
+                        <input
+                          id="booking-password-input"
+                          type="password"
+                          required
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          placeholder="Choose password to access your profile"
                           className={`w-full text-sm font-sans pl-10 pr-3 py-2.5 border rounded outline-none transition-colors ${
                             isDark
                               ? "bg-black border-neutral-800 text-white focus:border-gold-500"

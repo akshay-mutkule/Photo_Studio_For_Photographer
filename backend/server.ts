@@ -4,7 +4,7 @@ import fs from "fs";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
-import { Gallery, Booking, PortfolioImage, ClientActivity, DashboardStats } from "../frontend/types.js";
+import { Gallery, Booking, PortfolioImage, ClientActivity, DashboardStats } from "../src/types.js";
 import { initializeApp } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import { v2 as cloudinary } from "cloudinary";
@@ -715,7 +715,7 @@ app.get("/api/bookings", (req, res) => {
 });
 
 app.post("/api/bookings", (req, res) => {
-  const { clientName, clientEmail, clientPhone, date, location, sessionType, notes } = req.body;
+  const { clientName, clientEmail, clientPhone, date, location, sessionType, notes, profilePassword } = req.body;
   if (!clientName || !clientEmail || !date || !sessionType) {
     return res.status(400).json({ error: "Missing required fields for booking request" });
   }
@@ -749,7 +749,7 @@ app.post("/api/bookings", (req, res) => {
 
   if (!profile) {
     isNewProfile = true;
-    passcode = "VS-" + Math.floor(1000 + Math.random() * 9000);
+    passcode = profilePassword ? profilePassword.trim() : "VS-" + Math.floor(1000 + Math.random() * 9000);
     profile = {
       id: "prof-" + Math.random().toString(36).substr(2, 9),
       clientName,
@@ -761,7 +761,7 @@ app.post("/api/bookings", (req, res) => {
         {
           id: "notif-" + Math.random().toString(36).substr(2, 9),
           title: "Welcome to VS Photography! 📸",
-          message: `Your client profile has been created successfully. Use your passcode "${passcode}" with your email "${clientEmail}" to log into the Client Portal, where you can view booking statuses, read messages, and access your photo shoots.`,
+          message: `Your client profile has been created successfully. Use your password "${passcode}" with your email "${clientEmail}" to log into the Client Portal, where you can view booking statuses, read messages, and access your photo shoots.`,
           read: false,
           createdAt: new Date().toISOString()
         },
@@ -776,6 +776,9 @@ app.post("/api/bookings", (req, res) => {
     };
     db.profiles.push(profile);
   } else {
+    if (profilePassword) {
+      profile.passcode = profilePassword.trim();
+    }
     passcode = profile.passcode;
     profile.notifications.unshift({
       id: "notif-" + Math.random().toString(36).substr(2, 9),
@@ -1075,17 +1078,19 @@ app.post("/api/admin/galleries", (req, res) => {
   );
 
   if (!profile) {
-    const generatedPasscode = "VS-" + Math.floor(1000 + Math.random() * 9000);
     profile = {
       id: "prof-" + Math.random().toString(36).substr(2, 9),
       clientName,
       clientEmail,
       clientPhone: "",
-      passcode: generatedPasscode,
+      passcode: actualPasscode,
       createdAt: new Date().toISOString(),
       notifications: []
     };
     db.profiles.push(profile);
+  } else {
+    // Keep passcode same as given by admin/gallery passcode
+    profile.passcode = actualPasscode;
   }
 
   profile.notifications.unshift({

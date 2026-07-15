@@ -37,6 +37,9 @@ export default function ClientPortal({
   const [clientProfile, setClientProfile] = useState<any | null>(null);
   const [clientBookings, setClientBookings] = useState<any[]>([]);
   const [clientGalleries, setClientGalleries] = useState<any[]>([]);
+  const [passcodeRequiredGalleryId, setPasscodeRequiredGalleryId] = useState<string | null>(null);
+  const [galleryVerifyInput, setGalleryVerifyInput] = useState("");
+  const [galleryVerifyError, setGalleryVerifyError] = useState("");
 
   // Interactive UI State
   const [activeImage, setActiveImage] = useState<ImageItem | null>(null);
@@ -657,21 +660,81 @@ export default function ClientPortal({
                             <img src={g.coverImage} alt={g.title} className="w-full h-full object-cover" />
                           </div>
                           <div className="p-4 space-y-2 font-sans">
-                            <h4 className="font-serif text-md font-medium">{g.title}</h4>
-                            <p className="text-[11px] text-neutral-400 leading-relaxed line-clamp-2">{g.description}</p>
-                            <p className="text-[9px] text-neutral-500 font-mono uppercase">Date: {g.date}</p>
-                            <button
-                              onClick={() => {
-                                setGallery(g);
-                                if (g.selectionSubmitted) {
-                                  setSubmissionSuccess(true);
+                            {passcodeRequiredGalleryId === g.id ? (
+                              <form onSubmit={(e) => {
+                                e.preventDefault();
+                                if (galleryVerifyInput.trim().toLowerCase() === g.passcode.toLowerCase()) {
+                                  setGallery(g);
+                                  if (g.selectionSubmitted) {
+                                    setSubmissionSuccess(true);
+                                  }
+                                  setPasscodeRequiredGalleryId(null);
+                                } else {
+                                  setGalleryVerifyError("Incorrect passcode. Please verify and try again.");
                                 }
-                              }}
-                              className="w-full py-2 bg-gold-500 hover:bg-gold-400 text-black text-[10px] uppercase font-bold tracking-widest rounded transition-colors mt-2 cursor-pointer flex items-center justify-center gap-1.5"
-                            >
-                              <span>Open Proofing Suite</span>
-                              <ChevronRight className="w-3.5 h-3.5" />
-                            </button>
+                              }} className="space-y-3 pt-1">
+                                <div>
+                                  <label className="block text-[10px] uppercase font-sans tracking-widest text-gold-500 font-semibold mb-1">
+                                    Enter Gallery Passcode
+                                  </label>
+                                  <input
+                                    type="password"
+                                    required
+                                    placeholder="e.g., autumn2026"
+                                    value={galleryVerifyInput}
+                                    onChange={(e) => {
+                                      setGalleryVerifyInput(e.target.value);
+                                      setGalleryVerifyError("");
+                                    }}
+                                    className={`w-full text-center text-xs tracking-widest font-mono p-2 border rounded outline-none ${
+                                      isDark ? "bg-black border-neutral-800 text-white focus:border-gold-500" : "bg-white border-neutral-200 text-black focus:border-gold-500"
+                                    }`}
+                                  />
+                                </div>
+                                {galleryVerifyError && (
+                                  <p className="text-[10px] text-red-400 text-center font-sans font-light">{galleryVerifyError}</p>
+                                )}
+                                <div className="flex gap-2">
+                                  <button
+                                    type="button"
+                                    onClick={() => setPasscodeRequiredGalleryId(null)}
+                                    className="flex-1 py-1.5 border border-neutral-800 hover:border-neutral-700 text-neutral-400 text-[9px] uppercase tracking-wider rounded transition-colors cursor-pointer"
+                                  >
+                                    Cancel
+                                  </button>
+                                  <button
+                                    type="submit"
+                                    className="flex-1 py-1.5 bg-gold-500 hover:bg-gold-400 text-black text-[9px] uppercase font-bold tracking-wider rounded transition-colors cursor-pointer"
+                                  >
+                                    Unlock Folder
+                                  </button>
+                                </div>
+                              </form>
+                            ) : (
+                              <>
+                                <h4 className="font-serif text-md font-medium">{g.title}</h4>
+                                <p className="text-[11px] text-neutral-400 leading-relaxed line-clamp-2">{g.description}</p>
+                                <p className="text-[9px] text-neutral-500 font-mono uppercase">Date: {g.date}</p>
+                                <button
+                                  onClick={() => {
+                                    if (!g.passcode) {
+                                      setGallery(g);
+                                      if (g.selectionSubmitted) {
+                                        setSubmissionSuccess(true);
+                                      }
+                                    } else {
+                                      setPasscodeRequiredGalleryId(g.id);
+                                      setGalleryVerifyInput("");
+                                      setGalleryVerifyError("");
+                                    }
+                                  }}
+                                  className="w-full py-2 bg-gold-500 hover:bg-gold-400 text-black text-[10px] uppercase font-bold tracking-widest rounded transition-colors mt-2 cursor-pointer flex items-center justify-center gap-1.5"
+                                >
+                                  <span>Open Proofing Suite</span>
+                                  <ChevronRight className="w-3.5 h-3.5" />
+                                </button>
+                              </>
+                            )}
                           </div>
                         </div>
                       ))}
