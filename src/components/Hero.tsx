@@ -19,6 +19,7 @@ export default function Hero({ onViewPortfolio, onBookShoot, theme }: HeroProps)
           src="/images/hero-bg.jpg"
           alt="VS Photography Backdrop"
           className="w-full h-full object-cover object-center opacity-65 scale-105 animate-[scaleUp_20s_infinite_alternate]"
+          referrerPolicy="no-referrer"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/80 z-10" />
       </div>

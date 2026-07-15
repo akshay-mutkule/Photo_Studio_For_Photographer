@@ -38,6 +38,7 @@ export default function AdminDashboard({ theme, isAdminAuthenticated, onAdminAut
   const [copilotInput, setCopilotInput] = useState("");
   const [copilotLoading, setCopilotLoading] = useState(false);
   const copilotEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Gallery Creation form states
   const [newGalleryTitle, setNewGalleryTitle] = useState("");
@@ -220,56 +221,6 @@ export default function AdminDashboard({ theme, isAdminAuthenticated, onAdminAut
     setIsDragging(false);
   };
 
-  // Process raw local image drop & base64 conversion & auto tagging using server side Gemini!
-  const handleDrop = async (e: DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    const files = Array.from(e.dataTransfer.files) as File[];
-    if (files.length === 0) return;
-
-    setUploadStatus(`Processing ${files.length} photoshoot file(s)...`);
-
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      if (!file.type.startsWith("image/")) continue;
-
-      const base64 = await convertToBase64(file);
-      
-      // Auto-generate tags using server-side Gemini 3.5 Vision!
-      setUploadStatus(`Analyzing and auto-tagging ${file.name} with Gemini AI...`);
-      let tags: string[] = ["photography", "shoot-proof"];
-      
-      try {
-        const tagResponse = await fetch("/api/gemini/tag-image", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ base64Data: base64 })
-        });
-        if (tagResponse.ok) {
-          const tagData = await tagResponse.json();
-          tags = tagData.tags || tags;
-        }
-      } catch (err) {
-        console.error("AI Tag generation error:", err);
-      }
-
-      // Add to uploaded images list
-      const mockUrl = URL.createObjectURL(file); // Temporary blob link
-      const newImage: ImageItem = {
-        id: "img-" + Math.random().toString(36).substr(2, 9),
-        // We'll use high quality local placeholders to ensure robust UI visual presentation, while keeping real local reference names
-        url: "/images/portfolio-wedding-1.jpg",
-        tags,
-        originalName: file.name
-      };
-
-      setUploadedImages(prev => [...prev, newImage]);
-    }
-
-    setUploadStatus("Files uploaded successfully. Custom Gemini tags assigned.");
-    setTimeout(() => setUploadStatus(""), 4000);
-  };
-
   const convertToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -277,6 +228,92 @@ export default function AdminDashboard({ theme, isAdminAuthenticated, onAdminAut
       reader.onload = () => resolve(reader.result as string);
       reader.onerror = (error) => reject(error);
     });
+  };
+
+  // Shared photo uploader logic supporting Cloudinary storage and Gemini tag analysis
+  const processFiles = async (files: File[]) => {
+    if (files.length === 0) return;
+    setUploadStatus(`Processing ${files.length} photoshoot file(s)...`);
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (!file.type.startsWith("image/")) continue;
+
+      try {
+        const base64 = await convertToBase64(file);
+        
+        // 1. Upload file/photo to Cloudinary (with fallback to base64)
+        setUploadStatus(`Uploading ${file.name} to Cloudinary...`);
+        let finalImageUrl = "";
+        try {
+          const uploadResponse = await fetch("/api/cloudinary/upload", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ base64Data: base64, folder: "lumina-photography" })
+          });
+          
+          if (uploadResponse.ok) {
+            const uploadData = await uploadResponse.json();
+            finalImageUrl = uploadData.url;
+            console.log("Uploaded successfully. Storage provider:", uploadData.provider);
+          } else {
+            console.warn("Cloudinary upload route error. Using base64 fallback.");
+            finalImageUrl = base64;
+          }
+        } catch (err) {
+          console.error("Cloudinary connection failed, falling back to base64:", err);
+          finalImageUrl = base64;
+        }
+
+        // 2. Auto-generate tags using server-side Gemini 3.5 Vision!
+        setUploadStatus(`Analyzing and auto-tagging ${file.name} with Gemini AI...`);
+        let tags: string[] = ["photography", "shoot-proof"];
+        
+        try {
+          const tagResponse = await fetch("/api/gemini/tag-image", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              base64Data: finalImageUrl.startsWith("data:") ? finalImageUrl : undefined,
+              imageUrl: finalImageUrl.startsWith("http") ? finalImageUrl : undefined
+            })
+          });
+          if (tagResponse.ok) {
+            const tagData = await tagResponse.json();
+            tags = tagData.tags || tags;
+          }
+        } catch (err) {
+          console.error("AI Tag generation error:", err);
+        }
+
+        // 3. Add to uploaded images list
+        const newImage: ImageItem = {
+          id: "img-" + Math.random().toString(36).substr(2, 9),
+          url: finalImageUrl || "/images/portfolio-wedding-1.jpg",
+          tags,
+          originalName: file.name
+        };
+
+        setUploadedImages(prev => [...prev, newImage]);
+      } catch (err) {
+        console.error("Error processing file:", file.name, err);
+      }
+    }
+
+    setUploadStatus("Files uploaded and saved successfully.");
+    setTimeout(() => setUploadStatus(""), 4000);
+  };
+
+  const handleDrop = async (e: DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = Array.from(e.dataTransfer.files) as File[];
+    await processFiles(files);
+  };
+
+  const handleManualFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files ? (Array.from(e.target.files) as File[]) : [];
+    await processFiles(files);
   };
 
   // Create Gallery submit handler
@@ -770,12 +807,21 @@ export default function AdminDashboard({ theme, isAdminAuthenticated, onAdminAut
                         {/* Drag and drop Photos container inside drawer */}
                         <div className="md:col-span-3">
                           <label className="block text-[10px] font-sans tracking-widest uppercase text-neutral-400 mb-2 font-semibold">
-                            Drag-and-Drop Photoshoot Files
+                            Drag-and-Drop or Click to Upload Photoshoot Files
                           </label>
+                          <input
+                            type="file"
+                            ref={fileInputRef}
+                            multiple
+                            accept="image/*"
+                            className="hidden"
+                            onChange={handleManualFileSelect}
+                          />
                           <div
                             onDragOver={handleDragOver}
                             onDragLeave={handleDragLeave}
                             onDrop={handleDrop}
+                            onClick={() => fileInputRef.current?.click()}
                             className={`p-8 border-2 border-dashed rounded text-center cursor-pointer transition-colors ${
                               isDragging
                                 ? "border-gold-500 bg-gold-950/10 text-white"
@@ -784,10 +830,10 @@ export default function AdminDashboard({ theme, isAdminAuthenticated, onAdminAut
                           >
                             <Upload className="w-8 h-8 text-gold-500 mx-auto mb-3" />
                             <p className="text-xs font-sans">
-                              Drag & Drop multiple images here to auto-convert & queue.
+                              Drag & Drop multiple images here, or <span className="text-gold-400 underline font-medium">click to browse</span>.
                             </p>
-                            <p className="text-[10px] text-neutral-500 mt-1 font-mono">
-                              * Powered by server-side Gemini 3.5 Vision tag generation
+                            <p className="text-[10px] text-neutral-500 mt-1.5 font-mono">
+                              * Integrates Cloudinary storage with server-side Gemini 3.5 auto-tagging
                             </p>
                           </div>
 

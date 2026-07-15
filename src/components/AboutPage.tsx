@@ -29,6 +29,7 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
                 src="/images/about-me.jpg"
                 alt="Photographer behind the lens"
                 className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
               />
             </div>
             
@@ -131,6 +132,7 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
                 src="/images/about-travel.jpg"
                 alt="Behind the scenes shoot gear"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                referrerPolicy="no-referrer"
               />
             </div>
             <div className={`aspect-video rounded-lg overflow-hidden border ${isDark ? "border-neutral-800" : "border-neutral-200"}`}>
@@ -138,6 +140,7 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
                 src="/images/about-family.jpg"
                 alt="Setting up lighting"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                referrerPolicy="no-referrer"
               />
             </div>
             <div className={`aspect-video rounded-lg overflow-hidden border ${isDark ? "border-neutral-800" : "border-neutral-200"}`}>
@@ -145,6 +148,7 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
                 src="/images/about-editing.jpg"
                 alt="Editing raw photos in Lightroom"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                referrerPolicy="no-referrer"
               />
             </div>
           </div>

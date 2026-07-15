@@ -16,7 +16,22 @@ export default function BeforeAfter({
 }: BeforeAfterProps) {
   const [sliderPosition, setSliderPosition] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
+  const [containerWidth, setContainerWidth] = useState<number | string>("100%");
   const containerRef = useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (!containerRef.current) return;
+    setContainerWidth(containerRef.current.getBoundingClientRect().width);
+
+    const handleResize = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.getBoundingClientRect().width);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleMove = (clientX: number) => {
     if (!containerRef.current) return;
@@ -67,6 +82,7 @@ export default function BeforeAfter({
           src={afterImage}
           alt="After retouching"
           className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+          referrerPolicy="no-referrer"
         />
         <div className="absolute right-4 bottom-4 bg-black/70 border border-gold-500/30 text-gold-400 text-[10px] tracking-widest uppercase px-3 py-1.5 rounded backdrop-blur-sm z-30">
           {afterLabel}
@@ -81,7 +97,8 @@ export default function BeforeAfter({
             src={beforeImage}
             alt="Before retouching"
             className="absolute inset-0 w-full h-full object-cover pointer-events-none max-w-none grayscale contrast-75 brightness-90 saturate-50"
-            style={{ width: containerRef.current?.getBoundingClientRect().width || "100%" }}
+            style={{ width: containerWidth }}
+            referrerPolicy="no-referrer"
           />
           <div className="absolute left-4 bottom-4 bg-black/70 border border-neutral-700 text-neutral-300 text-[10px] tracking-widest uppercase px-3 py-1.5 rounded backdrop-blur-sm z-30 whitespace-nowrap">
             {beforeLabel}

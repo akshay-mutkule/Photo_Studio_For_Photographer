@@ -234,6 +234,7 @@ export default function PortfolioPage({ theme }: PortfolioPageProps) {
                   alt={img.title}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   loading="lazy"
+                  referrerPolicy="no-referrer"
                 />
 
                 {/* Dark Hover overlay */}
@@ -339,6 +340,7 @@ export default function PortfolioPage({ theme }: PortfolioPageProps) {
                     alt={lightboxImage.title}
                     style={{ transform: `scale(${zoomLevel})` }}
                     className="max-h-[70vh] object-contain mx-auto transition-transform duration-300"
+                    referrerPolicy="no-referrer"
                   />
                 </div>
 

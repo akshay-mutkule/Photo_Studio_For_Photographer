@@ -4,7 +4,10 @@ import fs from "fs";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
-import { Gallery, Booking, PortfolioImage, ClientActivity, DashboardStats } from "./src/types.js";
+import { Gallery, Booking, PortfolioImage, ClientActivity, DashboardStats } from "../frontend/types.js";
+import { initializeApp } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
+import { v2 as cloudinary } from "cloudinary";
 
 dotenv.config();
 
@@ -471,29 +474,179 @@ function initDb() {
   }
 }
 
-initDb();
+// Initialize Firebase Admin if configuration is available
+let firestoreDb: any = null;
 
-// Read and Write Helpers
-function readDb() {
-  try {
-    const data = fs.readFileSync(DB_FILE, "utf-8");
-    const parsed = JSON.parse(data);
-    if (!parsed.profiles) {
-      parsed.profiles = [];
-      fs.writeFileSync(DB_FILE, JSON.stringify(parsed, null, 2));
+try {
+  const firebaseConfigPath = path.join(process.cwd(), "firebase-applet-config.json");
+  if (fs.existsSync(firebaseConfigPath)) {
+    const firebaseConfig = JSON.parse(fs.readFileSync(firebaseConfigPath, "utf-8"));
+    if (firebaseConfig.projectId) {
+      const adminApp = initializeApp({
+        projectId: firebaseConfig.projectId
+      });
+      firestoreDb = getFirestore(adminApp, firebaseConfig.firestoreDatabaseId || "(default)");
+      console.log("Firebase Admin successfully initialized. Firestore database ID:", firebaseConfig.firestoreDatabaseId || "(default)");
     }
-    return parsed;
+  }
+} catch (error) {
+  console.error("Failed to initialize Firebase Admin:", error);
+}
+
+// Initialize Cloudinary Configuration lazily and safely
+let isCloudinaryConfigured = false;
+try {
+  if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+      secure: true
+    });
+    isCloudinaryConfigured = true;
+    console.log("Cloudinary successfully configured.");
+  } else {
+    console.warn("Cloudinary configuration environment variables are missing. Using fallback storage.");
+  }
+} catch (error) {
+  console.error("Failed to initialize Cloudinary SDK:", error);
+}
+
+// In-Memory Local Database Cache to support synchronous readDb/writeDb and extremely high performance
+let localDbCache: any = null;
+
+// Background worker to asynchronously persist memory changes to Firestore and db.json
+async function saveToFirestoreBackground(dbState: any) {
+  if (!firestoreDb) return;
+  try {
+    const syncCollection = async (collectionName: string, localArray: any[]) => {
+      const colRef = firestoreDb.collection(collectionName);
+      
+      // Fetch current IDs in Firestore
+      const snapshot = await colRef.get();
+      const existingIds = new Set(snapshot.docs.map((doc: any) => doc.id));
+      const currentIds = new Set(localArray.map((item: any) => item.id));
+      
+      // Update/Set current items
+      for (const item of localArray) {
+        if (item && item.id) {
+          await colRef.doc(item.id).set(item);
+        }
+      }
+      
+      // Delete any items that were deleted locally
+      for (const docId of existingIds) {
+        if (!currentIds.has(docId)) {
+          await colRef.doc(docId).delete();
+        }
+      }
+    };
+
+    await Promise.all([
+      syncCollection("portfolio", dbState.portfolio || []),
+      syncCollection("galleries", dbState.galleries || []),
+      syncCollection("bookings", dbState.bookings || []),
+      syncCollection("activities", dbState.activities || []),
+      syncCollection("profiles", dbState.profiles || [])
+    ]);
+
+    console.log("Firestore sync completed successfully.");
   } catch (error) {
-    console.error("Error reading database", error);
-    return { portfolio: [], galleries: [], bookings: [], activities: [], profiles: [] };
+    console.error("Error during Firestore sync:", error);
   }
 }
 
+// Load data into cache on startup
+async function syncAndLoadDatabase() {
+  let loadedFromFirestore = false;
+
+  if (firestoreDb) {
+    try {
+      console.log("Attempting to load database from Firestore...");
+      const portfolioSnap = await firestoreDb.collection("portfolio").get();
+      const galleriesSnap = await firestoreDb.collection("galleries").get();
+      const bookingsSnap = await firestoreDb.collection("bookings").get();
+      const activitiesSnap = await firestoreDb.collection("activities").get();
+      const profilesSnap = await firestoreDb.collection("profiles").get();
+
+      const portfolio = portfolioSnap.docs.map((doc: any) => doc.data());
+      const galleries = galleriesSnap.docs.map((doc: any) => doc.data());
+      const bookings = bookingsSnap.docs.map((doc: any) => doc.data());
+      const activities = activitiesSnap.docs.map((doc: any) => doc.data());
+      const profiles = profilesSnap.docs.map((doc: any) => doc.data());
+
+      // If we got documents, load them into the cache
+      if (portfolio.length > 0 || galleries.length > 0 || bookings.length > 0) {
+        localDbCache = {
+          portfolio,
+          galleries,
+          bookings,
+          activities,
+          profiles
+        };
+        loadedFromFirestore = true;
+        console.log(`Database successfully loaded from Firestore! Total Portfolio items: ${portfolio.length}, Galleries: ${galleries.length}, Bookings: ${bookings.length}`);
+        
+        // Also sync/write this back to db.json as a local hot backup
+        fs.writeFileSync(DB_FILE, JSON.stringify(localDbCache, null, 2));
+      }
+    } catch (error) {
+      console.error("Error loading database from Firestore:", error);
+    }
+  }
+
+  if (!loadedFromFirestore) {
+    console.log("Loading database from local db.json file...");
+    // Initialize the db.json structure first if needed
+    initDb();
+    
+    try {
+      const data = fs.readFileSync(DB_FILE, "utf-8");
+      localDbCache = JSON.parse(data);
+      if (!localDbCache.profiles) {
+        localDbCache.profiles = [];
+      }
+      console.log("Database loaded from db.json file.");
+
+      // If Firestore is available but was empty, let's seed Firestore!
+      if (firestoreDb) {
+        console.log("Seeding Firestore with initial data...");
+        await saveToFirestoreBackground(localDbCache);
+      }
+    } catch (error) {
+      console.error("Error reading local db.json, initializing empty db", error);
+      localDbCache = { portfolio: [], galleries: [], bookings: [], activities: [], profiles: [] };
+    }
+  }
+}
+
+// Read and Write Helpers
+function readDb() {
+  if (!localDbCache) {
+    try {
+      const data = fs.readFileSync(DB_FILE, "utf-8");
+      localDbCache = JSON.parse(data);
+    } catch (e) {
+      localDbCache = { portfolio: [], galleries: [], bookings: [], activities: [], profiles: [] };
+    }
+  }
+  if (!localDbCache.profiles) {
+    localDbCache.profiles = [];
+  }
+  return localDbCache;
+}
+
 function writeDb(data: any) {
+  localDbCache = data;
   try {
     fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
+    if (firestoreDb) {
+      saveToFirestoreBackground(data).catch(err => {
+        console.error("Background Firestore write failed:", err);
+      });
+    }
   } catch (error) {
-    console.error("Error writing database", error);
+    console.error("Error writing database backup:", error);
   }
 }
 
@@ -1101,6 +1254,51 @@ Return a JSON array of strings containing the matched IDs. Example output: ["p1"
   }
 });
 
+// Route to upload photos and files to Cloudinary
+app.post("/api/cloudinary/upload", async (req, res) => {
+  const { base64Data, folder } = req.body;
+  if (!base64Data) {
+    return res.status(400).json({ error: "Base64 data is required for upload." });
+  }
+
+  if (isCloudinaryConfigured) {
+    try {
+      console.log("Uploading photo/file to Cloudinary...");
+      // Cloudinary allows direct upload of base64 data (including data:image/... base64 prefix)
+      const uploadResponse = await cloudinary.uploader.upload(base64Data, {
+        folder: folder || "lumina-photography",
+        resource_type: "auto"
+      });
+      console.log("Cloudinary upload successful:", uploadResponse.secure_url);
+      return res.json({
+        success: true,
+        url: uploadResponse.secure_url,
+        publicId: uploadResponse.public_id,
+        bytes: uploadResponse.bytes,
+        format: uploadResponse.format,
+        provider: "cloudinary"
+      });
+    } catch (error: any) {
+      console.error("Cloudinary upload failed, falling back to base64 storage:", error);
+      return res.json({
+        success: true,
+        url: base64Data, // Fallback to base64 data so image remains fully visible
+        provider: "fallback-base64",
+        error: error.message || "Cloudinary upload error"
+      });
+    }
+  } else {
+    // If Cloudinary is not configured, fallback gracefully by returning the base64Data as the URL
+    // This allows the uploaded image to be instantly rendered in the browser and saved in the DB
+    return res.json({
+      success: true,
+      url: base64Data,
+      provider: "fallback-base64",
+      warning: "Cloudinary environment variables not set. Using base64 data-URI."
+    });
+  }
+});
+
 // Admin endpoint to automatically tag a new photoshoot image using Gemini 3.5 Vision!
 app.post("/api/gemini/tag-image", async (req, res) => {
   const { imageUrl, base64Data, prompt } = req.body;
@@ -1335,6 +1533,9 @@ Write in very simple, plain, friendly, and direct English. Do NOT use fancy mark
 
 // Mount Vite middleware in development (when process.env.NODE_ENV !== "production")
 async function serveApp() {
+  // Load and sync database (Firestore / local file backup)
+  await syncAndLoadDatabase();
+
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },
