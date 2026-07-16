@@ -5,7 +5,7 @@ import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
 import { Gallery, Booking, PortfolioImage, ClientActivity, DashboardStats } from "../src/types.js";
-import { initializeApp } from "firebase-admin/app";
+import { initializeApp, cert } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 import { v2 as cloudinary } from "cloudinary";
 
@@ -482,11 +482,43 @@ try {
   if (fs.existsSync(firebaseConfigPath)) {
     const firebaseConfig = JSON.parse(fs.readFileSync(firebaseConfigPath, "utf-8"));
     if (firebaseConfig.projectId) {
-      const adminApp = initializeApp({
+      let options: any = {
         projectId: firebaseConfig.projectId
-      });
-      firestoreDb = getFirestore(adminApp, firebaseConfig.firestoreDatabaseId || "(default)");
-      console.log("Firebase Admin successfully initialized. Firestore database ID:", firebaseConfig.firestoreDatabaseId || "(default)");
+      };
+
+      let shouldInit = true;
+      const isRender = process.env.RENDER === "true";
+      const hasServiceAccount = !!process.env.FIREBASE_SERVICE_ACCOUNT;
+      const hasGoogleCreds = !!process.env.GOOGLE_APPLICATION_CREDENTIALS;
+
+      if (isRender && !hasServiceAccount && !hasGoogleCreds) {
+        console.warn(
+          "Running on Render but no FIREBASE_SERVICE_ACCOUNT or GOOGLE_APPLICATION_CREDENTIALS environment variables found. " +
+          "To use Firestore on Render, please define the FIREBASE_SERVICE_ACCOUNT environment variable with your service account JSON. " +
+          "Falling back to local db.json storage to prevent crash."
+        );
+        shouldInit = false;
+      }
+
+      if (shouldInit) {
+        if (hasServiceAccount) {
+          try {
+            const sa = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT!);
+            options.credential = cert(sa);
+            console.log("Using service account credentials for Firebase Admin.");
+          } catch (e) {
+            console.error("Failed to parse FIREBASE_SERVICE_ACCOUNT env variable:", e);
+          }
+        } else if (hasGoogleCreds) {
+          console.log("Using GOOGLE_APPLICATION_CREDENTIALS for Firebase Admin.");
+        } else {
+          console.log("Using default credentials for Firebase Admin.");
+        }
+
+        const adminApp = initializeApp(options);
+        firestoreDb = getFirestore(adminApp, firebaseConfig.firestoreDatabaseId || "(default)");
+        console.log("Firebase Admin successfully initialized. Firestore database ID:", firebaseConfig.firestoreDatabaseId || "(default)");
+      }
     }
   }
 } catch (error) {
