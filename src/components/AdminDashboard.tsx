@@ -45,7 +45,7 @@ export default function AdminDashboard({ theme, isAdminAuthenticated, onAdminAut
   const [newGalleryClient, setNewGalleryClient] = useState("");
   const [newGalleryEmail, setNewGalleryEmail] = useState("");
   const [newGalleryPasscode, setNewGalleryPasscode] = useState("");
-  const [newGalleryCover, setNewGalleryCover] = useState("/images/portfolio-wedding-1.jpg");
+  const [newGalleryCover, setNewGalleryCover] = useState("https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80");
   const [newGalleryAllowDownload, setNewGalleryAllowDownload] = useState(true);
   const [uploadedImages, setUploadedImages] = useState<ImageItem[]>([]);
   const [isCreatingGallery, setIsCreatingGallery] = useState(false);
@@ -289,7 +289,7 @@ export default function AdminDashboard({ theme, isAdminAuthenticated, onAdminAut
         // 3. Add to uploaded images list
         const newImage: ImageItem = {
           id: "img-" + Math.random().toString(36).substr(2, 9),
-          url: finalImageUrl || "/images/portfolio-wedding-1.jpg",
+          url: finalImageUrl || "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
           tags,
           originalName: file.name
         };
@@ -336,13 +336,13 @@ export default function AdminDashboard({ theme, isAdminAuthenticated, onAdminAut
           images: uploadedImages.length > 0 ? uploadedImages : [
             {
               id: "img-default-1",
-              url: "/images/portfolio-wedding-1.jpg",
+              url: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
               tags: ["wedding", "editorial"],
               originalName: "DSC_001.jpg"
             },
             {
               id: "img-default-2",
-              url: "/images/portfolio-wedding-2.jpg",
+              url: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=80",
               tags: ["couple", "rings"],
               originalName: "DSC_002.jpg"
             }

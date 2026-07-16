@@ -28,7 +28,7 @@ export default function BlogSection({ theme }: { theme: "dark" | "light" }) {
       excerpt: "Our simple guide to choosing the best colors, clothes, and styles for your sunset photo shoot.",
       date: "June 28, 2026",
       readTime: "5 min read",
-      cover: "/images/blog-wedding.jpg",
+      cover: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80",
       paragraphs: [
         {
           text: "Planning a sunset photoshoot is an exciting journey, but one of the most common questions clients ask is: 'What should we wear?' The right outfit doesn’t just complement the background; it elevates the entire visual narrative. Here are the principal styling rules from my years behind the lens:"
@@ -62,7 +62,7 @@ export default function BlogSection({ theme }: { theme: "dark" | "light" }) {
       excerpt: "Learn how Vinayak Sable uses soft golden hour lighting and natural shadows to take beautiful, emotional photos.",
       date: "May 14, 2026",
       readTime: "8 min read",
-      cover: "/images/blog-lighting.jpg",
+      cover: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=80",
       paragraphs: [
         {
           text: "To a photographer, light is not merely a tool—it is the paint with which we compose stories. While artificial flash has its place, nothing can replicate the emotional depth and organic warmth of natural sunlight. Today, I invite you behind the scenes to explore how we harness natural light to make time stand still."
@@ -92,7 +92,7 @@ export default function BlogSection({ theme }: { theme: "dark" | "light" }) {
       excerpt: "We share our favorite coastal cliffs and quiet green hills for beautiful pre-wedding photo shoots.",
       date: "April 02, 2026",
       readTime: "6 min read",
-      cover: "/images/blog-nature.jpg",
+      cover: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80",
       paragraphs: [
         {
           text: "Every couple deserves a backdrop that matches the epic scale of their love story. Maharashtra is blessed with some of the most diverse, dramatic, and poetic landscapes in India. Here are five of my absolute favorite, handpicked photoshoot locations:"
@@ -286,7 +286,7 @@ export default function BlogSection({ theme }: { theme: "dark" | "light" }) {
                   <div className="flex items-center gap-4">
                     <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-gold-500 bg-neutral-950">
                       <img
-                        src="/images/about-me.jpg"
+                        src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=800&q=80"
                         alt="Vinayak Sable"
                         className="w-full h-full object-cover"
                       />

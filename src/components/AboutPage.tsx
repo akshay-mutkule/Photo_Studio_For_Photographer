@@ -26,7 +26,7 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
           <div className="relative">
             <div className={`relative z-10 aspect-[3/4] rounded-lg overflow-hidden border shadow-2xl ${isDark ? "border-neutral-800" : "border-neutral-200"}`}>
               <img
-                src="/images/about-me.jpg"
+                src="https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=800&q=80"
                 alt="Photographer behind the lens"
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
@@ -129,7 +129,7 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
             <div className={`aspect-video rounded-lg overflow-hidden border ${isDark ? "border-neutral-800" : "border-neutral-200"}`}>
               <img
-                src="/images/about-travel.jpg"
+                src="https://images.unsplash.com/photo-1507504038482-7621c5211903?auto=format&fit=crop&w=800&q=80"
                 alt="Behind the scenes shoot gear"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                 referrerPolicy="no-referrer"
@@ -137,7 +137,7 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
             </div>
             <div className={`aspect-video rounded-lg overflow-hidden border ${isDark ? "border-neutral-800" : "border-neutral-200"}`}>
               <img
-                src="/images/about-family.jpg"
+                src="https://images.unsplash.com/photo-1484981138541-3d074aa97716?auto=format&fit=crop&w=800&q=80"
                 alt="Setting up lighting"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                 referrerPolicy="no-referrer"
@@ -145,7 +145,7 @@ export default function AboutPage({ theme }: { theme: "dark" | "light" }) {
             </div>
             <div className={`aspect-video rounded-lg overflow-hidden border ${isDark ? "border-neutral-800" : "border-neutral-200"}`}>
               <img
-                src="/images/about-editing.jpg"
+                src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80"
                 alt="Editing raw photos in Lightroom"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                 referrerPolicy="no-referrer"

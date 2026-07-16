@@ -153,7 +153,7 @@ export default function ContactPage({ theme }: { theme: "dark" | "light" }) {
               className="block rounded-lg overflow-hidden border border-neutral-900 aspect-video relative group cursor-pointer hover:border-gold-500/50 transition-all duration-300"
             >
               <img
-                src="/images/contact-studio.jpg"
+                src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80"
                 alt="Studio Location Map view"
                 className="w-full h-full object-cover grayscale opacity-55 group-hover:opacity-70 group-hover:scale-[1.02] transition-all duration-500"
               />

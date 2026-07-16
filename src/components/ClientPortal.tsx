@@ -67,8 +67,8 @@ export default function ClientPortal({
     };
 
     const handleBlur = () => {
-      setIsWindowBlurred(true);
-      setSecurityNotice("Screenshot Protection Active: Screen capture or focus loss detected.");
+      // Keep visible and accessible inside iframes and previews
+      setIsWindowBlurred(false);
     };
 
     const preventDefaultShortcuts = (e: KeyboardEvent) => {

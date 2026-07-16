@@ -16,7 +16,7 @@ export default function Hero({ onViewPortfolio, onBookShoot, theme }: HeroProps)
       {/* Background Image with Dark Vignette */}
       <div className="absolute inset-0 z-0">
         <img
-          src="/images/hero-bg.jpg"
+          src="https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=1600&q=85"
           alt="VS Photography Backdrop"
           className="w-full h-full object-cover object-center opacity-65 scale-105 animate-[scaleUp_20s_infinite_alternate]"
           referrerPolicy="no-referrer"

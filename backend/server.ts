@@ -515,6 +515,71 @@ try {
 // In-Memory Local Database Cache to support synchronous readDb/writeDb and extremely high performance
 let localDbCache: any = null;
 
+const urlMap: Record<string, string> = {
+  "/images/hero-bg.jpg": "https://images.unsplash.com/photo-1472396961693-142e6e269027?auto=format&fit=crop&w=1600&q=85",
+  "/images/about-me.jpg": "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?auto=format&fit=crop&w=800&q=80",
+  "/images/about-travel.jpg": "https://images.unsplash.com/photo-1507504038482-7621c5211903?auto=format&fit=crop&w=800&q=80",
+  "/images/about-family.jpg": "https://images.unsplash.com/photo-1484981138541-3d074aa97716?auto=format&fit=crop&w=800&q=80",
+  "/images/about-editing.jpg": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80",
+  "/images/blog-wedding.jpg": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80",
+  "/images/blog-lighting.jpg": "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=80",
+  "/images/blog-nature.jpg": "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80",
+  "/images/contact-studio.jpg": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80",
+  "/images/portfolio-wedding-1.jpg": "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
+  "/images/portfolio-wedding-2.jpg": "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=80",
+  "/images/portfolio-pre-wedding.jpg": "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=1200&q=80",
+  "/images/portfolio-engagement.jpg": "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=1200&q=80",
+  "/images/portfolio-portrait-1.jpg": "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=1200&q=80",
+  "/images/portfolio-portrait-2.jpg": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=80",
+  "/images/portfolio-family.svg": "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=1200&q=80",
+  "/images/portfolio-family.jpg": "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=1200&q=80",
+  "/images/portfolio-maternity.svg": "https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&w=1200&q=80",
+  "/images/portfolio-maternity.jpg": "https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&w=1200&q=80",
+  "/images/portfolio-fashion.jpg": "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1200&q=80",
+  "/images/portfolio-wildlife.jpg": "https://images.unsplash.com/photo-1484406566174-9da000fda645?auto=format&fit=crop&w=1200&q=80",
+  "/images/portfolio-commercial-1.jpg": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1200&q=80",
+  "/images/portfolio-commercial-2.jpg": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1200&q=80",
+};
+
+function migrateDbUrls(db: any): boolean {
+  if (!db) return false;
+  let changed = false;
+  const mapUrl = (url: string) => {
+    if (url && urlMap[url]) {
+      changed = true;
+      return urlMap[url];
+    }
+    return url;
+  };
+
+  if (db.portfolio && Array.isArray(db.portfolio)) {
+    db.portfolio.forEach((item: any) => {
+      if (item && item.url) {
+        item.url = mapUrl(item.url);
+      }
+    });
+  }
+
+  if (db.galleries && Array.isArray(db.galleries)) {
+    db.galleries.forEach((g: any) => {
+      if (g) {
+        if (g.coverImage) {
+          g.coverImage = mapUrl(g.coverImage);
+        }
+        if (g.images && Array.isArray(g.images)) {
+          g.images.forEach((img: any) => {
+            if (img && img.url) {
+              img.url = mapUrl(img.url);
+            }
+          });
+        }
+      }
+    });
+  }
+
+  return changed;
+}
+
 // Background worker to asynchronously persist memory changes to Firestore and db.json
 async function saveToFirestoreBackground(dbState: any) {
   if (!firestoreDb) return;
@@ -560,6 +625,17 @@ async function saveToFirestoreBackground(dbState: any) {
 async function syncAndLoadDatabase() {
   let loadedFromFirestore = false;
 
+  // 1. Ensure the default db.json exists first to act as a fallback and seed source
+  initDb();
+  let defaults: any = { portfolio: [], galleries: [], bookings: [], activities: [], profiles: [] };
+  try {
+    if (fs.existsSync(DB_FILE)) {
+      defaults = JSON.parse(fs.readFileSync(DB_FILE, "utf-8"));
+    }
+  } catch (e) {
+    console.error("Failed to read initial DB defaults:", e);
+  }
+
   if (firestoreDb) {
     try {
       console.log("Attempting to load database from Firestore...");
@@ -569,14 +645,30 @@ async function syncAndLoadDatabase() {
       const activitiesSnap = await firestoreDb.collection("activities").get();
       const profilesSnap = await firestoreDb.collection("profiles").get();
 
-      const portfolio = portfolioSnap.docs.map((doc: any) => doc.data());
-      const galleries = galleriesSnap.docs.map((doc: any) => doc.data());
-      const bookings = bookingsSnap.docs.map((doc: any) => doc.data());
-      const activities = activitiesSnap.docs.map((doc: any) => doc.data());
-      const profiles = profilesSnap.docs.map((doc: any) => doc.data());
+      let portfolio = portfolioSnap.docs.map((doc: any) => doc.data());
+      let galleries = galleriesSnap.docs.map((doc: any) => doc.data());
+      let bookings = bookingsSnap.docs.map((doc: any) => doc.data());
+      let activities = activitiesSnap.docs.map((doc: any) => doc.data());
+      let profiles = profilesSnap.docs.map((doc: any) => doc.data());
 
-      // If we got documents, load them into the cache
-      if (portfolio.length > 0 || galleries.length > 0 || bookings.length > 0) {
+      // If we got documents or have collections, load them into the cache
+      if (portfolio.length > 0 || galleries.length > 0 || bookings.length > 0 || profiles.length > 0) {
+        let needsSync = false;
+
+        // If portfolio is empty in Firestore, fill it with default photos
+        if (portfolio.length === 0 && defaults.portfolio && defaults.portfolio.length > 0) {
+          console.log("Portfolio collection empty in Firestore. Seeding default portfolio...");
+          portfolio = defaults.portfolio;
+          needsSync = true;
+        }
+
+        // If galleries is empty in Firestore, fill it with default galleries
+        if (galleries.length === 0 && defaults.galleries && defaults.galleries.length > 0) {
+          console.log("Galleries collection empty in Firestore. Seeding default galleries...");
+          galleries = defaults.galleries;
+          needsSync = true;
+        }
+
         localDbCache = {
           portfolio,
           galleries,
@@ -589,6 +681,12 @@ async function syncAndLoadDatabase() {
         
         // Also sync/write this back to db.json as a local hot backup
         fs.writeFileSync(DB_FILE, JSON.stringify(localDbCache, null, 2));
+
+        if (needsSync) {
+          saveToFirestoreBackground(localDbCache).catch(err => {
+            console.error("Failed to seed defaults to Firestore:", err);
+          });
+        }
       }
     } catch (error) {
       console.error("Error loading database from Firestore:", error);
@@ -597,8 +695,6 @@ async function syncAndLoadDatabase() {
 
   if (!loadedFromFirestore) {
     console.log("Loading database from local db.json file...");
-    // Initialize the db.json structure first if needed
-    initDb();
     
     try {
       const data = fs.readFileSync(DB_FILE, "utf-8");
@@ -615,7 +711,21 @@ async function syncAndLoadDatabase() {
       }
     } catch (error) {
       console.error("Error reading local db.json, initializing empty db", error);
-      localDbCache = { portfolio: [], galleries: [], bookings: [], activities: [], profiles: [] };
+      localDbCache = defaults || { portfolio: [], galleries: [], bookings: [], activities: [], profiles: [] };
+    }
+  }
+
+  // Run URL migration to ensure all local image references are updated to Unsplash URLs
+  if (localDbCache) {
+    const migrated = migrateDbUrls(localDbCache);
+    if (migrated) {
+      console.log("Migrated local /images/ paths to premium Unsplash CDN URLs.");
+      fs.writeFileSync(DB_FILE, JSON.stringify(localDbCache, null, 2));
+      if (firestoreDb) {
+        saveToFirestoreBackground(localDbCache).catch(err => {
+          console.error("Failed to sync migrated URLs to Firestore:", err);
+        });
+      }
     }
   }
 }
